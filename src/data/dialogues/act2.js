@@ -19,6 +19,13 @@ const act2Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'Good morning, Cadet. We have officially crossed the orbital midpoint of our Hohmann transfer trajectory. Earth is now a pale blue dot in our rear sensors.',
+    glossary: {
+      'Hohmann transfer': {
+        simple: 'A fuel-saving path that lets a spacecraft coast from one planet\'s orbit to another.',
+        deep: 'Instead of flying in a straight line, the ship follows a long ellipse around the Sun. Mars launches only line up every 26 months, so timing is everything.',
+        source: 'NASA — Hohmann Transfer Orbit',
+      },
+    },
     next:    'act2_chen_welcome',
     unlock:  'codex_ares_transit',
     bg:      'transit_interior',
@@ -42,6 +49,13 @@ const act2Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Good. Discipline keeps crews alive on 6-month voyages. Dr. Patel is running bone density checks in the medical bay, while HAL-Jr monitors solar irradiance.',
+    glossary: {
+      'solar irradiance': {
+        simple: 'How much sunlight energy lands on each square metre of a solar panel.',
+        deep: 'At Earth it is about 1,361 watts per square metre. At Mars it drops below 600 because the planet is farther from the Sun, so Mars bases need bigger or smarter solar arrays.',
+        source: 'NASA — Solar Irradiance',
+      },
+    },
     next:    'act2_patel_checkin',
     bg:      'transit_interior',
   },
@@ -61,6 +75,13 @@ const act2Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Solar radiation and power loss. As we travel away from the Sun toward Mars, solar irradiance drops from 1,361 W/m² to under 600 W/m². We need every single photon our arrays can harvest.',
+    glossary: {
+      'solar irradiance': {
+        simple: 'How much sunlight energy lands on each square metre of a solar panel.',
+        deep: 'At Earth it is about 1,361 watts per square metre. At Mars it drops below 600 because the planet is farther from the Sun, so Mars bases need bigger or smarter solar arrays.',
+        source: 'NASA — Solar Irradiance',
+      },
+    },
     next:    'act2_patel_checkin',
     effects: [{ stat: 'score', delta: 40 }],
     bg:      'transit_interior',
@@ -72,6 +93,13 @@ const act2Dialogues = {
     speaker: 'medic',
     name:    'Dr. Patel',
     text:    'Cadet, routine dosimeter check. Cosmic ray background levels are within allowable safety limits, but space weather stations near Venus are reporting elevated solar flare activity.',
+    glossary: {
+      'dosimeter': {
+        simple: 'A small device astronauts wear to measure how much radiation their body receives.',
+        deep: 'Radiation can damage cells and DNA, so doctors track every astronaut\'s total dose. On the ISS, crew members wear personal dosimeters and the station carries area monitors.',
+        source: 'NASA — Space Radiation Dosimetry',
+      },
+    },
     choices: [
       { label: 'Should we run pre-flare drills?', next: 'act2_flare_drill', effects: [{ stat: 'score', delta: 35 }] },
       { label: 'How much protection does our shelter give?', next: 'act2_shelter_info', effects: [] },
@@ -84,6 +112,18 @@ const act2Dialogues = {
     speaker: 'medic',
     name:    'Dr. Patel',
     text:    'Proactive thinking. In a Coronal Mass Ejection, high-energy protons can arrive in under 30 minutes. The storm shelter is surrounded by our water reclamation tanks — water is an excellent hydrogen-rich radiation shield.',
+    glossary: {
+      'Coronal Mass Ejection': {
+        simple: 'A huge cloud of charged particles blasted out of the Sun\'s atmosphere.',
+        deep: 'CMEs can reach Earth in one to three days and arrive at Mars with less warning. Crews shelter behind water tanks because water is packed with hydrogen, which slows radiation down.',
+        source: 'NASA — Coronal Mass Ejections',
+      },
+      'radiation shield': {
+        simple: 'A barrier that blocks or slows dangerous energy particles before they reach people.',
+        deep: 'Thick metal walls are too heavy to launch, so engineers use what is already on board: water, food, and waste. Future Mars habitats may use packed regolith as shielding.',
+        source: 'NASA — Radiation Shielding',
+      },
+    },
     next:    'act2_alarm_trigger',
     effects: [{ stat: 'score', delta: 30 }, { stat: 'morale', delta: 5 }],
     unlock:  'codex_solar_radiation',
@@ -128,6 +168,13 @@ const act2Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'Electromagnetic deflection grid active. Crew radiation exposure minimized. However, the charged particle wave has caused electromagnetic torque on array gimbals. Solar panels desynchronized!',
+    glossary: {
+      'gimbals': {
+        simple: 'Pivoting joints that let a solar panel turn and point at the Sun.',
+        deep: 'Without gimbals, a panel would be stuck facing one direction and would make far less power. Motors rotate the panels as the spacecraft moves.',
+        source: 'NASA — Solar Array Gimbals',
+      },
+    },
     next:    'act2_solar_prep',
     effects: [{ stat: 'health', delta: 5 }],
     bg:      'transit_interior',
@@ -148,6 +195,18 @@ const act2Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Smart maneuver! Feathering protected the photovoltaic cells from physical impact. Now we must re-acquire the Sun vector before our capacitors drain to zero.',
+    glossary: {
+      'photovoltaic cells': {
+        simple: 'The layers inside a solar panel that turn sunlight directly into electricity.',
+        deep: 'Light knocks electrons loose in a semiconductor, creating a current. Space cells are tested to survive radiation, extreme temperatures, and years of sunlight.',
+        source: 'NASA — Photovoltaics',
+      },
+      'capacitors': {
+        simple: 'Devices that store electric charge and release it quickly when a system needs a burst of power.',
+        deep: 'They act like tiny, fast batteries. Spacecraft use them to smooth power and to fire thrusters or run instruments for short bursts.',
+        source: 'NASA — Spacecraft Power Systems',
+      },
+    },
     next:    'act2_solar_prep',
     effects: [{ stat: 'score', delta: 50 }],
     bg:      'transit_interior',
@@ -204,6 +263,13 @@ const act2Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'Day 178 of transit. Optical telemetry lock achieved: Mars is filling the forward viewport. Olympus Mons and Valles Marineris clearly visible.',
+    glossary: {
+      'Olympus Mons': {
+        simple: 'The tallest volcano in the solar system — about two and a half times the height of Mount Everest.',
+        deep: 'It sits on Mars and is roughly 22 km high. Because Mars has no drifting plates like Earth, the volcano kept erupting in the same spot and grew enormous.',
+        source: 'NASA — Olympus Mons',
+      },
+    },
     choices: [
       { label: 'Look through the forward observation dome.', next: 'act2_view_mars', effects: [{ stat: 'morale', delta: 15 }, { stat: 'score', delta: 40 }] },
       { label: 'Review Mars descent checklist with Commander.', next: 'act2_prep_descent', effects: [{ stat: 'score', delta: 60 }] },
@@ -216,6 +282,13 @@ const act2Dialogues = {
     speaker: 'medic',
     name:    'Dr. Patel',
     text:    'There she is: the Red Planet. Iron oxide rust in the dust, thin carbon dioxide skies, and the home of the Ares Outpost. We made it across the void, Cadet.',
+    glossary: {
+      'Iron oxide': {
+        simple: 'The rusty mineral that gives Mars its red colour.',
+        deep: 'It is the same chemistry as rust on an old bicycle. Wind lifts the dusty rust into the air, which is why the Martian sky can look pink or butterscotch.',
+        source: 'NASA — Mars Facts',
+      },
+    },
     next:    'act2_end',
     effects: [{ stat: 'morale', delta: 10 }],
     bg:      'mars_surface',
@@ -226,6 +299,13 @@ const act2Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Aerocapture burns scheduled. Heat shields checked. Prepare for atmospheric entry into Elysium Planitia. Next stop: Martian soil.',
+    glossary: {
+      'Aerocapture': {
+        simple: 'Using a planet\'s atmosphere to slow a spacecraft down instead of burning extra fuel.',
+        deep: 'The ship dives into the upper atmosphere, and friction turns speed into heat. A heat shield protects it. Done right, aerocapture saves a huge amount of propellant.',
+        source: 'NASA — Aerocapture',
+      },
+    },
     next:    'act2_end',
     effects: [{ stat: 'score', delta: 50 }],
     bg:      'mars_surface',

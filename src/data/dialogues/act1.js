@@ -28,6 +28,13 @@ const act1Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Cadet! Good to have you on board. This is your first solo rotation at Artemis Base. I\'ll be observing your decisions. You\'ll be handling today\'s EVA prep and monitoring the outpost systems.',
+    glossary: {
+      'EVA': {
+        simple: 'Extravehicular Activity — astronaut-speak for going outside the spacecraft in a spacesuit.',
+        deep: 'Every EVA is planned like a mission of its own: oxygen limits, suit pressure checks, and a buddy who watches you the whole time. The Apollo Moonwalks were EVAs.',
+        source: 'NASA — Extravehicular Activity',
+      },
+    },
     choices: [
       { label: 'Ready, Commander!',       next: 'chen_ready',    effects: [{ stat: 'morale', delta: 5 }] },
       { label: 'What if something goes wrong?', next: 'chen_worry',  effects: [] },
@@ -40,7 +47,14 @@ const act1Dialogues = {
     id:      'chen_ready',
     speaker: 'commander',
     name:    'Commander Chen',
-    text:    'That\'s the attitude! First things first — check the Oxygen Garden. Dr. Patel says CO₂ scrubbers were at 94% efficiency this morning. Any drop below 90% and you\'ll need to intervene.',
+    text:    'That\'s the attitude! First things first — check the Oxygen Garden. Dr. Patel says the CO₂ scrubber was at 94% efficiency this morning. Any drop below 90% and you\'ll need to intervene.',
+    glossary: {
+      'CO₂ scrubber': {
+        simple: 'A machine that pulls carbon dioxide out of the air so astronauts have clean air to breathe.',
+        deep: 'On the ISS, scrubbers use minerals called zeolites that trap CO₂. Future habitats may use plants or electrolysis to recycle air instead of hauling fresh oxygen from Earth.',
+        source: 'NASA — Life Support Systems',
+      },
+    },
     next:    'oxygen_check',
     bg:      'lunar_interior',
   },
@@ -60,6 +74,18 @@ const act1Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Artemis Base: 12 modules, crew of 6, located at the lunar south pole. We harvest water ice from permanently shadowed craters. Solar arrays provide 48kW. The Moon has no atmosphere — a micrometeorite hit is our most common emergency.',
+    glossary: {
+      'water ice': {
+        simple: 'Frozen water hiding in craters where sunlight never reaches. It is the Moon\'s most precious resource.',
+        deep: 'Astronauts can melt it for drinking water, split it into oxygen to breathe, and turn it into hydrogen and oxygen rocket fuel. That is why NASA plans to build bases near the lunar south pole.',
+        source: 'NASA Artemis — Lunar Water Ice',
+      },
+      'micrometeorite': {
+        simple: 'A tiny space rock, often smaller than a grain of sand, travelling faster than a rifle bullet.',
+        deep: 'With no atmosphere to burn them up, even dust-sized particles can chip a spacesuit or a habitat wall. Engineers add protective layers called Whipple shields to spacecraft.',
+        source: 'NASA — Micrometeoroid and Orbital Debris',
+      },
+    },
     next:    'oxygen_check',
     effects: [{ stat: 'score', delta: 50 }],
     unlock:  'codex_artemis_base',
@@ -72,6 +98,13 @@ const act1Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'Cadet, Oxygen Garden reading: CO₂ scrubber at 87%. This is below threshold. Immediate attention required.',
+    glossary: {
+      'CO₂ scrubber': {
+        simple: 'A machine that pulls carbon dioxide out of the air so astronauts have clean air to breathe.',
+        deep: 'On the ISS, scrubbers use minerals called zeolites that trap CO₂. Future habitats may use plants or electrolysis to recycle air instead of hauling fresh oxygen from Earth.',
+        source: 'NASA — Life Support Systems',
+      },
+    },
     choices: [
       { label: 'Rush to fix it immediately.',    next: 'oxygen_minigame',   effects: [{ stat: 'oxygen', delta: -5 }] },
       { label: 'Ask HAL-Jr for guidance first.', next: 'hal_oxygen_guide',  effects: [] },
@@ -142,6 +175,13 @@ const act1Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Good work on life support. Now: suit up for your first EVA. You\'ll be collecting regolith samples near the south crater rim. Check your suit seals carefully — the Moon has zero atmosphere.',
+    glossary: {
+      'regolith': {
+        simple: 'Moon soil. It is not soft dirt — it is sharp, glassy dust made from crushed rock.',
+        deep: 'Apollo astronauts found regolith scratched their visors and clogged equipment. Future bases may bake it into bricks with 3D printers to build radiation-proof walls.',
+        source: 'NASA — Lunar Regolith',
+      },
+    },
     choices: [
       { label: 'Double-check every seal.',      next: 'eva_careful',    effects: [{ stat: 'score', delta: 50 }] },
       { label: 'Quick check — I\'ve got this.', next: 'eva_reckless',   effects: [{ stat: 'health', delta: -15 }] },
@@ -256,6 +296,13 @@ const act1Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Outstanding EVA, Cadet. Time to head back to the airlock. Solar flare warning — not dangerous at our latitude but a reminder: deep space is not forgiving.',
+    glossary: {
+      'Solar flare': {
+        simple: 'A sudden burst of energy from the Sun that can send radiation out into space.',
+        deep: 'Flares often come with coronal mass ejections — clouds of charged particles. On the Moon or in deep space, astronauts need shelter because there is no magnetic field to block them.',
+        source: 'NASA — Solar Flares',
+      },
+    },
     next:    'act1_end',
     effects: [{ stat: 'oxygen', delta: -10 }],
     bg:      'lunar_surface',

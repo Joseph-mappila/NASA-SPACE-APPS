@@ -41,6 +41,9 @@ export const useGameStore = create((set, get) => ({
   // ── Codex ──
   unlockedCodexEntries: [],
 
+  // ── Glossary ──
+  seenGlossaryTerms: [],   // terms already explained on this playthrough
+
   // ── Actions ──
 
   setPlayerName: (name) => set({ playerName: name }),
@@ -116,6 +119,12 @@ export const useGameStore = create((set, get) => ({
       : [...state.unlockedCodexEntries, id],
   })),
 
+  markGlossaryTermSeen: (term) => set((state) => ({
+    seenGlossaryTerms: state.seenGlossaryTerms.includes(term)
+      ? state.seenGlossaryTerms
+      : [...state.seenGlossaryTerms, term],
+  })),
+
   resetGame: () => set({
     stats: { ...INITIAL_STATS },
     flags: {},
@@ -128,5 +137,6 @@ export const useGameStore = create((set, get) => ({
     minigameResult: null,
     unlockedAchievements: [],
     unlockedCodexEntries: [],
+    seenGlossaryTerms: [],
   }),
 }));

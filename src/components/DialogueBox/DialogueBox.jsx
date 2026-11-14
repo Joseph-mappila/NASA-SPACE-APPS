@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore';
 import soundEngine from '../../utils/audio';
+import GlossaryTerm from './GlossaryTerm';
 import styles from './DialogueBox.module.css';
 
 // ════════════════════════════════════════════════════════════════════
@@ -86,6 +87,42 @@ function TypewriterText({ text, speed = 24, onDone, isSkipped }) {
   );
 }
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Splits dialogue text into plain strings and tappable glossary terms.
+// Only the first occurrence of each term is made interactive.
+function renderTextWithGlossary(text, glossary, seenTerms, onSeen) {
+  if (!glossary) return text;
+
+  const lowerText = text.toLowerCase();
+  const terms = Object.keys(glossary)
+    .filter((term) => term && !seenTerms.has(term) && lowerText.includes(term.toLowerCase()))
+    .sort((a, b) => b.length - a.length);
+
+  if (terms.length === 0) return text;
+
+  const lookup = new Map(terms.map((term) => [term.toLowerCase(), term]));
+  const pattern = new RegExp(`\\b(${terms.map(escapeRegExp).join('|')})\\b`, 'gi');
+  const used = new Set();
+
+  return text.split(pattern).map((part, index) => {
+    const termKey = lookup.get(part.toLowerCase());
+    if (!termKey || used.has(termKey)) {
+      return <React.Fragment key={`text-${index}`}>{part}</React.Fragment>;
+    }
+    used.add(termKey);
+    return (
+      <GlossaryTerm
+        key={`term-${index}`}
+        term={part}
+        termKey={termKey}
+        data={glossary[termKey]}
+        onSeen={onSeen}
+      />
+    );
+  });
+}
+
 export default function DialogueBox({ node, playerName, onChoice, onNext }) {
   const [textDone, setTextDone] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
@@ -102,6 +139,18 @@ export default function DialogueBox({ node, playerName, onChoice, onNext }) {
 
   const hasChoices = node.choices?.length > 0;
   const avatarSrc = node.avatar || speakerCfg.avatar;
+
+  const seenGlossaryTerms = useGameStore((s) => s.seenGlossaryTerms);
+  const markGlossaryTermSeen = useGameStore((s) => s.markGlossaryTermSeen);
+
+  // Freeze the explained-terms set when entering a node so that marking a term
+  // as seen does not strip its highlight from the dialogue being read.
+  const glossaryNodeRef = useRef(null);
+  const seenSnapshotRef = useRef(new Set());
+  if (glossaryNodeRef.current !== node.id) {
+    glossaryNodeRef.current = node.id;
+    seenSnapshotRef.current = new Set(seenGlossaryTerms);
+  }
 
   // Reset states when dialogue node changes
   useEffect(() => {
@@ -172,12 +221,16 @@ export default function DialogueBox({ node, playerName, onChoice, onNext }) {
           {/* Dialogue text */}
           <div className={styles.textArea}>
             <p className={styles.text}>
-              <TypewriterText
-                text={displayText}
-                speed={node.speaker === 'system' ? 18 : 24}
-                isSkipped={isSkipped}
-                onDone={() => setTextDone(true)}
-              />
+              {textDone ? (
+                renderTextWithGlossary(displayText, node.glossary, seenSnapshotRef.current, markGlossaryTermSeen)
+              ) : (
+                <TypewriterText
+                  text={displayText}
+                  speed={node.speaker === 'system' ? 18 : 24}
+                  isSkipped={isSkipped}
+                  onDone={() => setTextDone(true)}
+                />
+              )}
             </p>
           </div>
 

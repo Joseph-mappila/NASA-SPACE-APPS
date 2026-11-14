@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
@@ -225,6 +225,17 @@ export default function MainMenu() {
           </AnimatePresence>
 
           <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              id="open-minigame-deck-btn"
+              className="btn btn-plasma"
+              onClick={() => {
+                soundEngine.playClick();
+                navigate('/minigames');
+              }}
+            >
+              🎮 Minigame Deck
+            </button>
+
             <button
               id="open-sim-btn"
               className="btn btn-ghost"

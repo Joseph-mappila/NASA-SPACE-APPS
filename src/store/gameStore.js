@@ -98,6 +98,12 @@ export const useGameStore = create((set, get) => ({
     minigameResult: null,
   }),
 
+  clearMinigame: () => set({
+    activeMinigame: null,
+    lastMinigame: null,
+    minigameResult: null,
+  }),
+
   resolveMinigame: (result, effects = []) => {
     get().applyEffect(effects);
     set((state) => ({

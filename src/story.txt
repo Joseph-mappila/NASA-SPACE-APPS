@@ -1,0 +1,30 @@
+Lightning, a phenomenon we now consider with fascination and understanding was once a source of great fear to humans.
+They couldn't understand what caused the big flash across the sky, and the big bang that followed it.
+It was nothing like they had seen before, never known before.
+They attributed it to gods, they worshipped nature begging for forgiveness for their sins.
+
+Suddenly the lightning hit a tree and engulfed it in fire, and they were fascinated by it. Scared by it.
+But curiosity pulled them forward and eventually they learnt to use it, they learnt to hunt with it.
+
+They found that the rocks in their sorroundings were not the same, some were brittle, some however were shiny and sonorous. 
+They used these and found that with fire they could be moulded into weapons, into structures far stronger than anything they had thought of before.
+
+The rest, as they say, is history. 
+From simple wheel driven carts to cars, to ships and to planes. And finally to rockets, we finally managed to leave the little speck of dust we were confined to in this galaxy.
+
+Throughout all this, one thing remained consistent, the curiosity of mankind that set them apart.
+Which is why CurioCET presents: 
+<GameName>
+
+Welcome to Luna, the lunar outpost set up by NASA on the moon!
+Hal: Good morning captain. We are currently day 57 of mission Luna. Current systems are all operational. 
+Oxygen levels: Normal, Water levels: Normal, Power levels: Moderate, Food levels: normal. Solar flare expected in 8 hours.
+Current crewmates: 15 all alive and well
+No casualties to report.
+No messages from earth, communication with earth intact.
+Current objectives that need attention:
+1. Waste disposal
+2. Solar panels on Block A need cleaning
+3. Solar Particle Event (SPE) Storm Shelter Assembly (IMPORTANT!)
+
+WHich one would you like to do first?

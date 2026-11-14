@@ -97,3 +97,29 @@ export async function fetchEPICImage() {
     return null;
   }
 }
+
+// ── DONKI — NASA Space Weather Database Of Notifications, Knowledge, Information ──
+// Live API for solar flares, coronal mass ejections, and space weather affecting Moon & Mars
+export async function fetchSpaceWeatherNotifications() {
+  try {
+    const res = await fetch(`${BASE}/DONKI/notifications?api_key=${API_KEY}`);
+    if (!res.ok) throw new Error('DONKI notifications fetch failed');
+    const data = await res.json();
+    return Array.isArray(data) ? data.slice(0, 5) : [];
+  } catch (err) {
+    console.warn('[NASA] DONKI notifications error:', err.message);
+    return [];
+  }
+}
+
+export async function fetchGeomagneticStorms() {
+  try {
+    const res = await fetch(`${BASE}/DONKI/GST?api_key=${API_KEY}`);
+    if (!res.ok) throw new Error('DONKI GST fetch failed');
+    const data = await res.json();
+    return Array.isArray(data) ? data.slice(0, 5) : [];
+  } catch (err) {
+    console.warn('[NASA] DONKI GST error:', err.message);
+    return [];
+  }
+}

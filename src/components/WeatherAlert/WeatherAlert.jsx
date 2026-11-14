@@ -35,12 +35,12 @@ export default function WeatherAlert({ event, weatherData, onDismiss }) {
           </span>
           <p className={styles.desc}>{event.description}</p>
 
-          {weatherData && (
+          {/* Dynamic telemetry chips (adapts to Moon, Transit, or Mars) */}
+          {(weatherData?.chips || event.chips) && (
             <div className={styles.dataRow}>
-              <DataChip label="MIN TEMP" value={`${weatherData.minTemp.toFixed(0)}°C`} />
-              <DataChip label="WIND"     value={`${weatherData.avgWindSpeed.toFixed(1)} m/s`} />
-              <DataChip label="SOL"      value={String(weatherData.sol)} />
-              <DataChip label="PRESSURE" value={`${weatherData.avgPressure.toFixed(0)} Pa`} />
+              {(weatherData?.chips || event.chips).map((chip, i) => (
+                <DataChip key={i} label={chip.label} value={chip.value} />
+              ))}
             </div>
           )}
         </div>

@@ -41,7 +41,7 @@ export default function GameScreen() {
   const navigateTo     = useGameStore((s) => s.navigateTo);
   const launchMinigame = useGameStore((s) => s.launchMinigame);
 
-  const { weatherEvent, weatherData, refreshWeather } = useMarsWeather();
+  const { weatherEvent, weatherData, refreshWeather } = useMarsWeather(currentAct);
 
   const [bgImage,       setBgImage]       = useState(null);
   const [bgTransition,  setBgTransition]  = useState(false);

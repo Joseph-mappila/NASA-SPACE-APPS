@@ -9,7 +9,7 @@
 > **OUTPOST 57** *(or **The Curiosity Protocol**)*
 > Welcome to Luna, NASA's lunar outpost.
 > **HAL:** Good morning, Captain. We are currently on Day 57 of Mission Luna. All core systems are operational.
-> * **Oxygen:** Normal ($P_{IO_2}$: 150 mmHg) | **Water:** Normal | **Power:** Moderate (52%) | **Food:** Normal
+> * **Oxygen:** Normal ($P_{IO_2}$: 145 mmHg) | **Water:** Normal | **Power:** Moderate (52%) | **Food:** Normal
 > * **Alert:** Solar Particle Event (solar flare) expected in 8 hours.
 > * **Crew:** 15/15 alive and well. No casualties to report.
 > * **Comms:** Earth link intact. No incoming messages.
@@ -41,8 +41,8 @@ Designed for **ages 7–12** without dumbing down the physics, HAL's console dis
 
 **Player Procedure:**
 
-1. Tune **AC Wave Frequency (Hz)** and **Phase Voltage** on the console oscilloscope until the electric wave matches the dust layer's lift threshold (too high causes dielectric arcing across the grid; too low leaves dust stuck).
-2. Use a grounded carbon-fiber brush in slow, unidirectional strokes along the outer bezel to clear clumped grains without scratching the solar cells.
+1. Tune **AC Wave Frequency (Hz)** and **Phase Voltage** on the console until the electric wave matches the dust layer's lift threshold (too high causes dielectric arcing across the grid; too low leaves dust stuck).
+2. Engage the shield and sweep the **field probe** over every dust clump to confirm the grains have lifted off the glass.
 
 **Outcome & Domino Effect:**
 
@@ -51,12 +51,13 @@ Designed for **ages 7–12** without dumbing down the physics, HAL's console dis
 
 
 * Day 57 • 10:30 (T-5.5h to Flare): Mission 2: Habitat Waste — Trash Compaction & Processing System (TCPS)
-**Real NASA Science:** Under NASA Moon-to-Mars Objective OP-12, crews cannot dump waste outside. NASA's **TCPS** applies controlled heat and pneumatic compression to convert mixed trash and wet wipes into sterile, dense tiles (**375 kg/m³**) while recovering **up to 98% of trapped water**. Heating must drive **water activity ($a_w$) below 0.6** so bacteria and mold cannot grow.
+**Real NASA Science:** Under NASA Moon-to-Mars Objective OP-12, crews cannot dump waste outside. NASA's **TCPS** applies controlled heat and pneumatic compression to convert mixed trash and wet wipes into dense, sterile tiles while recovering trapped water. Heating must drive **water activity ($a_w$) below 0.5** so bacteria and mold cannot grow, and the finished tile is less than **one-eighth of the original trash volume**. (The outpost's separate life-support loop recovers about 98% of its water, following the ISS ECLSS benchmark.)
 
 **Player Procedure:**
 
-1. Separate incoming Cargo Transfer Bags into wet organic waste, polyethylene plastics, and metal foil.
-2. Regulate **Chamber Pressure** and **Heater Temperature** so water boils cleanly into the condenser without flashing into a dangerous steam spike or overheating plastics into toxic **SMAC (Spacecraft Maximum Allowable Concentration)** off-gases.
+1. Open the cargo transfer bag and remove the two unsafe items: the sealed battery pack and the sharp metal strip.
+2. Set **chamber pressure** and **heater temperature** into their safe bands so water boils cleanly into the condenser without flashing into a dangerous steam spike or overheating plastics into toxic **SMAC (Spacecraft Maximum Allowable Concentration)** off-gases. Outpost 57's compactor uses **120–140 °C** and **60–80 kPa**.
+3. Hold the press until **water activity** drops below **0.5** and the tile is dense enough for shielding.
 
 **Outcome & Domino Effect:**
 
@@ -74,17 +75,18 @@ Designed for **ages 7–12** without dumbing down the physics, HAL's console dis
 
 **Outcome & Domino Effect:**
 
-* **Pass:** Cabin pressure holds steady at **8.2 psia** ($P_{IO_2}$ at 150 mmHg).
+* **Pass:** Cabin pressure holds steady at **8.2 psia** ($P_{IO_2}$ at 145 mmHg).
 * **Fail / Skip:** A continuous **oxygen leak** starts during the storm, draining cabin $O_2$ throughout Day 58.
 
 
 * Day 57 • 16:00 (T-0h • CRITICAL): Mission 4: Solar Particle Event (SPE) — 20 g/cm² Storm Shelter & Load-Shed
-**Real NASA Science:** Solar flares accelerate high-energy protons toward the Moon. Dense metals like lead shatter incoming protons into dangerous **secondary neutrons**, whereas **hydrogen-rich materials** (water and polyethylene) stop protons cleanly via elastic collisions. NASA protocols require stacking **10 cm water-equivalent** mass around the central core to keep doses **below 250 mSv** and shutting down non-essential computers against **Single Event Upsets (SEUs)**.
+**Real NASA Science:** Solar flares accelerate high-energy protons toward the Moon. Dense metals like lead shatter incoming protons into dangerous **secondary neutrons**, whereas **hydrogen-rich materials** (water and polyethylene) stop protons cleanly through elastic collisions. Outpost 57 plans **20 g/cm²** of hydrogen-rich mass around each shelter zone to keep doses **below 250 mSv**, and shuts down non-essential computers against **Single Event Upsets (SEUs)**.
 
 **Player Procedure:**
 
-1. Arrange water bladders, food rations, and **Mission 2's TCPS waste tiles** across a 3D dosimeter grid around the 15 crew bunks until all red radiation hot-spots drop below **250 mSv**.
-2. Flip circuit breakers in priority order to shed non-essential loads so the habitat runs within storm battery limits.
+1. Build **20 g/cm²** of shielding in each of the five storm-shelter zones using water bladders (+5), food crates (+10), and **Mission 2's TCPS waste tiles** (+4).
+2. Watch the dose estimate and keep it below **250 mSv**.
+3. Turn off non-essential breakers until the battery load is under **4.5 kW**, but leave life support on.
 
 **Outcome & Domino Effect:**
 
@@ -118,9 +120,9 @@ Designed for **ages 7–12** without dumbing down the physics, HAL's console dis
 
 **Player Procedure:**
 
-1. Open the scrubber-to-greenhouse $CO_2$ bleed valve just enough to hold plant chamber $CO_2$ at **1,100 ppm** without leaking back into the cabin.
-2. Dose $NO_3^-$, $K^+$, and $Mg^{2+}$ nutrients (diluted with water reclaimed in **Mission 2**) and adjust pH buffer to **5.8**.
-3. Activate root-zone aeration stones (preventing root suffocation in lunar $1/6\ g$ water films) and set **Red (660 nm) + Blue (450 nm) LED** intensity.
+1. Open the scrubber-to-greenhouse $CO_2$ bleed valve and hold plant chamber $CO_2$ at **1,000–1,200 ppm** without leaking back into the cabin.
+2. Set the **nutrient mix** into its target band (60–80%) using water reclaimed in **Mission 2**, and adjust the pH buffer to **5.5–6.0**.
+3. Hold all three bands at once until plant health reaches 100%. NASA's Advanced Plant Habitat uses red (660 nm) and blue (450 nm) LEDs for this crop.
 
 **Outcome & Domino Effect:**
 

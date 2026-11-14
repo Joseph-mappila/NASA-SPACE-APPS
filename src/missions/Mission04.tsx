@@ -9,14 +9,23 @@ type Unit = {
   type: ShieldType
   label: string
   detail: string
+  density: number
   symbol: string
 }
 
 const UNITS: Unit[] = [
-  { type: 'water', label: 'Water bladder', detail: 'Hydrogen-rich', symbol: '◒' },
-  { type: 'food', label: 'Food crate', detail: 'Dense supplies', symbol: '▣' },
-  { type: 'tile', label: 'Waste tile', detail: 'Polyethylene', symbol: '▤' },
+  { type: 'water', label: 'Water bladder', detail: '+5 g/cm² · hydrogen-rich', density: 5, symbol: '◒' },
+  { type: 'food', label: 'Food crate', detail: '+10 g/cm² · dense supplies', density: 10, symbol: '▣' },
+  { type: 'tile', label: 'Waste tile', detail: '+4 g/cm² · polyethylene', density: 4, symbol: '▤' },
 ]
+
+const UNIT_BY_TYPE = Object.fromEntries(UNITS.map((unit) => [unit.type, unit])) as Record<
+  ShieldType,
+  Unit
+>
+
+const ZONE_COUNT = 5
+const TARGET_DENSITY = 20
 
 type Breaker = {
   id: string
@@ -34,8 +43,6 @@ const BREAKERS: Breaker[] = [
   { id: 'lights', label: 'Non-critical lights', draw: 0.4 },
 ]
 
-const BUNKS = Array.from({ length: 15 }, (_, index) => index)
-
 export function Mission04({ state, onSolve }: MissionComponentProps) {
   const [selected, setSelected] = useState<ShieldType | null>('water')
   const [counts, setCounts] = useState<Record<ShieldType, number>>({
@@ -43,27 +50,33 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
     food: 4,
     tile: state.flags.shieldTiles,
   })
-  const [bunks, setBunks] = useState<Array<ShieldType | null>>(
-    Array.from({ length: 15 }, () => null),
+  const [zones, setZones] = useState<ShieldType[][]>(
+    Array.from({ length: ZONE_COUNT }, () => []),
   )
   const [breakers, setBreakers] = useState<Record<string, boolean>>(
     Object.fromEntries(BREAKERS.map((breaker) => [breaker.id, true])),
   )
   const [message, setMessage] = useState(
-    'Place shielding on the crew bunks. Then shed enough load to stay inside the battery limit.',
+    'Build 20 g/cm² of hydrogen-rich shielding around each shelter zone. Then shed enough power to stay under 4.5 kW.',
   )
 
-  const covered = bunks.filter(Boolean).length
-  const coverage = Math.round((covered / BUNKS.length) * 100)
+  const densities = zones.map((zone) =>
+    zone.reduce((sum, type) => sum + UNIT_BY_TYPE[type].density, 0),
+  )
+  const shieldedZones = densities.filter((density) => density >= TARGET_DENSITY).length
+  const coverage = Math.round((shieldedZones / ZONE_COUNT) * 100)
   const required = requiredShelterCoverage(state)
+  const averageDensity =
+    densities.reduce((sum, density) => sum + density, 0) / ZONE_COUNT
+  const dose = Math.max(30, Math.round(300 - averageDensity * 9))
   const load = BREAKERS.reduce(
     (sum, breaker) => sum + (breakers[breaker.id] ? breaker.draw : 0),
     0,
   )
-  const dose = Math.max(70, Math.round(420 - coverage * 2.7))
   const lifeSupport = breakers.eclss
   const powerOk = load <= 4.5
-  const ready = coverage >= required && powerOk && lifeSupport
+  const doseOk = dose < 250
+  const ready = coverage >= required && powerOk && lifeSupport && doseOk
 
   const available = useMemo(
     () => (selected ? counts[selected] : 0),
@@ -71,22 +84,41 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
   )
 
   const place = (index: number) => {
-    const existing = bunks[index]
-    if (existing) {
-      setBunks((current) => current.map((value, i) => (i === index ? null : value)))
-      setCounts((current) => ({ ...current, [existing]: current[existing] + 1 }))
-      setMessage('Shield unit returned to the supply rack.')
+    if (!selected) {
+      setMessage('Pick a shielding material first.')
       return
     }
-    if (!selected || counts[selected] <= 0) {
-      setMessage('No units of that type left. Choose another shielding material.')
+    if (counts[selected] <= 0) {
+      setMessage('No units of that type left. Choose another material.')
       return
     }
-    setBunks((current) => current.map((value, i) => (i === index ? selected : value)))
+    if (densities[index] >= TARGET_DENSITY) {
+      setMessage(`Zone ${index + 1} already has 20 g/cm². Shield a different zone.`)
+      return
+    }
+    setZones((current) =>
+      current.map((zone, zoneIndex) =>
+        zoneIndex === index ? [...zone, selected] : zone,
+      ),
+    )
     setCounts((current) => ({ ...current, [selected]: current[selected] - 1 }))
     setMessage(
-      `Bunk ${index + 1} shielded with ${UNITS.find((unit) => unit.type === selected)?.label.toLowerCase()}.`,
+      `Zone ${index + 1} now has ${densities[index] + UNIT_BY_TYPE[selected].density} g/cm² of shielding.`,
     )
+  }
+
+  const clearZone = (index: number) => {
+    const removed = zones[index]
+    if (removed.length === 0) return
+    setZones((current) =>
+      current.map((zone, zoneIndex) => (zoneIndex === index ? [] : zone)),
+    )
+    setCounts((current) => {
+      const next = { ...current }
+      for (const type of removed) next[type] += 1
+      return next
+    })
+    setMessage(`Zone ${index + 1} cleared. Units returned to the supply rack.`)
   }
 
   const seal = () => {
@@ -100,8 +132,12 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
     }
     if (coverage < required) {
       setMessage(
-        `Coverage is ${coverage}%. The storm shelter needs ${required}% to keep the crew below 250 mSv.`,
+        `Coverage is ${coverage}%. The storm shelter needs ${required}% of the zones at 20 g/cm².`,
       )
+      return
+    }
+    if (!doseOk) {
+      setMessage(`Estimated dose is ${dose} mSv. Add more shielding to get below 250 mSv.`)
       return
     }
     onSolve({
@@ -109,7 +145,7 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
       shelterCoverage: coverage,
       breakerLoad: load,
       notes: [
-        `${coverage}% of the crew bunks shielded.`,
+        `${coverage}% of the shelter zones have 20 g/cm² of shielding.`,
         `Estimated dose ${dose} mSv, below the 250 mSv limit.`,
         `Battery load ${load.toFixed(1)} kW, inside the 4.5 kW storm limit.`,
       ],
@@ -119,9 +155,9 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
   return (
     <div className="mission-workspace spe">
       <div className="mission-column mission-column--wide">
-        <div className="bunk-panel panel">
+        <div className="shelter-panel panel">
           <div className="panel-title">
-            <span className="eyebrow">Crew storm shelter · 15 bunks</span>
+            <span className="eyebrow">Storm shelter · 5 zones · 15 crew</span>
             <span className="mono">{coverage}% covered · goal {required}%</span>
           </div>
 
@@ -143,41 +179,58 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
             ))}
           </div>
 
-          <div className="bunk-grid">
-            {BUNKS.map((index) => {
-              const unit = bunks[index]
+          <div className="shelter-grid">
+            {zones.map((zone, index) => {
+              const density = densities[index]
+              const shielded = density >= TARGET_DENSITY
               return (
-                <button
-                  className={`bunk ${unit ? `bunk--${unit}` : ''}`}
-                  key={index}
-                  onClick={() => place(index)}
-                  type="button"
-                >
-                  <span>{unit ? UNITS.find((item) => item.type === unit)?.symbol : 'BUNK'}</span>
-                  <small>{String(index + 1).padStart(2, '0')}</small>
-                </button>
+                <div className={`shelter-zone ${shielded ? 'is-shielded' : ''}`} key={index}>
+                  <button
+                    className="shelter-zone__place"
+                    onClick={() => place(index)}
+                    type="button"
+                  >
+                    <span>Zone {index + 1}</span>
+                    <strong>{density} g/cm²</strong>
+                    <small>{shielded ? 'Crew shielded' : `${TARGET_DENSITY - density} more needed`}</small>
+                    <i>
+                      <b style={{ width: `${Math.min(100, (density / TARGET_DENSITY) * 100)}%` }} />
+                    </i>
+                  </button>
+                  <button
+                    className="shelter-zone__clear"
+                    disabled={zone.length === 0}
+                    onClick={() => clearZone(index)}
+                    type="button"
+                  >
+                    Clear
+                  </button>
+                </div>
               )
             })}
           </div>
 
           <div className="shelter-status">
             <Gauge
-              danger={dose >= 250}
+              danger={!doseOk}
               label="Dose estimate"
-              max={400}
+              max={350}
               min={0}
-              tone={dose < 250 ? 'green' : 'red'}
+              tone={doseOk ? 'green' : 'red'}
               unit=" mSv"
               value={dose}
             />
             <div className="shelter-status__text">
               <span>Selected material</span>
-              <strong>{selected ? `${available} ${selected} units ready` : 'None'}</strong>
-              <small>Click a bunk to place. Click a shielded bunk to return the unit.</small>
+              <strong>{selected ? `${available} ${UNIT_BY_TYPE[selected].label.toLowerCase()}s ready` : 'None'}</strong>
+              <small>
+                Water gives 5 g/cm², food gives 10, waste tiles give 4. NASA targets
+                20 g/cm² around a storm shelter.
+              </small>
             </div>
           </div>
 
-          <p className="console-message">{message}</p>
+          <p aria-live="polite" className="console-message">{message}</p>
         </div>
       </div>
 
@@ -228,7 +281,9 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
                 ? 'Life support must remain on.'
                 : !powerOk
                   ? 'Shed more non-essential load.'
-                  : `Cover at least ${required}% of the bunks.`}
+                  : !doseOk
+                    ? 'Add more shielding to lower the dose.'
+                    : `Cover at least ${required}% of the zones with 20 g/cm².`}
             </small>
           ) : null}
         </div>

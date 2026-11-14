@@ -34,11 +34,11 @@ describe('mission components', () => {
     expect(container.querySelector('.solar-panel')).toBeInTheDocument()
   })
 
-  it('renders mission 2', () => {
+  it('renders mission 2 with a waste bag inspection', () => {
     const { container } = render(
       <Mission02 onFail={onFail} onSolve={onSolve} state={state} />,
     )
-    expect(container.querySelectorAll('.bin')).toHaveLength(3)
+    expect(container.querySelectorAll('.waste-card')).toHaveLength(6)
   })
 
   it('renders mission 3', () => {
@@ -48,11 +48,11 @@ describe('mission components', () => {
     expect(container.querySelectorAll('.hatch')).toHaveLength(2)
   })
 
-  it('renders mission 4 with 15 bunks', () => {
+  it('renders mission 4 with five shelter zones', () => {
     const { container } = render(
       <Mission04 onFail={onFail} onSolve={onSolve} state={state} />,
     )
-    expect(container.querySelectorAll('.bunk')).toHaveLength(15)
+    expect(container.querySelectorAll('.shelter-zone')).toHaveLength(5)
   })
 
   it('renders mission 5 with three scrubber beds', () => {
@@ -62,11 +62,11 @@ describe('mission components', () => {
     expect(container.querySelectorAll('.scrubber-bed')).toHaveLength(3)
   })
 
-  it('renders mission 6 with five nutrient sliders', () => {
+  it('renders mission 6 with three chamber sliders', () => {
     const { container } = render(
       <Mission06 onFail={onFail} onSolve={onSolve} state={state} />,
     )
-    expect(container.querySelectorAll('.slider')).toHaveLength(5)
+    expect(container.querySelectorAll('.slider')).toHaveLength(3)
   })
 
   it('renders mission 7 with the reactor core', () => {
@@ -82,6 +82,7 @@ describe('mission components', () => {
       <Mission08 onFail={onFail} onSolve={onSolve} state={state} />,
     )
     expect(container.querySelectorAll('.packet')).toHaveLength(4)
-    expect(container.querySelector('.radar')).toBeInTheDocument()
+    expect(container.querySelector('.sky-plot')).toBeInTheDocument()
+    expect(container.querySelectorAll('.slider')).toHaveLength(2)
   })
 })

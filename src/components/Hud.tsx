@@ -1,55 +1,86 @@
-import type { CSSProperties, ReactNode } from 'react'
-import type { Resources } from '../game/types'
+import { useState, type ReactNode } from 'react'
+import { buildTelemetry, type TelemetryReading } from '../game/telemetry'
+import type { GameState } from '../game/types'
 
-type MeterTone = 'cyan' | 'amber' | 'red' | 'green'
-
-function toneFor(value: number): MeterTone {
-  if (value <= 20) return 'red'
-  if (value <= 50) return 'amber'
-  return 'cyan'
+function ReadingCard({ reading }: { reading: TelemetryReading }) {
+  return (
+    <div className={`telemetry-card telemetry-card--${reading.tone}`}>
+      <span className="telemetry-card__label">{reading.label}</span>
+      <span className="telemetry-card__value">
+        {reading.value}
+        <small>{reading.unit}</small>
+      </span>
+    </div>
+  )
 }
 
-const RESOURCE_LABELS: Array<{
-  key: keyof Resources
-  label: string
-  code: string
-  icon: string
-}> = [
-  { key: 'power', label: 'Power', code: 'PWR', icon: '⚡' },
-  { key: 'oxygen', label: 'Oxygen', code: 'O₂', icon: '◌' },
-  { key: 'waterFood', label: 'Water / Food', code: 'H₂O', icon: '◒' },
-  { key: 'crewHealth', label: 'Crew health', code: 'CREW', icon: '✚' },
-]
-
-export function ResourceHud({ resources }: { resources: Resources }) {
+function ReadingRow({ reading }: { reading: TelemetryReading }) {
   return (
-    <div className="resource-hud" aria-label="Outpost resources">
-      {RESOURCE_LABELS.map((item) => {
-        const value = resources[item.key]
-        const tone = toneFor(value)
-        return (
-          <div
-            className={`resource-meter resource-meter--${tone}`}
-            key={item.key}
-            style={{ '--meter-value': `${value}%` } as CSSProperties}
-          >
-            <span aria-hidden="true" className="resource-meter__icon">
-              {item.icon}
-            </span>
-            <span className="resource-meter__body">
-              <span className="resource-meter__label">
-                <b>{item.code}</b>
-                <small>{item.label}</small>
-              </span>
-              <span className="resource-meter__track">
-                <i />
-              </span>
-            </span>
-            <strong>{value}%</strong>
+    <li className={`telemetry-row telemetry-row--${reading.tone}`}>
+      <span aria-hidden="true" className="telemetry-row__dot" />
+      <div className="telemetry-row__body">
+        <div className="telemetry-row__head">
+          <strong>{reading.label}</strong>
+          <span>
+            {reading.value} {reading.unit}
+          </span>
+        </div>
+        <p>{reading.detail}</p>
+        <small>{reading.limit}</small>
+        <em>{reading.source}</em>
+      </div>
+    </li>
+  )
+}
+
+export function TelemetryHud({
+  state,
+  compact = false,
+}: {
+  state: GameState
+  compact?: boolean
+}) {
+  const [open, setOpen] = useState(false)
+  const telemetry = buildTelemetry(state)
+
+  return (
+    <section
+      aria-label="Outpost telemetry"
+      className={`telemetry ${compact ? 'telemetry--compact' : ''}`}
+    >
+      <div className="telemetry__primary">
+        {telemetry.primary.map((reading) => (
+          <ReadingCard key={reading.id} reading={reading} />
+        ))}
+      </div>
+
+      <button
+        aria-expanded={open}
+        className="telemetry__toggle"
+        onClick={() => setOpen((current) => !current)}
+        type="button"
+      >
+        {open ? 'Hide details' : 'All systems'}
+        <span aria-hidden="true">{open ? '−' : '+'}</span>
+      </button>
+
+      {open ? (
+        <div className="telemetry__drawer">
+          <div className="telemetry__drawer-head">
+            <span className="eyebrow">Outpost telemetry</span>
+            <small>Live values · NASA limits</small>
           </div>
-        )
-      })}
-    </div>
+          <ul>
+            {telemetry.primary.map((reading) => (
+              <ReadingRow key={reading.id} reading={reading} />
+            ))}
+            {telemetry.secondary.map((reading) => (
+              <ReadingRow key={reading.id} reading={reading} />
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </section>
   )
 }
 

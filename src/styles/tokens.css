@@ -18,10 +18,21 @@
   --blue: #7db7ff;
   --violet: #b59cff;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
-  --display: 'Archivo Black', 'Arial Black', Impact, sans-serif;
-  --body: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
-  --mono: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
-  --radius: 6px;
+  --display: 'Baloo 2 Variable', 'Baloo 2', 'Nunito Variable', sans-serif;
+  --wordmark: 'Archivo Black', 'Arial Black', Impact, sans-serif;
+  --body: 'Nunito Variable', 'Nunito', system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --radius: 12px;
+  --text-2xs: 0.75rem;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(1.75rem, 2.6vw, 2.25rem);
+  --text-3xl: clamp(2.15rem, 4vw, 3.25rem);
+  --leading-tight: 1.16;
+  --leading-body: 1.62;
 }
 
 * {
@@ -43,6 +54,8 @@ body {
     var(--ink);
   color: var(--paper);
   font-family: var(--body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

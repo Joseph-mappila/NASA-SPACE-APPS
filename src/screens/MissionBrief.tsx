@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { audio } from '../audio/engine'
-import { Brand } from '../components/Hud'
+import { Brand, TelemetryHud } from '../components/Hud'
 import { formatClock } from '../game/format'
 import { missionLimitFor } from '../game/state'
 import type { GameState, MissionDefinition } from '../game/types'
@@ -17,6 +17,7 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
   useEffect(() => {
     audio.beep(920, 0.08, 0.03)
   }, [mission.id])
+
   const warnings: string[] = []
   if (state.flags.brownout && mission.id === 5) {
     warnings.push('Sensor brownout: scrubber readouts are unstable.')
@@ -46,20 +47,45 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
 
         <section className="mission-brief__main">
           <span className="eyebrow">
-            Day {mission.day} · {mission.time} · {mission.code}
+            Day {mission.day} · {mission.time} · Mission {String(mission.id).padStart(2, '0')}
           </span>
           <h1 className="display">{mission.title}</h1>
           <h2>{mission.subtitle}</h2>
+
+          <div className="goal-card">
+            <span>Your goal</span>
+            <strong>{mission.objective}</strong>
+          </div>
+
           <p className="mission-brief__lede">{mission.brief}</p>
 
+          <div className="brief-steps">
+            <span className="eyebrow">What to do</span>
+            <ol>
+              {mission.steps.map((step, index) => (
+                <li key={step}>
+                  <span>{index + 1}</span>
+                  <p>{step}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
           <div className="science-card">
-            <span className="eyebrow">Real NASA science</span>
+            <span className="eyebrow">NASA fact</span>
             <p>{mission.science}</p>
           </div>
 
-          <div className="mission-brief__objective">
-            <span>Objective</span>
-            <strong>{mission.objective}</strong>
+          <div className="glossary">
+            <span className="eyebrow">Words to know</span>
+            <div>
+              {mission.glossary.map((item) => (
+                <span className="glossary__item" key={item.term}>
+                  <strong>{item.term}</strong>
+                  <small>{item.meaning}</small>
+                </span>
+              ))}
+            </div>
           </div>
 
           {warnings.length > 0 ? (
@@ -72,23 +98,14 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
         </section>
 
         <aside className="mission-brief__side">
+          <TelemetryHud state={state} />
+
           <div className="flight-plan panel">
-            <span className="eyebrow">Flight plan</span>
-            <ol>
-              {mission.steps.map((step, index) => (
-                <li key={step}>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <p>{step}</p>
-                </li>
-              ))}
-            </ol>
+            <span className="eyebrow">Controls</span>
             <div className="flight-plan__controls">
-              <span>Controls</span>
-              <div>
-                {mission.controls.map((control) => (
-                  <span className="chip" key={control}>{control}</span>
-                ))}
-              </div>
+              {mission.controls.map((control) => (
+                <span className="chip" key={control}>{control}</span>
+              ))}
             </div>
           </div>
 
@@ -101,10 +118,10 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
             <div>
               <span className="eyebrow">Mission clock</span>
               <strong>{formatClock(limit)}</strong>
-              <small>It starts the moment you begin. There is no retry.</small>
+              <small>It starts when you begin. There is no retry.</small>
             </div>
             <button className="btn btn--primary btn--wide" onClick={onStart} type="button">
-              Begin Mission {String(mission.id).padStart(2, '0')}
+              Start Mission {String(mission.id).padStart(2, '0')}
             </button>
           </div>
         </aside>

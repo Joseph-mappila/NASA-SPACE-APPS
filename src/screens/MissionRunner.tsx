@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { audio } from '../audio/engine'
-import { Brand, ResourceHud } from '../components/Hud'
+import { Brand, TelemetryHud } from '../components/Hud'
 import { formatClock } from '../game/format'
 import { missionLimitFor } from '../game/state'
 import type {
@@ -142,7 +142,7 @@ export function MissionRunner({
           <h1 className="display">{mission.title}</h1>
           <p>{mission.objective}</p>
         </div>
-        <ResourceHud resources={state.resources} />
+        <TelemetryHud compact state={state} />
       </div>
 
       <div className="mission-screen__stage">

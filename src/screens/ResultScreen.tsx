@@ -1,4 +1,4 @@
-import { ResourceHud } from '../components/Hud'
+import { TelemetryHud } from '../components/Hud'
 import { MISSIONS } from '../game/content'
 import { formatClock, formatSeconds, gradeLabel } from '../game/format'
 import type { GameState, MissionId } from '../game/types'
@@ -109,7 +109,7 @@ export function ResultScreen({ state, onContinue }: ResultScreenProps) {
             </p>
           </div>
 
-          <ResourceHud resources={state.resources} />
+          <TelemetryHud state={state} />
 
           <button className="btn btn--primary btn--wide" onClick={onContinue} type="button">
             {NEXT_LABEL[missionId]}

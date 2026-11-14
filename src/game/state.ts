@@ -191,6 +191,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           screen: 'day-brief',
           day: 58,
           currentMission: null,
+          resources: withResources(state.resources, { oxygen: -3 }),
         }
       }
       if (last === 8) return { ...state, screen: 'ending' }

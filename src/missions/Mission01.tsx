@@ -30,14 +30,14 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
   const [engaged, setEngaged] = useState(false)
   const [clumps, setClumps] = useState(CLUMPS)
   const [errors, setErrors] = useState(0)
-  const [brushing, setBrushing] = useState(false)
+  const [probing, setProbing] = useState(false)
   const [message, setMessage] = useState(
-    'Match the wave to the dust layer. Watch the oscilloscope, then engage.',
+    'Match the electric wave to the dust layer, then engage the shield.',
   )
   const panelRef = useRef<HTMLDivElement>(null)
   const solved = useRef(false)
-  const brushingRef = useRef(false)
-  const [brushPos, setBrushPos] = useState({ x: 50, y: 50 })
+  const probingRef = useRef(false)
+  const [probePos, setProbePos] = useState({ x: 50, y: 50 })
 
   const inBand = frequency >= 42 && frequency <= 58 && voltage >= 60 && voltage <= 80
   const cleared = clumps.filter((clump) => clump.cleared).length
@@ -71,18 +71,18 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
       return
     }
     setEngaged(true)
-    setMessage('Dust is lifting. Sweep the grounded brush across the remaining clumps.')
+    setMessage('Dust is lifting. Move the field probe over each clump to confirm it cleared.')
   }
 
-  const brush = (event: PointerEvent<HTMLDivElement>) => {
+  const probeMove = (event: PointerEvent<HTMLDivElement>) => {
     if (!engaged) return
     const panel = panelRef.current
     if (!panel) return
     const rect = panel.getBoundingClientRect()
     const x = ((event.clientX - rect.left) / rect.width) * 100
     const y = ((event.clientY - rect.top) / rect.height) * 100
-    setBrushPos({ x, y })
-    if (!brushingRef.current) return
+    setProbePos({ x, y })
+    if (!probingRef.current) return
     setClumps((current) => {
       let changed = false
       const next = current.map((clump) => {
@@ -169,20 +169,20 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
           </div>
           <div
             aria-label="Solar panel dust removal area"
-            className={`solar-panel ${engaged ? 'is-engaged' : ''} ${brushing ? 'is-brushing' : ''}`}
+            className={`solar-panel ${engaged ? 'is-engaged' : ''} ${probing ? 'is-probing' : ''}`}
             onPointerDown={(event) => {
-              brushingRef.current = true
-              setBrushing(true)
-              brush(event)
+              probingRef.current = true
+              setProbing(true)
+              probeMove(event)
             }}
             onPointerLeave={() => {
-              brushingRef.current = false
-              setBrushing(false)
+              probingRef.current = false
+              setProbing(false)
             }}
-            onPointerMove={brush}
+            onPointerMove={probeMove}
             onPointerUp={() => {
-              brushingRef.current = false
-              setBrushing(false)
+              probingRef.current = false
+              setProbing(false)
             }}
             ref={panelRef}
           >
@@ -197,11 +197,11 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
             {engaged ? <span className="solar-panel__wave" /> : null}
             {engaged ? (
               <span
-                className="solar-panel__brush"
-                style={{ left: `${brushPos.x}%`, top: `${brushPos.y}%` }}
+                className="solar-panel__probe"
+                style={{ left: `${probePos.x}%`, top: `${probePos.y}%` }}
               />
             ) : null}
-            <span className="solar-panel__label">EDS GRID · ITO ELECTRODES · 8.2 psia</span>
+            <span className="solar-panel__label">EDS GRID · ITO ELECTRODES · NO CONTACT</span>
           </div>
         </div>
 

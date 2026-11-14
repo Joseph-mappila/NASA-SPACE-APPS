@@ -176,12 +176,31 @@ export function Mission07({ onSolve, onFail }: MissionComponentProps) {
             />
           </div>
 
+          <div className="readout-row">
+            <div className="readout">
+              <span>Feed cleared</span>
+              <strong className={cleared === clumps.length ? 'is-good' : ''}>
+                {cleared}/7
+              </strong>
+            </div>
+            <div className="readout">
+              <span>Bed setpoint</span>
+              <strong className={tempOk ? 'is-good' : ''}>950 °C</strong>
+            </div>
+            <div className="readout">
+              <span>O₂ purity</span>
+              <strong className={stability >= 100 ? 'is-good' : ''}>
+                {stability >= 100 ? '98%' : '—'}
+              </strong>
+            </div>
+          </div>
+
           {phase === 'hopper' ? (
             <p className="console-message">
               Drag the vibration probe across every clump to clear the auger feed.
             </p>
           ) : (
-            <p className={`console-message ${temperature > 1100 ? 'is-warn' : ''}`}>
+            <p aria-live="polite" className={`console-message ${temperature > 1100 ? 'is-warn' : ''}`}>
               {temperature > 1100
                 ? 'Bed temperature critical. Back off the heater.'
                 : allOk
@@ -200,6 +219,11 @@ export function Mission07({ onSolve, onFail }: MissionComponentProps) {
               {allOk ? 'Reduction running' : phase === 'hopper' ? 'Feed blocked' : 'Ramping'}
             </span>
           </div>
+
+          <p className="reactor-equation">
+            Moon dirt + hydrogen → iron + titanium dioxide + water. Electricity then
+            splits the water into oxygen for the crew and hydrogen to use again.
+          </p>
 
           <div className="reactor-core">
             <div className="reactor-core__chamber">

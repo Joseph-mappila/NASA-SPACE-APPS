@@ -4,62 +4,65 @@ import type { MissionComponentProps } from './types'
 
 const TARGETS = {
   co2: [1000, 1200] as [number, number],
-  nitrate: [60, 80] as [number, number],
-  potassium: [50, 70] as [number, number],
-  magnesium: [40, 60] as [number, number],
+  nutrient: [60, 80] as [number, number],
   ph: [5.5, 6.0] as [number, number],
 }
 
 export function Mission06({ onSolve }: MissionComponentProps) {
-  const [co2, setCo2] = useState(820)
-  const [nitrate, setNitrate] = useState(34)
-  const [potassium, setPotassium] = useState(38)
-  const [magnesium, setMagnesium] = useState(28)
-  const [ph, setPh] = useState(4.9)
-  const [stability, setStability] = useState(0)
+  const [co2, setCo2] = useState(760)
+  const [nutrient, setNutrient] = useState(38)
+  const [ph, setPh] = useState(4.8)
+  const [health, setHealth] = useState(12)
   const solved = useRef(false)
 
   const inBand = (value: number, target: [number, number]) =>
     value >= target[0] && value <= target[1]
 
   const co2Ok = inBand(co2, TARGETS.co2)
-  const nitrateOk = inBand(nitrate, TARGETS.nitrate)
-  const potassiumOk = inBand(potassium, TARGETS.potassium)
-  const magnesiumOk = inBand(magnesium, TARGETS.magnesium)
+  const nutrientOk = inBand(nutrient, TARGETS.nutrient)
   const phOk = inBand(ph, TARGETS.ph)
-  const allOk = co2Ok && nitrateOk && potassiumOk && magnesiumOk && phOk
+  const allOk = co2Ok && nutrientOk && phOk
   const lockout = ph < 5.5 || ph > 6.0
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setStability((current) =>
-        Math.min(100, Math.max(0, current + (allOk ? 5 : -3))),
+      setHealth((current) =>
+        Math.min(100, Math.max(0, current + (allOk ? 4 : -3))),
       )
-    }, 260)
+    }, 300)
     return () => window.clearInterval(id)
   }, [allOk])
 
   useEffect(() => {
-    if (stability < 100 || solved.current) return
+    if (health < 100 || solved.current) return
     solved.current = true
     onSolve({
       accuracy: 100,
       notes: [
         'Greenhouse pH stable at 5.8.',
-        'Nitrate, potassium, and magnesium in the target bands.',
+        'Nutrient mix in the target band at 70%.',
         'Photosynthesis running. Cabin oxygen decline halted.',
       ],
     })
-  }, [stability, onSolve])
+  }, [health, onSolve])
+
+  const leafState =
+    health >= 100
+      ? 'Crop recovered'
+      : health > 55
+        ? 'New growth'
+        : health > 20
+          ? 'Recovering'
+          : 'Wilting'
 
   return (
     <div className="mission-workspace bliss">
       <div className="mission-column mission-column--wide">
         <div className="greenhouse-panel panel">
           <div className="panel-title">
-            <span className="eyebrow">Bioregenerative plant module</span>
+            <span className="eyebrow">Advanced Plant Habitat · crop bay</span>
             <span className={allOk ? 'status status--good' : 'status status--warn'}>
-              {lockout ? 'Nutrient lockout' : allOk ? 'Photosynthesis stable' : 'Balancing'}
+              {lockout ? 'Nutrient lockout' : allOk ? 'Photosynthesis stable' : leafState}
             </span>
           </div>
 
@@ -75,8 +78,8 @@ export function Mission06({ onSolve }: MissionComponentProps) {
                   className="plant"
                   key={index}
                   style={{
-                    height: `${18 + (stability / 100) * (100 + index * 6)}px`,
-                    opacity: 0.3 + (stability / 100) * 0.7,
+                    height: `${18 + (health / 100) * (100 + index * 6)}px`,
+                    opacity: 0.3 + (health / 100) * 0.7,
                     animationDelay: `${index * 90}ms`,
                   }}
                 >
@@ -88,28 +91,49 @@ export function Mission06({ onSolve }: MissionComponentProps) {
             </div>
             <div className="growth-chamber__floor" />
             <div className="growth-chamber__readout">
-              <span>Stability</span>
-              <strong>{Math.round(stability)}%</strong>
+              <span>Plant health</span>
+              <strong>{Math.round(health)}%</strong>
             </div>
-            {stability > 40 ? <div className="oxygen-bubbles" /> : null}
+            {health > 40 ? <div className="oxygen-bubbles" /> : null}
           </div>
 
           <div className="stability-track">
-            <i style={{ width: `${stability}%` }} />
+            <i style={{ width: `${health}%` }} />
           </div>
-          <p className="console-message">
+
+          <div className="readout-row">
+            <div className="readout">
+              <span>Leaf state</span>
+              <strong className={health > 55 ? 'is-good' : ''}>{leafState}</strong>
+            </div>
+            <div className="readout">
+              <span>CO₂ uptake</span>
+              <strong className={co2Ok ? 'is-good' : ''}>
+                {co2Ok ? 'normal' : 'low'}
+              </strong>
+            </div>
+            <div className="readout">
+              <span>pH lockout</span>
+              <strong className={!lockout ? 'is-good' : ''}>
+                {lockout ? 'active' : 'clear'}
+              </strong>
+            </div>
+          </div>
+
+          <p aria-live="polite" className="console-message">
             {lockout
               ? 'pH is outside 5.5–6.0. Iron and magnesium are locking out. Adjust the buffer.'
               : allOk
-                ? 'All bands are green. Hold the balance until the crop stabilizes.'
-                : 'Bring every control into its target band at the same time.'}
+                ? 'All three bands are green. Hold the balance until the crop recovers.'
+                : 'Bring CO₂, nutrient mix, and pH into their green bands at the same time.'}
           </p>
         </div>
       </div>
 
       <div className="mission-column">
         <div className="nutrient-panel panel">
-          <span className="eyebrow">Nutrient dosing</span>
+          <span className="eyebrow">Chamber controls</span>
+
           <Slider
             label="CO₂ chamber"
             max={1600}
@@ -120,33 +144,17 @@ export function Mission06({ onSolve }: MissionComponentProps) {
             unit=" ppm"
             value={co2}
           />
+
           <Slider
-            label="Nitrate NO₃⁻"
+            label="Nutrient mix"
             max={100}
             min={0}
-            onChange={setNitrate}
-            target={TARGETS.nitrate}
+            onChange={setNutrient}
+            target={TARGETS.nutrient}
             unit="%"
-            value={nitrate}
+            value={nutrient}
           />
-          <Slider
-            label="Potassium K⁺"
-            max={100}
-            min={0}
-            onChange={setPotassium}
-            target={TARGETS.potassium}
-            unit="%"
-            value={potassium}
-          />
-          <Slider
-            label="Magnesium Mg²⁺"
-            max={100}
-            min={0}
-            onChange={setMagnesium}
-            target={TARGETS.magnesium}
-            unit="%"
-            value={magnesium}
-          />
+
           <Slider
             label="pH buffer"
             max={7.5}
@@ -161,17 +169,25 @@ export function Mission06({ onSolve }: MissionComponentProps) {
 
           <div className="nutrient-grid">
             {[
-              ['CO₂', co2Ok],
-              ['NO₃⁻', nitrateOk],
-              ['K⁺', potassiumOk],
-              ['Mg²⁺', magnesiumOk],
-              ['pH', phOk],
-            ].map(([label, ok]) => (
+              ['CO₂', co2Ok, `${co2} ppm`],
+              ['Nutrients', nutrientOk, `${nutrient}%`],
+              ['pH', phOk, ph.toFixed(1)],
+            ].map(([label, ok, value]) => (
               <span className={ok ? 'is-good' : ''} key={String(label)}>
-                {label}
+                <b>{label}</b>
+                {value}
               </span>
             ))}
           </div>
+        </div>
+
+        <div className="science-note panel">
+          <span className="eyebrow">Why it matters</span>
+          <p>
+            The plants pull carbon dioxide out of the cabin and add oxygen. If the crop
+            stays healthy, it buys the crew time while the scrubbers and oxygen reactor
+            come back online.
+          </p>
         </div>
       </div>
     </div>

@@ -67,6 +67,7 @@ export type MissionDefinition = {
   objective: string
   steps: string[]
   controls: string[]
+  glossary: Array<{ term: string; meaning: string }>
 }
 
 export type GameState = {

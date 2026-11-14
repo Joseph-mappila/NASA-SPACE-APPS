@@ -18,7 +18,7 @@ Luna
 
 Welcome to Luna, the lunar outpost set up by NASA on the moon!
 Hal: Good morning captain. We are currently day 57 of mission Luna. Current systems are all operational. 
-Oxygen: Normal ($P_{IO_2}$: 150 mmHg) | Water: Normal | Power: Moderate (52%) | Food: Normal
+Oxygen: Normal ($P_{IO_2}$: 145 mmHg) | Water: Normal | Power: Moderate (52%) | Food: Normal
 Alert: Solar Particle Event (solar flare) expected in 8 hours.
 Crew: 15/15 alive and well. No casualties to report.
 Comms: Earth link intact. No incoming messages.

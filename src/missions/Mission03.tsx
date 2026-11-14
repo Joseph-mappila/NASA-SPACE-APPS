@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Gauge, HoldButton } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -12,35 +12,55 @@ const SPOTS: DustSpot[] = [
   { id: 3, x: 44, y: 70, cleared: false },
 ]
 
+const SIDES: Side[] = ['inner', 'outer']
+
 export function Mission03({ onSolve, onFail }: MissionComponentProps) {
   const [leakSide] = useState<Side>(() => (Math.random() > 0.5 ? 'inner' : 'outer'))
   const [found, setFound] = useState(false)
+  const [tested, setTested] = useState<Record<Side, boolean>>({ inner: false, outer: false })
+  const [testing, setTesting] = useState<Side | null>(null)
   const [spots, setSpots] = useState(SPOTS)
   const [reseated, setReseated] = useState(false)
-  const [brushing, setBrushing] = useState(false)
+  const [wiping, setWiping] = useState(false)
   const [errors, setErrors] = useState(0)
-  const [message, setMessage] = useState('Run a pressure-decay scan on both hatches.')
+  const [message, setMessage] = useState(
+    'Run a pressure-decay test on each hatch. The faster pressure drops, the bigger the leak.',
+  )
   const sealRef = useRef<HTMLDivElement>(null)
-  const brushingRef = useRef(false)
+  const wipingRef = useRef(false)
   const solved = useRef(false)
+  const testTimer = useRef<number | null>(null)
 
   const cleared = spots.filter((spot) => spot.cleared).length
   const allClear = cleared === spots.length
 
-  const scan = (side: Side) => {
-    if (found) return
-    if (side === leakSide) {
-      setFound(true)
-      setMessage(
-        `Pressure decay confirmed at the ${side} hatch. Inspect the O-ring groove and clear the regolith.`,
-      )
-    } else {
-      setMessage(`The ${side} hatch is holding 8.2 psia. Scan the other hatch.`)
+  useEffect(() => {
+    return () => {
+      if (testTimer.current !== null) window.clearTimeout(testTimer.current)
     }
+  }, [])
+
+  const test = (side: Side) => {
+    if (found || testing || tested[side]) return
+    setTesting(side)
+    setMessage(`Pressure-decay test running on the ${side} hatch…`)
+    testTimer.current = window.setTimeout(() => {
+      testTimer.current = null
+      setTesting(null)
+      setTested((current) => ({ ...current, [side]: true }))
+      if (side === leakSide) {
+        setFound(true)
+        setMessage(
+          `Decay confirmed at the ${side} hatch: 3.8 sccm. Inspect the O-ring groove and clear the regolith.`,
+        )
+      } else {
+        setMessage(`The ${side} hatch held pressure at 0.2 sccm. Test the other hatch.`)
+      }
+    }, 1400)
   }
 
   const wipe = (event: PointerEvent<HTMLDivElement>) => {
-    if (!brushingRef.current || !found || reseated) return
+    if (!wipingRef.current || !found || reseated) return
     const seal = sealRef.current
     if (!seal) return
     const rect = seal.getBoundingClientRect()
@@ -64,12 +84,12 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
     if (!allClear) {
       const next = errors + 1
       setErrors(next)
-      setMessage('Regolith is still trapped in the groove. Wipe all three spots first.')
+      setMessage('Regolith is still trapped in the groove. Clean all three spots first.')
       if (next >= 3) onFail('The O-ring was reseated over trapped regolith and failed the pressure test.')
       return
     }
     setReseated(true)
-    setMessage('O-ring reseated. Hold the pump to bring the airlock back to 8.2 psia.')
+    setMessage('O-ring reseated. Hold the pump until the cabin reaches 8.2 psia.')
   }
 
   const pump = () => {
@@ -97,34 +117,59 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
           </div>
 
           <div className="hatches">
-            {(['inner', 'outer'] as Side[]).map((side) => (
-              <button
-                className={`hatch ${found && side === leakSide ? 'is-leaking' : ''} ${found && side !== leakSide ? 'is-sealed' : ''}`}
-                key={side}
-                onClick={() => scan(side)}
-                type="button"
-              >
-                <span className="hatch__ring" />
-                <span className="hatch__window" />
-                <strong>{side} hatch</strong>
-                <small>
-                  {found
-                    ? side === leakSide
-                      ? 'ΔP decay · leak'
-                      : 'ΔP stable'
-                    : 'Tap to scan'}
-                </small>
-                {found && side === leakSide ? <i className="hatch__bubble" /> : null}
-              </button>
-            ))}
+            {SIDES.map((side) => {
+              const isLeak = found && side === leakSide
+              const isSealed = found && side !== leakSide
+              return (
+                <button
+                  aria-pressed={tested[side]}
+                  className={`hatch ${isLeak ? 'is-leaking' : ''} ${isSealed ? 'is-sealed' : ''}`}
+                  disabled={found || testing !== null || tested[side]}
+                  key={side}
+                  onClick={() => test(side)}
+                  type="button"
+                >
+                  <span className="hatch__ring" />
+                  <span className="hatch__window" />
+                  <strong>{side} hatch</strong>
+                  <small>
+                    {testing === side
+                      ? 'Testing pressure…'
+                      : tested[side]
+                        ? side === leakSide
+                          ? '3.8 sccm · leak'
+                          : '0.2 sccm · stable'
+                        : 'Run decay test'}
+                  </small>
+                  {isLeak ? <i className="hatch__bubble" /> : null}
+                </button>
+              )
+            })}
           </div>
 
           <div className="airlock-gauges">
-            <Gauge label="Cabin pressure" max={14} min={0} tone="amber" unit=" psia" value={reseated ? 8.2 : 7.6} />
-            <Gauge label="Leak rate" max={10} min={0} danger={!reseated} tone={reseated ? 'green' : 'red'} unit=" sccm" value={reseated ? 0.2 : 3.8} />
+            <Gauge
+              label="Cabin pressure"
+              max={14}
+              min={0}
+              tone={reseated ? 'green' : 'amber'}
+              unit=" psia"
+              value={reseated ? 8.2 : found ? 7.6 : 8.0}
+            />
+            <Gauge
+              danger={found && !reseated}
+              label="Leak rate"
+              max={10}
+              min={0}
+              tone={found && !reseated ? 'red' : 'green'}
+              unit=" sccm"
+              value={found && !reseated ? 3.8 : 0.2}
+            />
           </div>
 
-          <p className={`console-message ${errors > 0 ? 'is-warn' : ''}`}>{message}</p>
+          <p aria-live="polite" className={`console-message ${errors > 0 ? 'is-warn' : ''}`}>
+            {message}
+          </p>
         </div>
       </div>
 
@@ -137,20 +182,20 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
 
           <div
             aria-label="Airlock seal inspection area"
-            className={`seal ${brushing ? 'is-brushing' : ''} ${reseated ? 'is-sealed' : ''}`}
+            className={`seal ${wiping ? 'is-wiping' : ''} ${reseated ? 'is-sealed' : ''}`}
             onPointerDown={(event) => {
-              brushingRef.current = true
-              setBrushing(true)
+              wipingRef.current = true
+              setWiping(true)
               wipe(event)
             }}
             onPointerLeave={() => {
-              brushingRef.current = false
-              setBrushing(false)
+              wipingRef.current = false
+              setWiping(false)
             }}
             onPointerMove={wipe}
             onPointerUp={() => {
-              brushingRef.current = false
-              setBrushing(false)
+              wipingRef.current = false
+              setWiping(false)
             }}
             ref={sealRef}
           >
@@ -188,7 +233,7 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
               <strong>{reseated ? 'reseated' : 'open'}</strong>
             </div>
             <div>
-              <span>Errors</span>
+              <span>Retries</span>
               <strong className={errors > 0 ? 'is-bad' : ''}>{errors}</strong>
             </div>
           </div>

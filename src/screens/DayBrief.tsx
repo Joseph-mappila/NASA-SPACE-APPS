@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { audio } from '../audio/engine'
 import commanderImage from '../images/commander_chen.webp'
 import controlImage from '../images/line20-24.webp'
-import { Brand, ResourceHud } from '../components/Hud'
+import { Brand, TelemetryHud } from '../components/Hud'
 import { DAY_BRIEFS, MISSIONS } from '../game/content'
 import { passedCount } from '../game/state'
 import type { GameState, MissionId } from '../game/types'
@@ -22,7 +22,7 @@ export function DayBrief({ state, onContinue }: DayBriefProps) {
   const missions = DAY_MISSIONS[state.day]
   const commanderLine = state.day === 57
     ? 'I have fifteen people down here, Captain. Let’s make the Moon boring.'
-    : 'We made it through the night. Now let’s make sure the air stays breathable.'
+    : 'We made it through the night. Now let’s keep the air breathable.'
 
   useEffect(() => {
     audio.beep(state.day === 57 ? 1040 : 860, 0.09)
@@ -41,7 +41,7 @@ export function DayBrief({ state, onContinue }: DayBriefProps) {
 
       <div className="day-brief__top">
         <Brand day={state.day} code={state.day === 57 ? 'MISSION LUNA' : 'POST-STORM'} />
-        <ResourceHud resources={state.resources} />
+        <TelemetryHud state={state} />
       </div>
 
       <div className="day-brief__layout">
@@ -94,7 +94,7 @@ export function DayBrief({ state, onContinue }: DayBriefProps) {
           </div>
 
           <button className="btn btn--primary" onClick={onContinue} type="button">
-            {state.day === 57 ? 'Begin Day 57' : 'Begin post-storm recovery'}
+            {state.day === 57 ? 'Start Day 57' : 'Start Day 58'}
           </button>
         </section>
 

@@ -214,6 +214,10 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
 
           <div className="valve-board">
             <span className="eyebrow">Valve sequence</span>
+            <p className="valve-warning">
+              Close the cabin valve first. If vacuum opens while cabin air is connected,
+              breathable air vents straight into space.
+            </p>
             <div className="valves">
               <button
                 aria-pressed={cabinOpen}
@@ -265,7 +269,7 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
             </div>
           </div>
 
-          <p className={`console-message ${errors > 0 ? 'is-warn' : ''}`}>{message}</p>
+          <p aria-live="polite" className={`console-message ${errors > 0 ? 'is-warn' : ''}`}>{message}</p>
         </div>
       </div>
 
@@ -309,6 +313,25 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
               unit=" °C"
               value={step >= 4 ? 22 : 28}
             />
+          </div>
+
+          <div className="readout-row">
+            <div className="readout">
+              <span>Vacuum path</span>
+              <strong className={vacuumOpen ? 'is-bad' : 'is-good'}>
+                {vacuumOpen ? 'open' : 'closed'}
+              </strong>
+            </div>
+            <div className="readout">
+              <span>Cabin air</span>
+              <strong className={cabinOpen ? 'is-good' : ''}>
+                {cabinOpen ? 'connected to bed' : 'sealed'}
+              </strong>
+            </div>
+            <div className="readout">
+              <span>Bubbles left</span>
+              <strong>{bubblesLeft}/6</strong>
+            </div>
           </div>
 
           {step >= 7 ? (

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Gauge, Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
 const QUEUE = [
@@ -14,27 +15,37 @@ function shuffled<T>(items: T[]): T[] {
   return [...items].sort(() => Math.random() - 0.5)
 }
 
+function angleGap(a: number, b: number): number {
+  return Math.abs(((a - b + 540) % 360) - 180)
+}
+
 export function Mission08({ onSolve, onFail }: MissionComponentProps) {
-  const [reticle, setReticle] = useState({ x: 50, y: 50 })
-  const [dragging, setDragging] = useState(false)
+  const [target] = useState(() => ({
+    azimuth: 196 + Math.random() * 38,
+    elevation: 28 + Math.random() * 22,
+  }))
+  const [azimuth, setAzimuth] = useState(140)
+  const [elevation, setElevation] = useState(12)
   const [lock, setLock] = useState(0)
   const [locked, setLocked] = useState(false)
-  const [packets, setPackets] = useState(() => shuffled(QUEUE))
+  const [packets] = useState(() => shuffled(QUEUE))
   const [chosen, setChosen] = useState<string[]>([])
   const [errors, setErrors] = useState(0)
   const [message, setMessage] = useState(
-    'Drag the reticle onto the moving Ka-band carrier. Hold it inside the ring.',
+    'Peak the dish on the LunaNet satellite. Move azimuth and elevation until the signal tops out.',
   )
-  const radarRef = useRef<HTMLDivElement>(null)
-  const signalRef = useRef<HTMLSpanElement>(null)
-  const reticleRef = useRef(reticle)
   const lockRef = useRef(0)
   const lockedRef = useRef(false)
   const chosenRef = useRef<string[]>([])
   const solved = useRef(false)
   const errorsRef = useRef(0)
 
-  reticleRef.current = reticle
+  const pointingError = Math.hypot(
+    angleGap(azimuth, target.azimuth),
+    elevation - target.elevation,
+  )
+  const signal = Math.max(0, Math.min(100, Math.round(100 - pointingError * 3.2)))
+  const peaking = signal >= 90
 
   const maybeSolve = () => {
     if (solved.current) return
@@ -45,7 +56,7 @@ export function Mission08({ onSolve, onFail }: MissionComponentProps) {
         signalLocked: true,
         packetsPrioritized: true,
         notes: [
-          'Ka-band pointing error held below 0.2°.',
+          `Ka-band pointing error held at ${pointingError.toFixed(1)}°.`,
           'Critical ECLSS telemetry sent first.',
           'Houston certifies Outpost Luna for the lunar night.',
         ],
@@ -54,51 +65,21 @@ export function Mission08({ onSolve, onFail }: MissionComponentProps) {
   }
 
   useEffect(() => {
-    let frame = 0
-    let last = performance.now()
-    const tick = (time: number) => {
-      const dt = Math.min(0.05, (time - last) / 1000)
-      last = time
-      const angle = (time / 1000) * 0.82
-      const signalX = 50 + Math.cos(angle) * 27 + Math.sin(angle * 2.3) * 3
-      const signalY = 50 + Math.sin(angle * 0.93) * 23 + Math.cos(angle * 1.7) * 3
-      if (signalRef.current) {
-        signalRef.current.style.left = `${signalX}%`
-        signalRef.current.style.top = `${signalY}%`
-      }
-      const distance = Math.hypot(
-        signalX - reticleRef.current.x,
-        signalY - reticleRef.current.y,
-      )
-      const inside = distance < 9
+    if (locked) return
+    const id = window.setInterval(() => {
       lockRef.current = Math.min(
         1,
-        Math.max(0, lockRef.current + (inside ? dt / 2.6 : -dt / 4)),
+        Math.max(0, lockRef.current + (peaking ? 0.09 : -0.12)),
       )
-      setLock((current) => {
-        const next = Math.round(lockRef.current * 20) / 20
-        return current === next ? current : next
-      })
+      setLock(Math.round(lockRef.current * 20) / 20)
       if (lockRef.current >= 1 && !lockedRef.current) {
         lockedRef.current = true
         setLocked(true)
-        setMessage('Signal locked. Now prioritize the DTN queue: ECLSS first.')
+        setMessage('Signal locked. Now send the DTN queue: life support first.')
       }
-      if (!lockedRef.current) frame = requestAnimationFrame(tick)
-    }
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [])
-
-  const moveReticle = (event: PointerEvent<HTMLDivElement>, force = false) => {
-    if ((!dragging && !force) || locked) return
-    const radar = radarRef.current
-    if (!radar) return
-    const rect = radar.getBoundingClientRect()
-    const x = Math.min(96, Math.max(4, ((event.clientX - rect.left) / rect.width) * 100))
-    const y = Math.min(96, Math.max(4, ((event.clientY - rect.top) / rect.height) * 100))
-    setReticle({ x, y })
-  }
+    }, 180)
+    return () => window.clearInterval(id)
+  }, [peaking, locked])
 
   const choose = (id: string) => {
     if (chosenRef.current.includes(id)) return
@@ -140,50 +121,88 @@ export function Mission08({ onSolve, onFail }: MissionComponentProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locked, chosen])
 
+  const beamX = 6 + (azimuth / 360) * 88
+  const beamY = 6 + (1 - elevation / 90) * 88
+  const targetX = 6 + (target.azimuth / 360) * 88
+  const targetY = 6 + (1 - target.elevation / 90) * 88
+
   return (
     <div className="mission-workspace lunanet">
       <div className="mission-column mission-column--wide">
-        <div className="radar-panel panel">
+        <div className="antenna-panel panel">
           <div className="panel-title">
-            <span className="eyebrow">Ka-band acquisition · 23/27 GHz</span>
-            <span className={locked ? 'status status--good' : 'status status--warn'}>
-              {locked ? 'Signal locked' : `Lock ${Math.round(lock * 100)}%`}
+            <span className="eyebrow">LunaNet acquisition · Ka-band 23/27 GHz</span>
+            <span className={locked ? 'status status--good' : peaking ? 'status status--warn' : 'status'}>
+              {locked ? 'Signal locked' : peaking ? `Peaking · ${Math.round(lock * 100)}%` : 'Searching'}
             </span>
           </div>
 
-          <div
-            aria-label="LunaNet dish pointing radar"
-            className={`radar ${dragging ? 'is-dragging' : ''} ${locked ? 'is-locked' : ''}`}
-            onPointerDown={(event) => {
-              setDragging(true)
-              moveReticle(event, true)
-            }}
-            onPointerLeave={() => setDragging(false)}
-            onPointerMove={moveReticle}
-            onPointerUp={() => setDragging(false)}
-            ref={radarRef}
-          >
-            <span className="radar__sweep" />
-            <span className="radar__ring radar__ring--one" />
-            <span className="radar__ring radar__ring--two" />
-            <span className="radar__ring radar__ring--three" />
-            <span className="radar__cross radar__cross--x" />
-            <span className="radar__cross radar__cross--y" />
-            <span className="radar__signal" ref={signalRef} />
+          <div className="sky-plot" aria-label="Antenna sky plot">
+            <span className="sky-plot__grid" />
+            <span className="sky-plot__axis sky-plot__axis--x" />
+            <span className="sky-plot__axis sky-plot__axis--y" />
             <span
-              className="radar__reticle"
-              style={{ left: `${reticle.x}%`, top: `${reticle.y}%` }}
+              className={`sky-plot__target ${peaking ? 'is-near' : ''} ${locked ? 'is-locked' : ''}`}
+              style={{ left: `${targetX}%`, top: `${targetY}%` }}
             >
               <i />
-              <b />
+              <b>SAT</b>
             </span>
-            <span className="radar__label">AZ 214.6° · EL 38.2° · ERROR 0.18°</span>
+            <span
+              className={`sky-plot__beam ${peaking ? 'is-near' : ''} ${locked ? 'is-locked' : ''}`}
+              style={{ left: `${beamX}%`, top: `${beamY}%` }}
+            />
+            <span className="sky-plot__label">SKY PLOT · AZ LEFT–RIGHT · EL BOTTOM–TOP</span>
+          </div>
+
+          <div className="antenna-controls">
+            <Slider
+              label="Azimuth"
+              max={360}
+              min={0}
+              onChange={setAzimuth}
+              step={0.5}
+              unit="°"
+              value={azimuth}
+              format={(value) => value.toFixed(1)}
+            />
+            <Slider
+              label="Elevation"
+              max={85}
+              min={5}
+              onChange={setElevation}
+              step={0.5}
+              unit="°"
+              value={elevation}
+              format={(value) => value.toFixed(1)}
+            />
+          </div>
+
+          <div className="antenna-readouts">
+            <Gauge
+              label="Signal"
+              max={100}
+              min={0}
+              tone={locked ? 'green' : peaking ? 'amber' : 'cyan'}
+              unit="%"
+              value={signal}
+            />
+            <div className="readout">
+              <span>Pointing error</span>
+              <strong className={peaking ? 'is-good' : ''}>{pointingError.toFixed(1)}°</strong>
+            </div>
+            <div className="readout">
+              <span>Lock hold</span>
+              <strong className={locked ? 'is-good' : ''}>{Math.round(lock * 100)}%</strong>
+            </div>
           </div>
 
           <div className="lock-track">
             <i style={{ width: `${lock * 100}%` }} />
           </div>
-          <p className={`console-message ${errors > 0 ? 'is-warn' : ''}`}>{message}</p>
+          <p className={`console-message ${errors > 0 ? 'is-warn' : ''}`} aria-live="polite">
+            {message}
+          </p>
         </div>
       </div>
 

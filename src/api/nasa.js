@@ -41,23 +41,41 @@ export async function fetchRandomAPOD(count = 5) {
 }
 
 // ── Mars Rover Photos — Curiosity ───────────────────────────────────
-export async function fetchMarsRoverPhotos(sol = 1000, camera = null) {
-  try {
-    const params = new URLSearchParams({ api_key: API_KEY, sol: String(sol) });
-    if (camera) params.append('camera', camera);
-    const res  = await fetch(`${BASE}/mars-photos/api/v1/rovers/curiosity/photos?${params}`);
-    if (!res.ok) throw new Error('Mars rover fetch failed');
-    const data = await res.json();
-    return (data.photos || []).slice(0, 10).map((p) => ({
-      url:       p.img_src,
-      camera:    p.camera.full_name,
-      sol:       p.sol,
-      earthDate: p.earth_date,
-    }));
-  } catch (err) {
-    console.warn('[NASA] Mars Rover error:', err.message);
-    return [];
+// Tries multiple sols since not every sol has NAVCAM coverage.
+// Falls back to NASA Image Library on empty results or rate-limit.
+const CURIOSITY_SOLS = [4000, 3800, 3500, 3000, 2500];
+
+export async function fetchMarsRoverPhotos(sol = 4000, camera = null) {
+  const tryFetch = async (s) => {
+    try {
+      const params = new URLSearchParams({ api_key: API_KEY, sol: String(s) });
+      if (camera) params.append('camera', camera.toLowerCase());
+      const res  = await fetch(`${BASE}/mars-photos/api/v1/rovers/curiosity/photos?${params}`);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (data.photos || []).slice(0, 10).map((p) => ({
+        url:       p.img_src,
+        camera:    p.camera.full_name,
+        sol:       p.sol,
+        earthDate: p.earth_date,
+      }));
+    } catch {
+      return [];
+    }
+  };
+
+  // Try the requested sol first, then fall through the backup list
+  const solsToTry = [sol, ...CURIOSITY_SOLS.filter((s) => s !== sol)];
+  for (const s of solsToTry) {
+    const photos = await tryFetch(s);
+    if (photos.length > 0) return photos;
   }
+
+  // Final fallback: NASA Image Library for Mars surface imagery
+  console.warn('[NASA] Mars Rover: no photos found for any sol, falling back to Image Library');
+  return fetchNASAImages('mars surface curiosity rover', 6).then((imgs) =>
+    imgs.map((i) => ({ url: i.url, camera: 'Image Library', sol: 0, earthDate: '' }))
+  );
 }
 
 // ── NASA Image & Video Library ───────────────────────────────────────

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
-import { fetchRandomAPOD } from '../api/nasa';
+import { fetchRandomAPOD, fetchNASAImages } from '../api/nasa';
 import soundEngine from '../utils/audio';
 import styles from './MainMenu.module.css';
 
@@ -12,6 +12,11 @@ const TAGLINES = [
   '384,400 km from home.',
   'Survive. Learn. Explore.',
 ];
+
+const FALLBACK_MAIN_BG = {
+  url: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001955/GSFC_20171208_Archive_e001955~medium.jpg',
+  title: 'Deep Space Hubble',
+};
 
 export default function MainMenu() {
   const navigate   = useNavigate();
@@ -36,12 +41,27 @@ export default function MainMenu() {
     return () => clearInterval(id);
   }, []);
 
-  // Fetch NASA background
+  // Fetch NASA background with bulletproof multi-tier fallback
   useEffect(() => {
-    fetchRandomAPOD(10).then((images) => {
-      const spaceImages = images.filter((i) => i.url);
-      if (spaceImages.length) setBgImage(spaceImages[Math.floor(Math.random() * spaceImages.length)]);
-    });
+    fetchRandomAPOD(10)
+      .then((images) => {
+        const spaceImages = images.filter((i) => i.url);
+        if (spaceImages.length) {
+          setBgImage(spaceImages[Math.floor(Math.random() * spaceImages.length)]);
+        } else {
+          return fetchNASAImages('deep space nebula hubble galaxy', 6).then((imgs) => {
+            if (imgs && imgs.length) {
+              const img = imgs[Math.floor(Math.random() * imgs.length)];
+              setBgImage({ url: img.url, title: img.title || 'Deep Space' });
+            } else {
+              setBgImage(FALLBACK_MAIN_BG);
+            }
+          });
+        }
+      })
+      .catch(() => {
+        setBgImage(FALLBACK_MAIN_BG);
+      });
   }, []);
 
   function handleStart() {
@@ -76,6 +96,11 @@ export default function MainMenu() {
             src={bgImage.url}
             alt={bgImage.title}
             onLoad={() => setBgLoaded(true)}
+            onError={() => {
+              if (bgImage.url !== FALLBACK_MAIN_BG.url) {
+                setBgImage(FALLBACK_MAIN_BG);
+              }
+            }}
             className={styles.bgImg}
           />
         </motion.div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore }   from '../store/gameStore';
-import { fetchNASAImages, fetchMarsRoverPhotos, fetchRandomAPOD, fetchEPICImage } from '../api/nasa';
+import { fetchNASAImages, fetchMarsRoverPhotos, fetchEPICImage } from '../api/nasa';
 import { useMarsWeather } from '../api/marsWeather';
 import { getDialogueNode } from '../data/dialogues';
 import HUD                from '../components/HUD/HUD';
@@ -13,15 +13,41 @@ import soundEngine        from '../utils/audio';
 import styles             from './GameScreen.module.css';
 
 // Scene → NASA image query map
+// Every scene key used in dialogues OR the simulator must have an entry here.
 const SCENE_QUERIES = {
-  lunar_surface:    { type: 'library', query: 'lunar surface moon astronaut' },
-  lunar_interior:   { type: 'library', query: 'space station interior nasa' },
-  oxygen_garden:    { type: 'library', query: 'plant growth space nasa' },
-  deep_space:       { type: 'library', query: 'deep space stars hubble nebula' },
-  transit_interior: { type: 'library', query: 'orion spacecraft interior nasa' },
+  // ── Act 1: Lunar ──
+  moon:             { type: 'library', query: 'lunar surface moon astronaut apollo' },
+  lunar_surface:    { type: 'library', query: 'lunar surface moon astronaut apollo' },
+  lunar_interior:   { type: 'library', query: 'space station interior nasa habitat' },
+  hydroponics:      { type: 'library', query: 'plant growth space nasa veggie' },
+  oxygen_garden:    { type: 'library', query: 'plant growth space nasa veggie' },
   earth_view:       { type: 'epic' },
-  mars_surface:     { type: 'mars',    sol: 1200 },
-  default:          { type: 'apod' },
+
+  // ── Act 2: Deep Space Transit ──
+  deep_space:       { type: 'library', query: 'deep space stars hubble nebula galaxy' },
+  transit_interior: { type: 'library', query: 'orion spacecraft interior nasa capsule' },
+
+  // ── Act 3: Mars ──
+  mars_surface:     { type: 'mars' },
+  mars_colony:      { type: 'library', query: 'mars surface red planet nasa landscape' },
+
+  // ── Default fallback ──
+  default:          { type: 'library', query: 'nasa space stars cosmos' },
+};
+
+// High-reliability verified NASA asset URLs for instant fallback
+const FALLBACK_SCENE_IMAGES = {
+  moon:             'https://images-assets.nasa.gov/image/as11-40-5874/as11-40-5874~medium.jpg',
+  lunar_surface:    'https://images-assets.nasa.gov/image/as11-40-5874/as11-40-5874~medium.jpg',
+  lunar_interior:   'https://images-assets.nasa.gov/image/KSC-03pd2029/KSC-03pd2029~medium.jpg',
+  hydroponics:      'https://images-assets.nasa.gov/image/KSC-20180307-PH_CSH01_0015/KSC-20180307-PH_CSH01_0015~medium.jpg',
+  oxygen_garden:    'https://images-assets.nasa.gov/image/KSC-20180307-PH_CSH01_0015/KSC-20180307-PH_CSH01_0015~medium.jpg',
+  earth_view:       'https://images-assets.nasa.gov/image/as17-148-22742/as17-148-22742~medium.jpg',
+  deep_space:       'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001955/GSFC_20171208_Archive_e001955~medium.jpg',
+  transit_interior: 'https://images-assets.nasa.gov/image/KSC-03pd2029/KSC-03pd2029~medium.jpg',
+  mars_surface:     'https://images-assets.nasa.gov/image/PIA16018/PIA16018~medium.jpg',
+  mars_colony:      'https://images-assets.nasa.gov/image/PIA16018/PIA16018~medium.jpg',
+  default:          'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001955/GSFC_20171208_Archive_e001955~medium.jpg',
 };
 
 export default function GameScreen() {
@@ -55,22 +81,42 @@ export default function GameScreen() {
     setBgTransition(true);
     const cfg = SCENE_QUERIES[scene] || SCENE_QUERIES.default;
 
+    let url = null;
+
     try {
       if (cfg.type === 'epic') {
         const epic = await fetchEPICImage();
-        if (epic?.url) setBgImage(epic.url);
+        url = epic?.url || null;
+        // EPIC sometimes fails (CORS, rate limit) — fall through to library
+        if (!url) {
+          const imgs = await fetchNASAImages('earth from space nasa', 3);
+          url = imgs[0]?.url || null;
+        }
       } else if (cfg.type === 'library') {
-        const imgs = await fetchNASAImages(cfg.query, 3);
-        if (imgs.length) setBgImage(imgs[0].url);
+        const imgs = await fetchNASAImages(cfg.query, 5);
+        url = imgs[0]?.url || null;
       } else if (cfg.type === 'mars') {
-        const photos = await fetchMarsRoverPhotos(cfg.sol, 'NAVCAM');
-        if (photos.length) setBgImage(photos[0].url);
-      } else {
-        const apods = await fetchRandomAPOD(3);
-        if (apods.length) setBgImage(apods[0].url);
+        // fetchMarsRoverPhotos now has its own multi-sol + Image Library fallback
+        const photos = await fetchMarsRoverPhotos(4000, null);
+        url = photos[0]?.url || null;
       }
-    } catch {/* silent fallback */}
+    } catch {/* silent */}
 
+    // Universal last-resort: NASA Image Library with a generic space query
+    if (!url) {
+      try {
+        const imgs = await fetchNASAImages('nasa space cosmos stars', 5);
+        url = imgs[0]?.url || null;
+      } catch {/* silent */}
+    }
+
+    // Ultimate guaranteed fallback: Verified NASA asset for the scene
+    if (!url) {
+      url = FALLBACK_SCENE_IMAGES[scene] || FALLBACK_SCENE_IMAGES.default;
+    }
+
+    // Only update if we got something — don't blank out a working image
+    if (url) setBgImage(url);
     setTimeout(() => setBgTransition(false), 400);
   }, []);
 
@@ -188,7 +234,17 @@ export default function GameScreen() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <img src={bgImage} alt="Scene background" className={styles.bgImg} />
+            <img
+              src={bgImage}
+              alt="Scene background"
+              className={styles.bgImg}
+              onError={() => {
+                const fallback = FALLBACK_SCENE_IMAGES[currentScene] || FALLBACK_SCENE_IMAGES.default;
+                if (bgImage !== fallback) {
+                  setBgImage(fallback);
+                }
+              }}
+            />
             {weatherEvent && <div className={styles.weatherTint} style={{ background: weatherEvent.bgTint }} />}
           </motion.div>
         )}

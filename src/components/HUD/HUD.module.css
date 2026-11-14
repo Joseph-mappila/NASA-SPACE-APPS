@@ -1,16 +1,18 @@
 .hud {
   position: absolute;
   top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   z-index: 20;
   display: flex;
   align-items: center;
   gap: 20px;
   padding: 10px 20px;
   border-radius: 100px;
-  min-width: min(700px, 95vw);
-  max-width: 95vw;
+  width: min(720px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
 }
 
 .player {

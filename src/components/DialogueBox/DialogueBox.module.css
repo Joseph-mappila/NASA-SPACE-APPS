@@ -1,10 +1,15 @@
 .root {
   position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   z-index: 30;
-  width: min(820px, 94vw);
+  width: min(780px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  box-sizing: border-box;
   padding: 18px 22px;
   display: flex;
   flex-direction: column;
@@ -179,8 +184,15 @@
 }
 
 @media (max-width: 600px) {
-  .root { bottom: 14px; padding: 14px; width: 96vw; }
-  .avatarFrame { width: 56px; height: 56px; min-width: 56px; }
+  .root {
+    bottom: 12px;
+    padding: 12px 14px;
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+  }
+  .layoutRow { gap: 10px; }
+  .avatarFrame { width: 52px; height: 52px; min-width: 52px; }
   .avatarIcon { font-size: 1.3rem; }
   .text { font-size: 0.88rem; }
+  .choiceBtn { padding: 8px 12px !important; font-size: 0.82rem !important; }
 }

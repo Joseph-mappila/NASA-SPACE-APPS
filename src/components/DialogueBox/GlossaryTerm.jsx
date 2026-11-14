@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import soundEngine from '../../utils/audio';
 import styles from './DialogueBox.module.css';
 
 const POPOVER_MAX_WIDTH = 320;
@@ -104,6 +105,7 @@ export default function GlossaryTerm({ term, termKey, data, onSeen }) {
         onClick={(event) => {
           // Keep the dialogue box from treating this as a "skip text" tap.
           event.stopPropagation();
+          soundEngine.playClick();
           if (open) setOpen(false);
           else openPopover();
         }}
@@ -138,7 +140,10 @@ export default function GlossaryTerm({ term, termKey, data, onSeen }) {
               <button
                 type="button"
                 className={styles.popoverMore}
-                onClick={() => setExpanded(true)}
+                onClick={() => {
+                  soundEngine.playClick();
+                  setExpanded(true);
+                }}
               >
                 Want more? 🔍
               </button>

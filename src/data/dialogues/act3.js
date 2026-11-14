@@ -10,6 +10,13 @@ const act3Dialogues = {
     id:       'act3_intro',
     speaker:  'system',
     text:     'ELYSIUM PLANITIA, MARS — 2047\nTouchdown confirmed. Gravity: 0.38g. Atmospheric pressure: 782 Pa.',
+    glossary: {
+      'Elysium Planitia': {
+        simple: 'A broad, smooth plain near the Martian equator, ideal for safe landing and surface operations.',
+        deep: 'Elysium Planitia is the second largest volcanic region on Mars. NASA selected it for the InSight lander because its flat, smooth basalt plains offered optimal landing safety and solar power conditions.',
+        source: 'NASA InSight Mission — Landing Site',
+      },
+    },
     next:     'act3_chen_welcome',
     bg:       'mars_surface',
   },
@@ -51,6 +58,13 @@ const act3Dialogues = {
     speaker: 'commander',
     name:    'Commander Chen',
     text:    'Power and habitat linkage. InSight atmospheric sensors show our local pressure is 782 Pa — less than 1% of Earth. Without our pressurized dome, boiling fluids and sub-zero cold would be fatal within seconds.',
+    glossary: {
+      'InSight': {
+        simple: 'A NASA robotic lander that monitored daily Martian weather, seismic activity, and interior heat flow.',
+        deep: 'Operating at Elysium Planitia from 2018 to 2022, InSight\'s TWINS weather package gathered over four continuous Earth years of wind, atmospheric pressure, and temperature data.',
+        source: 'NASA — InSight Mars Lander',
+      },
+    },
     next:    'act3_patel_brief',
     effects: [{ stat: 'score', delta: 40 }],
     bg:      'mars_surface',
@@ -62,6 +76,13 @@ const act3Dialogues = {
     speaker: 'medic',
     name:    'Dr. Patel',
     text:    'Cadet, initial airlock suits check. Martian soil contains toxic chlorine perchlorates — ensure suit de-dusting blowers are calibrated at the habitat entrance. We cannot allow dust inside our living quarters.',
+    glossary: {
+      'perchlorates': {
+        simple: 'Toxic, chlorine-rich chemical salts common in Martian soil that are harmful to thyroid and lung health.',
+        deep: 'Discovered by NASA\'s Phoenix and Curiosity missions, perchlorates make unwashed Martian dust dangerous to inhale. However, perchlorates can also be broken down into oxygen and used in rocket propellants.',
+        source: 'NASA — Mars Soil Geochemistry',
+      },
+    },
     choices: [
       { label: 'Calibrate electrostatic de-dusting protocols.', next: 'act3_dust_calibrated', effects: [{ stat: 'health', delta: 10 }, { stat: 'score', delta: 40 }] },
       { label: 'Check the MOXIE oxygen generation system.', next: 'act3_moxie_check', effects: [{ stat: 'oxygen', delta: 15 }] },
@@ -86,6 +107,13 @@ const act3Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'MOXIE unit running at 100% efficiency. Extracting breathable O₂ directly from atmospheric carbon dioxide (CO₂ → O₂ + CO). Habitat reserves filling.',
+    glossary: {
+      'MOXIE': {
+        simple: 'A NASA instrument that produces breathable oxygen by electrochemically splitting Martian atmospheric carbon dioxide.',
+        deep: 'Tested aboard the Perseverance rover, MOXIE (Mars Oxygen ISRU Experiment) proved that future human missions can generate their breathing air and rocket oxidizer locally instead of shipping it from Earth.',
+        source: 'NASA — MOXIE Experiment on Perseverance',
+      },
+    },
     next:    'act3_hal_alert',
     effects: [{ stat: 'oxygen', delta: 10 }],
     bg:      'mars_surface',
@@ -118,6 +146,18 @@ const act3Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'Watch for impact craters with loose regolith, basalt boulder fields that can puncture tires, and steep sand dunes. Also, keep sensors active for geological mineral caches on your path!',
+    glossary: {
+      'regolith': {
+        simple: 'Loose surface dust and rock fragments covering bedrock, shaped by billions of years of meteorite impacts.',
+        deep: 'Unlike Earth soil, Martian regolith contains no organic matter. It is extremely fine, abrasive, and easily lifted by wind storms into atmospheric dust hazes.',
+        source: 'NASA — Martian Surface Geology',
+      },
+      'basalt': {
+        simple: 'Dark, heavy volcanic rock formed from cooled lava that covers much of the Martian crust.',
+        deep: 'Most of the Martian plains, including Elysium Planitia, consist of basaltic lava flows similar to oceanic crust and Hawaiian volcanic rocks on Earth.',
+        source: 'NASA — Mars Volcanism',
+      },
+    },
     next:    'act3_rover_launch',
     effects: [{ stat: 'score', delta: 40 }],
     bg:      'mars_surface',
@@ -185,6 +225,18 @@ const act3Dialogues = {
     speaker: 'hal',
     name:    'HAL-Jr',
     text:    'Hematite, olivine, and hydrated sulfate clays identified in our retrieved samples. This confirms ancient groundwater chemistry at Elysium Planitia billions of years ago!',
+    glossary: {
+      'Hematite': {
+        simple: 'An iron-oxide mineral often called "grey hematite" that typically crystallizes in the presence of liquid water.',
+        deep: 'When the Opportunity rover discovered spherical hematite deposits ("blueberries") at Meridiani Planum, it provided the first conclusive proof of prolonged liquid water on ancient Mars.',
+        source: 'NASA — Mars Exploration Rovers',
+      },
+      'olivine': {
+        simple: 'A greenish magnesium-iron silicate volcanic mineral that rapidly weathers away when exposed to water.',
+        deep: 'The presence of unweathered olivine proves that certain regions of Mars have remained cold and hyper-arid for billions of years since volcanism ceased.',
+        source: 'NASA — Mars Reconnaissance Orbiter (CRISM)',
+      },
+    },
     next:    'act3_graduation',
     effects: [{ stat: 'score', delta: 60 }],
     unlock:  'achievement_rock_star',

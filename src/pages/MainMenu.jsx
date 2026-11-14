@@ -136,6 +136,7 @@ export default function MainMenu() {
             { label: 'Acts',         value: '3' },
             { label: 'Minigames',    value: '4' },
             { label: 'NASA APIs',    value: '5' },
+            { label: 'Dictionary',   value: '24' },
             { label: 'Decisions',    value: '30+' },
           ].map(({ label, value }) => (
             <div key={label} className={styles.statChip}>

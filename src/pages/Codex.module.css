@@ -36,6 +36,63 @@
 .codexTitle { font-size: 0.9rem; letter-spacing: 0.1em; color: white; }
 .codexSub   { font-size: 0.75rem; color: rgba(184,196,204,0.5); }
 
+.tabRow {
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: 4px;
+}
+
+.tabBtn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tabBtn:hover {
+  color: white;
+}
+
+.tabActive {
+  background: rgba(0, 212, 255, 0.2);
+  color: var(--color-cyan);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.15);
+}
+
+.metaRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tagBadge {
+  font-size: 0.65rem;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: var(--color-cyan);
+  font-family: 'Share Tech Mono', monospace;
+  display: inline-block;
+}
+
+.tagBadgeSeen {
+  background: rgba(0, 255, 136, 0.12);
+  border-color: rgba(0, 255, 136, 0.3);
+  color: #00ff88;
+}
+
 .entryList {
   flex: 1;
   overflow-y: auto;

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import soundEngine from '../../utils/audio';
 import styles from './WeatherAlert.module.css';
 
 const SEVERITY_STYLES = {
@@ -10,6 +11,12 @@ const SEVERITY_STYLES = {
 };
 
 export default function WeatherAlert({ event, weatherData, onDismiss }) {
+  useEffect(() => {
+    if (event?.severity === 'critical') {
+      soundEngine.playAlarm();
+    }
+  }, [event]);
+
   if (!event) return null;
   const sev = SEVERITY_STYLES[event.severity] || SEVERITY_STYLES.info;
 

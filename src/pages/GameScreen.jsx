@@ -9,6 +9,7 @@ import HUD                from '../components/HUD/HUD';
 import DialogueBox        from '../components/DialogueBox/DialogueBox';
 import WeatherAlert       from '../components/WeatherAlert/WeatherAlert';
 import MinigameRouter     from '../components/Minigames/MinigameRouter';
+import soundEngine        from '../utils/audio';
 import styles             from './GameScreen.module.css';
 
 // Scene → NASA image query map
@@ -113,16 +114,24 @@ export default function GameScreen() {
   useEffect(() => {
     if (!minigameResult) return;
 
+    if (minigameResult === 'success') {
+      soundEngine.playSuccess();
+    } else {
+      soundEngine.playFail();
+    }
+
     const minigameKey = activeMinigame || lastMinigame || currentNode?.minigame;
     const successMap = {
       oxygenGarden: 'oxygen_success',
       evaRepair:    'eva_repair_success',
       solarPanel:   'act2_solar_success',
+      navigation:   'act3_rover_success',
     };
     const failMap = {
       oxygenGarden: 'oxygen_fail',
       evaRepair:    'eva_repair_fail',
       solarPanel:   'act2_solar_fail',
+      navigation:   'act3_rover_fail',
     };
 
     const nextNodeId =

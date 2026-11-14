@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { ACHIEVEMENTS } from '../data/achievements';
+import soundEngine from '../utils/audio';
 import styles from './ActSummary.module.css';
 
 export default function ActSummary() {
@@ -14,10 +15,22 @@ export default function ActSummary() {
   const resetGame = useGameStore((s) => s.resetGame);
   const startAct  = useGameStore((s) => s.startAct);
 
+  useEffect(() => {
+    soundEngine.playSuccess();
+  }, []);
+
   const grade = stats.score >= 600 ? 'S' : stats.score >= 400 ? 'A' : stats.score >= 200 ? 'B' : 'C';
   const gradeColor = { S: '#00ff88', A: '#00d4ff', B: '#f5a623', C: '#e63946' }[grade];
 
-  const actTitle = currentAct === 2 ? 'ACT 2 COMPLETE — DEEP SPACE TRANSIT' : 'ACT 1 COMPLETE — ARTEMIS LUNAR OUTPOST';
+  const actTitle = currentAct === 3
+    ? 'MISSION ACCOMPLISHED — ARES OUTPOST (MARS)'
+    : currentAct === 2
+    ? 'ACT 2 COMPLETE — DEEP SPACE TRANSIT'
+    : 'ACT 1 COMPLETE — ARTEMIS LUNAR OUTPOST';
+
+  const subtitle = currentAct === 3
+    ? `Congratulations, Senior Specialist ${name}! You conquered the Moon, survived deep space transit, and established humanity's home on Mars.`
+    : `Well done, ${name}. Here's how you performed.`;
 
   return (
     <div className={styles.root}>
@@ -32,8 +45,10 @@ export default function ActSummary() {
         {/* Header */}
         <div className={styles.header}>
           <span className={styles.headerBadge}>{actTitle}</span>
-          <h1 className={styles.title}>Mission Report</h1>
-          <p className={styles.subtitle}>Well done, {name}. Here's how you performed.</p>
+          <h1 className={styles.title}>
+            {currentAct === 3 ? 'Expedition Final Report' : 'Mission Report'}
+          </h1>
+          <p className={styles.subtitle}>{subtitle}</p>
         </div>
 
         {/* Grade */}
@@ -111,13 +126,24 @@ export default function ActSummary() {
             >
               🚀 Proceed to Act 2: Mars Transit ▶
             </button>
+          ) : currentAct === 2 ? (
+            <button
+              id="summary-next-act-btn"
+              className="btn btn-plasma"
+              onClick={() => {
+                startAct(3, 'mars_surface', 'act3_intro');
+                navigate('/game');
+              }}
+            >
+              🚀 Proceed to Act 3: Ares Mars Colony ▶
+            </button>
           ) : (
             <button
               id="summary-menu-btn"
               className="btn btn-primary"
               onClick={() => navigate('/')}
             >
-              🚀 Main Menu
+              🏆 Mission Completed — Main Menu
             </button>
           )}
 
@@ -125,10 +151,12 @@ export default function ActSummary() {
             id="summary-replay-btn"
             className="btn btn-ghost"
             onClick={() => {
-              if (currentAct === 2) {
+              if (currentAct === 3) {
+                startAct(3, 'mars_surface', 'act3_intro');
+              } else if (currentAct === 2) {
                 startAct(2, 'deep_space', 'act2_intro');
               } else {
-                resetGame();
+                startAct(1, 'moon', 'intro');
               }
               navigate('/game');
             }}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { CODEX_ENTRIES } from '../data/achievements';
+import soundEngine from '../utils/audio';
 import styles from './Codex.module.css';
 
 export default function Codex() {
@@ -24,7 +25,10 @@ export default function Codex() {
             <button
               id="codex-back-btn"
               className="btn btn-ghost"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                soundEngine.playClick();
+                navigate(-1);
+              }}
               style={{ padding: '6px 12px', fontSize: '0.8rem' }}
             >
               ← Back
@@ -41,7 +45,12 @@ export default function Codex() {
                   key={e.id}
                   id={`codex-entry-${e.id}`}
                   className={`${styles.entryItem} ${selected === e.id ? styles.entryActive : ''} ${!isUnlocked ? styles.entryLocked : ''}`}
-                  onClick={() => isUnlocked && setSelected(e.id)}
+                  onClick={() => {
+                    if (isUnlocked) {
+                      soundEngine.playClick();
+                      setSelected(e.id);
+                    }
+                  }}
                   whileHover={isUnlocked ? { x: 4 } : {}}
                 >
                   <span className={styles.entryEmoji}>{isUnlocked ? e.emoji : '🔒'}</span>

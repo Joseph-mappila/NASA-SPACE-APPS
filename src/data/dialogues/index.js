@@ -4,10 +4,12 @@
 // ══════════════════════════════════════════
 import act1Dialogues from './act1';
 import act2Dialogues from './act2';
+import act3Dialogues from './act3';
 
 export const ACT_DIALOGUES = {
   1: act1Dialogues,
   2: act2Dialogues,
+  3: act3Dialogues,
 };
 
 export function getDialogueNode(actNumber, id) {
@@ -21,5 +23,5 @@ export function getDialogueNode(actNumber, id) {
   return null;
 }
 
-export { act1Dialogues, act2Dialogues };
+export { act1Dialogues, act2Dialogues, act3Dialogues };
 export default ACT_DIALOGUES;

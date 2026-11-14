@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { fetchRandomAPOD } from '../api/nasa';
+import soundEngine from '../utils/audio';
 import styles from './MainMenu.module.css';
 
 const TAGLINES = [
@@ -16,12 +17,14 @@ export default function MainMenu() {
   const navigate   = useNavigate();
   const resetGame  = useGameStore((s) => s.resetGame);
   const setName    = useGameStore((s) => s.setPlayerName);
+  const startAct   = useGameStore((s) => s.startAct);
 
   const [bgImage,   setBgImage]   = useState(null);
   const [bgLoaded,  setBgLoaded]  = useState(false);
   const [tagline,   setTagline]   = useState(TAGLINES[0]);
   const [nameInput, setNameInput] = useState('');
   const [showName,  setShowName]  = useState(false);
+  const [showSim,   setShowSim]   = useState(false);
   const taglineIdx = useRef(0);
 
   // Rotate taglines
@@ -42,10 +45,20 @@ export default function MainMenu() {
   }, []);
 
   function handleStart() {
+    soundEngine.playClick();
     if (!showName) { setShowName(true); return; }
     if (!nameInput.trim()) return;
     resetGame();
     setName(nameInput.trim() || 'Cadet');
+    navigate('/game');
+  }
+
+  function launchSimAct(act, scene, dialogue) {
+    soundEngine.playClick();
+    resetGame();
+    setName(nameInput.trim() || 'Cadet');
+    startAct(act, scene, dialogue);
+    setShowSim(false);
     navigate('/game');
   }
 
@@ -120,10 +133,10 @@ export default function MainMenu() {
           transition={{ delay: 1 }}
         >
           {[
-            { label: 'Acts',         value: '1' },
-            { label: 'Minigames',    value: '3' },
-            { label: 'NASA APIs',    value: '4' },
-            { label: 'Decisions',    value: '20+' },
+            { label: 'Acts',         value: '3' },
+            { label: 'Minigames',    value: '4' },
+            { label: 'NASA APIs',    value: '5' },
+            { label: 'Decisions',    value: '30+' },
           ].map(({ label, value }) => (
             <div key={label} className={styles.statChip}>
               <span className={styles.statValue}>{value}</span>
@@ -185,14 +198,29 @@ export default function MainMenu() {
             )}
           </AnimatePresence>
 
-          <button
-            id="open-codex-btn"
-            className="btn btn-ghost"
-            onClick={() => navigate('/codex')}
-            style={{ marginTop: 12 }}
-          >
-            📚 Mission Codex
-          </button>
+          <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              id="open-sim-btn"
+              className="btn btn-ghost"
+              onClick={() => {
+                soundEngine.playClick();
+                setShowSim(true);
+              }}
+            >
+              🧪 Training Lab & Simulator
+            </button>
+
+            <button
+              id="open-codex-btn"
+              className="btn btn-ghost"
+              onClick={() => {
+                soundEngine.playClick();
+                navigate('/codex');
+              }}
+            >
+              📚 Mission Codex
+            </button>
+          </div>
         </motion.div>
 
         {/* NASA image credit */}
@@ -207,6 +235,138 @@ export default function MainMenu() {
           </motion.p>
         )}
       </div>
+
+      {/* ── Training Lab & Simulator Modal ── */}
+      <AnimatePresence>
+        {showSim && (
+          <motion.div
+            className={styles.modalOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowSim(false)}
+          >
+            <motion.div
+              className={`${styles.modalContent} glass-panel`}
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <div>
+                  <h2 className={`font-mono ${styles.modalTitle}`}>🧪 MISSION SIMULATOR & LAB</h2>
+                  <p className={styles.modalSub}>Direct access for testing, grading & demonstrations</p>
+                </div>
+                <button
+                  className={styles.modalCloseBtn}
+                  onClick={() => setShowSim(false)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className={styles.modalBody}>
+                {/* Campaign Acts */}
+                <div className={styles.simSection}>
+                  <h3 className={`font-mono ${styles.simSectionTitle}`}>🛰️ CAMPAIGN ACTS</h3>
+                  <div className={styles.simGrid}>
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(1, 'moon', 'intro')}
+                    >
+                      <span className={styles.simIcon}>🌕</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>Act 1: Artemis Lunar Outpost</span>
+                        <span className={styles.simDesc}>Shackleton crater base, vacuum physics & life support</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(2, 'deep_space', 'act2_intro')}
+                    >
+                      <span className={styles.simIcon}>🚀</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>Act 2: Mars Deep Space Transit</span>
+                        <span className={styles.simDesc}>Ares ship, Hohmann transfer & solar particle crisis</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(3, 'mars_surface', 'act3_intro')}
+                    >
+                      <span className={styles.simIcon}>🔴</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>Act 3: Ares Mars Colony</span>
+                        <span className={styles.simDesc}>Touchdown, dust storm alerts & mission graduation</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Minigames */}
+                <div className={styles.simSection}>
+                  <h3 className={`font-mono ${styles.simSectionTitle}`}>⚡ SURVIVAL MINIGAMES</h3>
+                  <div className={styles.simGrid}>
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(1, 'lunar_surface', 'eva_repair_minigame')}
+                    >
+                      <span className={styles.simIcon}>🔌</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>EVA Wire Repair</span>
+                        <span className={styles.simDesc}>Match 4 circuit couplings under lunar emergency timer</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(1, 'hydroponics', 'oxygen_minigame')}
+                    >
+                      <span className={styles.simIcon}>🌱</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>Oxygen Hydroponics</span>
+                        <span className={styles.simDesc}>Feed nutrient balance & stabilize habitat CO₂ scrubber</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(2, 'deep_space', 'act2_solar_prep')}
+                    >
+                      <span className={styles.simIcon}>☀️</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>Solar Wing Alignment</span>
+                        <span className={styles.simDesc}>Align 3 photovoltaic arrays with Sun angle vector</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+
+                    <button
+                      className={styles.simCard}
+                      onClick={() => launchSimAct(3, 'mars_surface', 'act3_rover_launch')}
+                    >
+                      <span className={styles.simIcon}>🚜</span>
+                      <div className={styles.simInfo}>
+                        <span className={styles.simName}>Martian Rover Navigation</span>
+                        <span className={styles.simDesc}>Navigate 6x6 grid, avoid craters & collect minerals</span>
+                      </div>
+                      <span className={styles.simArrow}>▶</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

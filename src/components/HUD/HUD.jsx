@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import soundEngine from '../../utils/audio';
 import styles from './HUD.module.css';
 
 const STATS_CONFIG = [
@@ -40,6 +41,13 @@ function StatBar({ config, value }) {
 }
 
 export default function HUD({ stats, playerName, onCodex }) {
+  const [muted, setMuted] = useState(soundEngine.isMuted());
+
+  function handleToggleAudio() {
+    const next = soundEngine.toggleMute();
+    setMuted(next);
+  }
+
   return (
     <div className={`${styles.hud} hud-flicker glass-panel`} role="status" aria-label="Mission HUD">
       {/* Player */}
@@ -75,6 +83,16 @@ export default function HUD({ stats, playerName, onCodex }) {
           {String(stats.score).padStart(5, '0')}
         </motion.span>
       </div>
+
+      {/* Audio Mute/Unmute */}
+      <button
+        id="hud-mute-btn"
+        className={`btn btn-ghost ${styles.codexBtn}`}
+        onClick={handleToggleAudio}
+        title={muted ? 'Unmute Audio FX' : 'Mute Audio FX'}
+      >
+        {muted ? '🔇' : '🔊'}
+      </button>
 
       {/* Codex button */}
       <button

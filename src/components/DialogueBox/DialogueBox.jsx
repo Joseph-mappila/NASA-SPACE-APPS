@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore';
+import soundEngine from '../../utils/audio';
 import styles from './DialogueBox.module.css';
 
 // ════════════════════════════════════════════════════════════════════
@@ -197,7 +198,10 @@ export default function DialogueBox({ node, playerName, onChoice, onNext }) {
                         key={choice.next || i}
                         id={`choice-btn-${i}`}
                         className={`${styles.choiceBtn} btn btn-ghost`}
-                        onClick={() => onChoice(choice)}
+                        onClick={() => {
+                          soundEngine.playClick();
+                          onChoice(choice);
+                        }}
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.05 }}
@@ -212,7 +216,10 @@ export default function DialogueBox({ node, playerName, onChoice, onNext }) {
                   <button
                     id="dialogue-next-btn"
                     className="btn btn-ghost"
-                    onClick={onNext}
+                    onClick={() => {
+                      soundEngine.playClick();
+                      onNext();
+                    }}
                     style={{ alignSelf: 'flex-end', fontSize: '0.85rem' }}
                   >
                     Continue ▶

@@ -1,0 +1,16 @@
+{
+  "sepID": "2024-05-10T13:35:00-SEP-001",
+  "eventTime": "2024-05-10T13:35Z",
+  "type": "Solar Energetic Particle event",
+  "instrument": "GOES-P: SEISS >10 MeV",
+  "linkedEvents": [
+    "2024-05-08T05:36:00-CME-001",
+    "2024-05-09T09:24:00-CME-001",
+    "2024-05-10T07:12:00-CME-001"
+  ],
+  "sourceUrl": "https://ccmc.gsfc.nasa.gov/DONKI/view/SEP/30677/-1",
+  "apiUrl": "https://api.nasa.gov/DONKI/SEP?startDate=2024-05-10&endDate=2024-05-12",
+  "retrievedAt": "2026-11-14T04:45:00Z",
+  "usageNote": "Archived Earth-observed event used as a simplified educational shelter scenario. It is not presented as a Mars radiation-dose forecast."
+}
+

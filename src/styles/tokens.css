@@ -1,0 +1,87 @@
+:root {
+  color-scheme: dark;
+  --ink: #05070b;
+  --ink-soft: #0a0e16;
+  --panel: #0e1621;
+  --panel-raised: #13202c;
+  --paper: #f2ede0;
+  --paper-dim: #c9c3b4;
+  --muted: #87939e;
+  --line: rgba(223, 240, 237, 0.16);
+  --line-strong: rgba(223, 240, 237, 0.3);
+  --cyan: #82e6df;
+  --cyan-dim: #2d7b7a;
+  --amber: #f3b15d;
+  --orange: #f06a3a;
+  --red: #ff5d4d;
+  --green: #7fe0a6;
+  --blue: #7db7ff;
+  --violet: #b59cff;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  --display: 'Archivo Black', 'Arial Black', Impact, sans-serif;
+  --body: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+  --radius: 6px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ink);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(64, 113, 130, 0.14), transparent 42%),
+    var(--ink);
+  color: var(--paper);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 4px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070a10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #26333c;
+  border: 2px solid #070a10;
+}

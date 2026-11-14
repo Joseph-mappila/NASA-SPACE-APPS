@@ -237,7 +237,7 @@ const act1Dialogues = {
       { label: 'Stick to the original plan.',          next: 'eva_return',        effects: [] },
     ],
     unlock: 'achievement_homesick',
-    bg:     'lunar_surface',
+    bg:     'earth_view',
   },
 
   'eva_extra_samples': {

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore }   from '../store/gameStore';
-import { fetchNASAImages, fetchMarsRoverPhotos, fetchRandomAPOD } from '../api/nasa';
+import { fetchNASAImages, fetchMarsRoverPhotos, fetchRandomAPOD, fetchEPICImage } from '../api/nasa';
 import { useMarsWeather } from '../api/marsWeather';
 import { getDialogueNode } from '../data/dialogues';
 import HUD                from '../components/HUD/HUD';
@@ -18,6 +18,7 @@ const SCENE_QUERIES = {
   oxygen_garden:    { type: 'library', query: 'plant growth space nasa' },
   deep_space:       { type: 'library', query: 'deep space stars hubble nebula' },
   transit_interior: { type: 'library', query: 'orion spacecraft interior nasa' },
+  earth_view:       { type: 'epic' },
   mars_surface:     { type: 'mars',    sol: 1200 },
   default:          { type: 'apod' },
 };
@@ -54,7 +55,10 @@ export default function GameScreen() {
     const cfg = SCENE_QUERIES[scene] || SCENE_QUERIES.default;
 
     try {
-      if (cfg.type === 'library') {
+      if (cfg.type === 'epic') {
+        const epic = await fetchEPICImage();
+        if (epic?.url) setBgImage(epic.url);
+      } else if (cfg.type === 'library') {
         const imgs = await fetchNASAImages(cfg.query, 3);
         if (imgs.length) setBgImage(imgs[0].url);
       } else if (cfg.type === 'mars') {
@@ -139,7 +143,8 @@ export default function GameScreen() {
     if (targetNode?.minigame) {
       launchMinigame(targetNode.minigame);
     }
-    navigateTo(currentScene, choice.next);
+    const nextScene = targetNode?.bg || currentScene;
+    navigateTo(nextScene, choice.next);
   }
 
   function handleNext() {
@@ -149,7 +154,8 @@ export default function GameScreen() {
       if (targetNode?.minigame) {
         launchMinigame(targetNode.minigame);
       }
-      navigateTo(currentScene, targetKey);
+      const nextScene = targetNode?.bg || currentScene;
+      navigateTo(nextScene, targetKey);
     }
   }
 

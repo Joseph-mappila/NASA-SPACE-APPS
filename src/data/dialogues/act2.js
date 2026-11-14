@@ -53,7 +53,7 @@ const act2Dialogues = {
     text:    'Carl Sagan called it our cosmic perspective. Looking back at Earth from 38 million kilometers away changes every astronaut who has ever made this voyage.',
     next:    'act2_patel_checkin',
     effects: [{ stat: 'morale', delta: 10 }, { stat: 'score', delta: 30 }],
-    bg:      'deep_space',
+    bg:      'earth_view',
   },
 
   'act2_chen_threats': {

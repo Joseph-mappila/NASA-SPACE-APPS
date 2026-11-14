@@ -1,0 +1,282 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.panel {
+  width: min(840px, 96vw);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.title {
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  color: var(--color-plasma);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: rgba(184, 196, 204, 0.7);
+  margin-top: 4px;
+}
+
+.timerBlock {
+  flex-shrink: 0;
+}
+
+.timerNum {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.outcomeBanner {
+  text-align: center;
+  padding: 10px 16px;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid var(--color-plasma);
+  border-radius: 8px;
+  color: var(--color-plasma);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
+}
+
+.outcomeFail {
+  background: rgba(230, 57, 70, 0.15) !important;
+  border-color: var(--color-danger) !important;
+  color: var(--color-danger) !important;
+}
+
+.powerRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(184, 196, 204, 0.08);
+}
+
+.powerLabelCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+}
+
+.powerLabel {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: rgba(184, 196, 204, 0.8);
+}
+
+.powerSub {
+  font-size: 0.52rem;
+  color: rgba(184, 196, 204, 0.4);
+}
+
+.powerTrack {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.powerFill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.powerPct {
+  font-size: 0.88rem;
+  color: var(--color-plasma);
+  min-width: 44px;
+  text-align: right;
+  font-weight: 700;
+}
+
+.wingsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.wingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.wingAligned {
+  background: rgba(0, 255, 136, 0.06) !important;
+  box-shadow: 0 0 16px -4px currentColor;
+}
+
+.wingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(184, 196, 204, 0.1);
+  padding-bottom: 6px;
+}
+
+.wingName {
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.wingStatus {
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+}
+
+/* Dial & Array graphic */
+.dialContainer {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px dashed rgba(184, 196, 204, 0.2);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
+}
+
+.targetIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.sunIcon {
+  font-size: 1rem;
+  transform: translateY(-8px);
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.rotatingArray {
+  width: 18px;
+  height: 84px;
+  border-radius: 4px;
+  border: 1.5px solid;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2px 0;
+  background: rgba(7, 10, 20, 0.85);
+  box-shadow: 0 0 10px -2px currentColor;
+}
+
+.solarCells {
+  width: 10px;
+  height: 70px;
+  opacity: 0.35;
+  border-radius: 2px;
+}
+
+.panelCenterDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.angleReadout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.68rem;
+}
+
+.btnRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.ctrlBtn {
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 0.68rem !important;
+  padding: 6px 2px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(184, 196, 204, 0.2) !important;
+}
+
+.ctrlBtn:hover:not(:disabled) {
+  border-color: var(--color-cyan) !important;
+  background: rgba(0, 212, 255, 0.1) !important;
+}
+
+.scienceNote {
+  font-size: 0.65rem;
+  color: rgba(184, 196, 204, 0.5);
+  text-align: center;
+  line-height: 1.4;
+  margin: 0;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+@media (max-width: 680px) {
+  .wingsGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .dialContainer {
+    width: 90px;
+    height: 90px;
+  }
+  .rotatingArray {
+    height: 64px;
+  }
+  .powerRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

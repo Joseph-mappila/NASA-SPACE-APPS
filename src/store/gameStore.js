@@ -72,6 +72,15 @@ export const useGameStore = create((set, get) => ({
 
   setAct: (act) => set({ currentAct: act }),
 
+  startAct: (actNumber, sceneId, dialogueId) => set({
+    currentAct: actNumber,
+    currentScene: sceneId,
+    currentDialogueId: dialogueId,
+    activeMinigame: null,
+    lastMinigame: null,
+    minigameResult: null,
+  }),
+
   setWeatherEvent: (event) => set({ weatherEvent: event }),
 
   setCurrentWeatherData: (data) => set({ currentWeatherData: data }),

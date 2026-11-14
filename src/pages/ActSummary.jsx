@@ -9,11 +9,15 @@ export default function ActSummary() {
   const navigate  = useNavigate();
   const stats     = useGameStore((s) => s.stats);
   const name      = useGameStore((s) => s.playerName);
+  const currentAct = useGameStore((s) => s.currentAct);
   const unlocked  = useGameStore((s) => s.unlockedAchievements);
   const resetGame = useGameStore((s) => s.resetGame);
+  const startAct  = useGameStore((s) => s.startAct);
 
   const grade = stats.score >= 600 ? 'S' : stats.score >= 400 ? 'A' : stats.score >= 200 ? 'B' : 'C';
   const gradeColor = { S: '#00ff88', A: '#00d4ff', B: '#f5a623', C: '#e63946' }[grade];
+
+  const actTitle = currentAct === 2 ? 'ACT 2 COMPLETE — DEEP SPACE TRANSIT' : 'ACT 1 COMPLETE — ARTEMIS LUNAR OUTPOST';
 
   return (
     <div className={styles.root}>
@@ -27,7 +31,7 @@ export default function ActSummary() {
       >
         {/* Header */}
         <div className={styles.header}>
-          <span className={styles.headerBadge}>ACT 1 COMPLETE</span>
+          <span className={styles.headerBadge}>{actTitle}</span>
           <h1 className={styles.title}>Mission Report</h1>
           <p className={styles.subtitle}>Well done, {name}. Here's how you performed.</p>
         </div>
@@ -96,26 +100,48 @@ export default function ActSummary() {
 
         {/* Actions */}
         <div className={styles.actions}>
+          {currentAct === 1 ? (
+            <button
+              id="summary-next-act-btn"
+              className="btn btn-plasma"
+              onClick={() => {
+                startAct(2, 'deep_space', 'act2_intro');
+                navigate('/game');
+              }}
+            >
+              🚀 Proceed to Act 2: Mars Transit ▶
+            </button>
+          ) : (
+            <button
+              id="summary-menu-btn"
+              className="btn btn-primary"
+              onClick={() => navigate('/')}
+            >
+              🚀 Main Menu
+            </button>
+          )}
+
           <button
             id="summary-replay-btn"
             className="btn btn-ghost"
-            onClick={() => { resetGame(); navigate('/game'); }}
+            onClick={() => {
+              if (currentAct === 2) {
+                startAct(2, 'deep_space', 'act2_intro');
+              } else {
+                resetGame();
+              }
+              navigate('/game');
+            }}
           >
-            🔄 Replay Act 1
+            🔄 Replay Act {currentAct}
           </button>
+
           <button
             id="summary-codex-btn"
-            className="btn btn-plasma"
+            className="btn btn-ghost"
             onClick={() => navigate('/codex')}
           >
             📚 Mission Codex
-          </button>
-          <button
-            id="summary-menu-btn"
-            className="btn btn-primary"
-            onClick={() => navigate('/')}
-          >
-            🚀 Main Menu
           </button>
         </div>
       </motion.div>

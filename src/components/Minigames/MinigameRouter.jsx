@@ -1,12 +1,13 @@
 import React from 'react';
 import EVARepair     from './EVARepair';
 import OxygenGarden  from './OxygenGarden';
+import SolarPanel    from './SolarPanel';
 
 // Add more minigames here as the team builds them
 const MINIGAME_MAP = {
   evaRepair:    EVARepair,
   oxygenGarden: OxygenGarden,
-  // solarPanel:   SolarPanel,    // TODO: Team member can build this
+  solarPanel:   SolarPanel,
   // navigation:   Navigation,    // TODO: Team member can build this
   // sampleLab:    SampleLab,     // TODO: Team member can build this
 };

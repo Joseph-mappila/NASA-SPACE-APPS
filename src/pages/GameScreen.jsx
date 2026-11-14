@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore }   from '../store/gameStore';
 import { fetchNASAImages, fetchMarsRoverPhotos, fetchRandomAPOD } from '../api/nasa';
 import { useMarsWeather } from '../api/marsWeather';
-import act1Dialogues      from '../data/dialogues/act1';
+import { getDialogueNode } from '../data/dialogues';
 import HUD                from '../components/HUD/HUD';
 import DialogueBox        from '../components/DialogueBox/DialogueBox';
 import WeatherAlert       from '../components/WeatherAlert/WeatherAlert';
@@ -13,11 +13,13 @@ import styles             from './GameScreen.module.css';
 
 // Scene → NASA image query map
 const SCENE_QUERIES = {
-  lunar_surface:  { type: 'library', query: 'lunar surface moon astronaut' },
-  lunar_interior: { type: 'library', query: 'space station interior nasa' },
-  oxygen_garden:  { type: 'library', query: 'plant growth space nasa' },
-  mars_surface:   { type: 'mars',    sol: 1200 },
-  default:        { type: 'apod' },
+  lunar_surface:    { type: 'library', query: 'lunar surface moon astronaut' },
+  lunar_interior:   { type: 'library', query: 'space station interior nasa' },
+  oxygen_garden:    { type: 'library', query: 'plant growth space nasa' },
+  deep_space:       { type: 'library', query: 'deep space stars hubble nebula' },
+  transit_interior: { type: 'library', query: 'orion spacecraft interior nasa' },
+  mars_surface:     { type: 'mars',    sol: 1200 },
+  default:          { type: 'apod' },
 };
 
 export default function GameScreen() {
@@ -26,6 +28,7 @@ export default function GameScreen() {
   // Store
   const stats          = useGameStore((s) => s.stats);
   const playerName     = useGameStore((s) => s.playerName);
+  const currentAct     = useGameStore((s) => s.currentAct);
   const currentScene   = useGameStore((s) => s.currentScene);
   const dialogueId     = useGameStore((s) => s.currentDialogueId);
   const activeMinigame = useGameStore((s) => s.activeMinigame);
@@ -87,7 +90,7 @@ export default function GameScreen() {
   }, [weatherEvent?.type]);
 
   // Current dialogue node
-  const currentNode = act1Dialogues[dialogueId];
+  const currentNode = getDialogueNode(currentAct, dialogueId);
 
   // Handle dialogue node changes
   useEffect(() => {
@@ -110,10 +113,12 @@ export default function GameScreen() {
     const successMap = {
       oxygenGarden: 'oxygen_success',
       evaRepair:    'eva_repair_success',
+      solarPanel:   'act2_solar_success',
     };
     const failMap = {
       oxygenGarden: 'oxygen_fail',
       evaRepair:    'eva_repair_fail',
+      solarPanel:   'act2_solar_fail',
     };
 
     const nextNodeId =
@@ -130,7 +135,7 @@ export default function GameScreen() {
   function handleChoice(choice) {
     if (choice.effects) applyEffect(choice.effects);
     if (choice.flag)    setFlag(choice.flag);
-    const targetNode = act1Dialogues[choice.next];
+    const targetNode = getDialogueNode(currentAct, choice.next);
     if (targetNode?.minigame) {
       launchMinigame(targetNode.minigame);
     }
@@ -140,7 +145,7 @@ export default function GameScreen() {
   function handleNext() {
     const targetKey = currentNode?.next || currentNode?.onSuccess;
     if (targetKey) {
-      const targetNode = act1Dialogues[targetKey];
+      const targetNode = getDialogueNode(currentAct, targetKey);
       if (targetNode?.minigame) {
         launchMinigame(targetNode.minigame);
       }

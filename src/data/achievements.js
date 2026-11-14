@@ -91,4 +91,18 @@ export const CODEX_ENTRIES = {
     body:  'Mars is cold — brutally so. Average surface temperature is about -60°C (-80°F), with winter nights at the poles reaching -125°C (-195°F). However, summer days near the equator can reach a relatively balmy 20°C (68°F) — but only briefly. The thin atmosphere (less than 1% of Earth\'s pressure) cannot retain heat well. The InSight lander recorded the first long-term Mars weather dataset, measuring temperature, pressure, and wind at Elysium Planitia from 2018 to 2022.',
     source: 'NASA InSight Mission (2018–2022)',
   },
+  codex_ares_transit: {
+    id:    'codex_ares_transit',
+    emoji: '🚀',
+    title: 'Hohmann Transfer to Mars',
+    body:  'Travelling between Earth/Moon and Mars is not a straight line. Spacecraft follow an elliptical Hohmann transfer orbit that takes approximately 6 to 9 months, timed to align with orbital synodic windows that occur only once every 26 months. Minimizing fuel requirements means spacecraft spend months coasting in the harsh deep space radiation environment.',
+    source: 'NASA Deep Space Exploration Architecture',
+  },
+  codex_solar_radiation: {
+    id:    'codex_solar_radiation',
+    emoji: '☀️',
+    title: 'Deep Space Radiation & Solar Flares',
+    body:  'Outside Earth\'s protective magnetosphere, astronauts face Galactic Cosmic Rays (GCR) and unpredictable Solar Particle Events (SPE). High-energy protons emitted during solar storms can deliver dangerous radiation doses within hours. Deep space transport vehicles use dedicated storm shelters surrounded by water tanks and food supplies to shield the crew during coronal mass ejections.',
+    source: 'NASA Space Radiation Analysis Group (SRAG)',
+  },
 };

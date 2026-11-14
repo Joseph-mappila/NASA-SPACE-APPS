@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore';
 import styles from './OxygenGarden.module.css';
@@ -24,40 +24,55 @@ export default function OxygenGarden() {
   const [timeLeft,  setTimeLeft]  = useState(TIME_LIMIT);
   const [fed,       setFed]       = useState({});  // { plantId: [nutrientIds] }
   const [dragging,  setDragging]  = useState(null);
+  const [selected,  setSelected]  = useState(null); // Click-to-feed support
   const [gameOver,  setGameOver]  = useState(false);
+  const [outcome,   setOutcome]   = useState(null); // 'success' | 'fail'
   const [flash,     setFlash]     = useState(null); // { plantId, ok }
 
+  const timerRef = useRef(null);
+
   useEffect(() => {
-    const id = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setTimeLeft((t) => {
-        if (t <= 1) { clearInterval(id); handleEnd(false); return 0; }
+        if (t <= 1) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          handleEnd(false);
+          return 0;
+        }
         return t - 1;
       });
     }, 1000);
-    return () => clearInterval(id);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleEnd(success) {
     if (gameOver) return;
     setGameOver(true);
-    if (success) {
-      resolveMinigame('success', [{ stat: 'oxygen', delta: 15 }, { stat: 'score', delta: 120 }]);
-    } else {
-      resolveMinigame('fail', [{ stat: 'oxygen', delta: -10 }, { stat: 'health', delta: -5 }]);
-    }
+    if (timerRef.current) clearInterval(timerRef.current);
+    setOutcome(success ? 'success' : 'fail');
+
+    setTimeout(() => {
+      if (success) {
+        resolveMinigame('success', [{ stat: 'oxygen', delta: 15 }, { stat: 'score', delta: 120 }]);
+      } else {
+        resolveMinigame('fail', [{ stat: 'oxygen', delta: -10 }, { stat: 'health', delta: -5 }]);
+      }
+    }, 800);
   }
 
-  function dropNutrient(plantId) {
-    if (!dragging || gameOver) return;
+  function applyNutrient(plantId, nutrient) {
+    if (!nutrient || gameOver) return;
     setFed((prev) => {
       const existing = prev[plantId] || [];
-      if (existing.includes(dragging.id)) return prev;
-      const updated = { ...prev, [plantId]: [...existing, dragging.id] };
+      if (existing.includes(nutrient.id)) return prev;
+      const updated = { ...prev, [plantId]: [...existing, nutrient.id] };
 
       // Flash feedback
       const plant = PLANTS.find((p) => p.id === plantId);
-      const isCorrect = plant.needs.includes(dragging.id);
+      const isCorrect = plant.needs.includes(nutrient.id);
       setFlash({ plantId, ok: isCorrect });
       setTimeout(() => setFlash(null), 600);
 
@@ -65,14 +80,28 @@ export default function OxygenGarden() {
       const allDone = PLANTS.every((p) =>
         p.needs.every((n) => (updated[p.id] || []).includes(n))
       );
-      if (allDone) setTimeout(() => handleEnd(true), 600);
+      if (allDone) {
+        if (timerRef.current) clearInterval(timerRef.current);
+        setTimeout(() => handleEnd(true), 400);
+      }
 
       return updated;
     });
-    setDragging(null);
   }
 
-  const timePct  = (timeLeft / TIME_LIMIT) * 100;
+  function dropNutrient(plantId) {
+    if (dragging) {
+      applyNutrient(plantId, dragging);
+      setDragging(null);
+    }
+  }
+
+  function handlePlantClick(plantId) {
+    if (selected) {
+      applyNutrient(plantId, selected);
+    }
+  }
+
   const scrubberPct = Math.min(100, Math.round(
     (Object.values(fed).flat().length / PLANTS.reduce((s, p) => s + p.needs.length, 0)) * 100
   ));
@@ -84,7 +113,7 @@ export default function OxygenGarden() {
         <div className={styles.header}>
           <div>
             <h2 className={`font-mono ${styles.title}`}>🌱 OXYGEN GARDEN</h2>
-            <p className={styles.subtitle}>Drag nutrients to plants that need them. Restore CO₂ scrubber to 100%!</p>
+            <p className={styles.subtitle}>Drag or click nutrients to feed plants. Restore CO₂ scrubber to 100%!</p>
           </div>
           <div className={styles.timerBlock}>
             <span className={`font-mono ${styles.timerNum}`}
@@ -92,6 +121,19 @@ export default function OxygenGarden() {
             >{timeLeft}s</span>
           </div>
         </div>
+
+        {/* Status / Outcome Banner */}
+        {outcome && (
+          <motion.div
+            className={`${styles.outcomeBanner} ${outcome === 'fail' ? styles.outcomeFail : ''}`}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+          >
+            {outcome === 'success'
+              ? '✅ CO₂ SCRUBBERS RESTORED TO 100%! EXCELLENT WORK.'
+              : '⚠️ CO₂ CRITICAL THRESHOLD REACHED. RETURNING TO BASE.'}
+          </motion.div>
+        )}
 
         {/* Scrubber progress */}
         <div className={styles.scrubberRow}>
@@ -115,9 +157,10 @@ export default function OxygenGarden() {
               <motion.div
                 key={plant.id}
                 id={`plant-${plant.id}`}
-                className={`${styles.plant} ${isFlash ? (flash.ok ? styles.plantOk : styles.plantBad) : ''}`}
+                className={`${styles.plant} ${selected ? styles.plantClickable : ''} ${isFlash ? (flash.ok ? styles.plantOk : styles.plantBad) : ''}`}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => dropNutrient(plant.id)}
+                onClick={() => handlePlantClick(plant.id)}
                 animate={isFlash ? { scale: [1, 1.05, 1] } : {}}
               >
                 <span className={styles.plantEmoji}>{plant.emoji}</span>
@@ -142,27 +185,33 @@ export default function OxygenGarden() {
           })}
         </div>
 
-        {/* Nutrient sources (drag these) */}
+        {/* Nutrient sources (drag or click these) */}
         <div className={styles.nutrients}>
-          <span className={`font-mono ${styles.nutrientsLabel}`}>AVAILABLE NUTRIENTS — DRAG TO PLANTS</span>
+          <span className={`font-mono ${styles.nutrientsLabel}`}>
+            {selected ? `CLICK A PLANT TO APPLY ${selected.label.toUpperCase()}` : 'AVAILABLE NUTRIENTS — DRAG OR CLICK TO SELECT'}
+          </span>
           <div className={styles.nutrientRow}>
-            {NUTRIENTS.map((n) => (
-              <motion.div
-                key={n.id}
-                id={`nutrient-${n.id}`}
-                className={styles.nutrient}
-                style={{ borderColor: n.color }}
-                draggable
-                onDragStart={() => setDragging(n)}
-                onDragEnd={() => setDragging(null)}
-                whileHover={{ scale: 1.08, y: -4 }}
-                whileDrag={{ opacity: 0.5, scale: 0.9 }}
-              >
-                <span className={styles.nutrientEmoji}>{n.emoji}</span>
-                <span className={`font-mono ${styles.nutrientId}`} style={{ color: n.color }}>{n.id}</span>
-                <span className={styles.nutrientName}>{n.label}</span>
-              </motion.div>
-            ))}
+            {NUTRIENTS.map((n) => {
+              const isSelected = selected?.id === n.id;
+              return (
+                <motion.div
+                  key={n.id}
+                  id={`nutrient-${n.id}`}
+                  className={`${styles.nutrient} ${isSelected ? styles.nutrientSelected : ''}`}
+                  style={{ borderColor: n.color }}
+                  draggable
+                  onDragStart={() => { setDragging(n); setSelected(n); }}
+                  onDragEnd={() => setDragging(null)}
+                  onClick={() => setSelected(isSelected ? null : n)}
+                  whileHover={{ scale: 1.08, y: -4 }}
+                  whileDrag={{ opacity: 0.5, scale: 0.9 }}
+                >
+                  <span className={styles.nutrientEmoji}>{n.emoji}</span>
+                  <span className={`font-mono ${styles.nutrientId}`} style={{ color: n.color }}>{n.id}</span>
+                  <span className={styles.nutrientName}>{n.label}</span>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

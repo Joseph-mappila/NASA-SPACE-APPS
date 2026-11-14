@@ -29,6 +29,7 @@ export default function GameScreen() {
   const currentScene   = useGameStore((s) => s.currentScene);
   const dialogueId     = useGameStore((s) => s.currentDialogueId);
   const activeMinigame = useGameStore((s) => s.activeMinigame);
+  const lastMinigame   = useGameStore((s) => s.lastMinigame);
   const minigameResult = useGameStore((s) => s.minigameResult);
   const applyEffect    = useGameStore((s) => s.applyEffect);
   const setFlag        = useGameStore((s) => s.setFlag);
@@ -103,22 +104,25 @@ export default function GameScreen() {
 
   // Minigame result → next dialogue
   useEffect(() => {
-    if (minigameResult === 'success') {
-      const successMap = {
-        oxygenGarden: 'oxygen_success',
-        evaRepair:    'eva_repair_success',
-      };
-      if (activeMinigame && successMap[activeMinigame]) {
-        navigateTo(currentScene, successMap[activeMinigame]);
-      }
-    } else if (minigameResult === 'fail') {
-      const failMap = {
-        oxygenGarden: 'oxygen_fail',
-        evaRepair:    'eva_repair_fail',
-      };
-      if (activeMinigame && failMap[activeMinigame]) {
-        navigateTo(currentScene, failMap[activeMinigame]);
-      }
+    if (!minigameResult) return;
+
+    const minigameKey = activeMinigame || lastMinigame || currentNode?.minigame;
+    const successMap = {
+      oxygenGarden: 'oxygen_success',
+      evaRepair:    'eva_repair_success',
+    };
+    const failMap = {
+      oxygenGarden: 'oxygen_fail',
+      evaRepair:    'eva_repair_fail',
+    };
+
+    const nextNodeId =
+      minigameResult === 'success'
+        ? (currentNode?.onSuccess || (minigameKey && successMap[minigameKey]) || 'oxygen_success')
+        : (currentNode?.onFail || (minigameKey && failMap[minigameKey]) || 'oxygen_fail');
+
+    if (nextNodeId) {
+      navigateTo(currentScene, nextNodeId);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minigameResult]);
@@ -126,16 +130,27 @@ export default function GameScreen() {
   function handleChoice(choice) {
     if (choice.effects) applyEffect(choice.effects);
     if (choice.flag)    setFlag(choice.flag);
+    const targetNode = act1Dialogues[choice.next];
+    if (targetNode?.minigame) {
+      launchMinigame(targetNode.minigame);
+    }
     navigateTo(currentScene, choice.next);
   }
 
   function handleNext() {
-    if (currentNode?.next) {
-      navigateTo(currentScene, currentNode.next);
+    const targetKey = currentNode?.next || currentNode?.onSuccess;
+    if (targetKey) {
+      const targetNode = act1Dialogues[targetKey];
+      if (targetNode?.minigame) {
+        launchMinigame(targetNode.minigame);
+      }
+      navigateTo(currentScene, targetKey);
     }
   }
 
   if (!currentNode) return null;
+
+  const isMinigameActive = Boolean(activeMinigame || currentNode?.minigame);
 
   return (
     <div
@@ -192,14 +207,17 @@ export default function GameScreen() {
       </AnimatePresence>
 
       {/* Dialogue Box */}
-      {!activeMinigame && (
-        <DialogueBox
-          node={currentNode}
-          playerName={playerName}
-          onChoice={handleChoice}
-          onNext={handleNext}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {!isMinigameActive && !currentNode?.isActEnd && (
+          <DialogueBox
+            key={currentNode.id}
+            node={currentNode}
+            playerName={playerName}
+            onChoice={handleChoice}
+            onNext={handleNext}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Notification Toast */}
       <AnimatePresence>

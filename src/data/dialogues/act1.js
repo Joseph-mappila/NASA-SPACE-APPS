@@ -107,6 +107,9 @@ const act1Dialogues = {
     speaker:   'system',
     text:      'MINIGAME: Oxygen Garden\nReplenish nutrients to bring CO₂ scrubber back to green.',
     minigame:  'oxygenGarden',
+    next:      'oxygen_success',
+    onSuccess: 'oxygen_success',
+    onFail:    'oxygen_fail',
     bg:        'oxygen_garden',
   },
 
@@ -192,11 +195,14 @@ const act1Dialogues = {
 
   // ── EVA Repair Minigame ──────────────────────────────────────────
   'eva_repair_minigame': {
-    id:       'eva_repair_minigame',
-    speaker:  'system',
-    text:     'MINIGAME: EVA Suit Repair\nMatch the wire connectors before oxygen drops to zero!',
-    minigame: 'evaRepair',
-    bg:       'lunar_surface',
+    id:        'eva_repair_minigame',
+    speaker:   'system',
+    text:      'MINIGAME: EVA Suit Repair\nMatch the wire connectors before oxygen drops to zero!',
+    minigame:  'evaRepair',
+    next:      'eva_repair_success',
+    onSuccess: 'eva_repair_success',
+    onFail:    'eva_repair_fail',
+    bg:        'lunar_surface',
   },
 
   'eva_repair_success': {

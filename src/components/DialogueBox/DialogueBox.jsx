@@ -1,20 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useGameStore } from '../../store/gameStore';
 import styles from './DialogueBox.module.css';
 
-const SPEAKER_STYLES = {
-  commander: { color: 'var(--color-cyan)',     label: 'CMD' },
-  hal:       { color: 'var(--color-plasma)',   label: 'HAL' },
-  medic:     { color: 'var(--color-alert)',    label: 'MED' },
-  player:    { color: 'white',                label: 'YOU' },
-  system:    { color: 'var(--color-mars-glow)',label: 'SYS' },
+// ════════════════════════════════════════════════════════════════════
+// Character speaker configurations & avatar paths.
+// Teammates: Drop character portrait files into public/avatars/
+// (e.g. commander.png, hal.png, medic.png, cadet.png, system.png).
+// They will automatically display here in place of the placeholder.
+// ════════════════════════════════════════════════════════════════════
+export const SPEAKER_CONFIG = {
+  commander: {
+    color: 'var(--color-cyan)',
+    label: 'CMD',
+    role: 'Expedition Commander',
+    icon: '🧑‍🚀',
+    avatar: '/avatars/commander.png',
+  },
+  hal: {
+    color: 'var(--color-plasma)',
+    label: 'HAL',
+    role: 'AI Assistant',
+    icon: '🤖',
+    avatar: '/avatars/hal.png',
+  },
+  medic: {
+    color: 'var(--color-alert)',
+    label: 'MED',
+    role: 'Chief Medical Officer',
+    icon: '👩‍⚕️',
+    avatar: '/avatars/medic.png',
+  },
+  player: {
+    color: 'white',
+    label: 'YOU',
+    role: 'Junior Astronaut',
+    icon: '🚀',
+    avatar: '/avatars/cadet.png',
+  },
+  system: {
+    color: 'var(--color-mars-glow)',
+    label: 'SYS',
+    role: 'Station Comms',
+    icon: '📡',
+    avatar: '/avatars/system.png',
+  },
 };
 
-function TypewriterText({ text, speed = 28, onDone }) {
+function TypewriterText({ text, speed = 24, onDone, isSkipped }) {
   const [displayed, setDisplayed] = useState('');
-  const [done,      setDone]      = useState(false);
+  const [done, setDone] = useState(false);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
+    if (isSkipped) {
+      setDisplayed(text);
+      setDone(true);
+      onDoneRef.current?.();
+      return;
+    }
+
     setDisplayed('');
     setDone(false);
     let i = 0;
@@ -24,11 +70,12 @@ function TypewriterText({ text, speed = 28, onDone }) {
       if (i >= text.length) {
         clearInterval(id);
         setDone(true);
-        onDone?.();
+        onDoneRef.current?.();
       }
     }, speed);
+
     return () => clearInterval(id);
-  }, [text, speed, onDone]);
+  }, [text, speed, isSkipped]);
 
   return (
     <span>
@@ -40,89 +87,142 @@ function TypewriterText({ text, speed = 28, onDone }) {
 
 export default function DialogueBox({ node, playerName, onChoice, onNext }) {
   const [textDone, setTextDone] = useState(false);
-  const speakerCfg = SPEAKER_STYLES[node.speaker] || SPEAKER_STYLES.system;
-  const displayText = node.text.replace('{playerName}', playerName);
-  const hasChoices  = node.choices?.length > 0;
+  const [isSkipped, setIsSkipped] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
-  // Reset done state when node changes
-  useEffect(() => setTextDone(false), [node.id]);
+  const score = useGameStore((s) => s.stats.score);
+  const speakerKey = node.speaker || 'system';
+  const speakerCfg = SPEAKER_CONFIG[speakerKey] || SPEAKER_CONFIG.system;
+
+  const scoreAdjective = score >= 500 ? 'exceptional' : score >= 300 ? 'commendable' : 'acceptable';
+  const displayText = (node.text || '')
+    .replace('{playerName}', playerName)
+    .replace('{score_adjective}', scoreAdjective);
+
+  const hasChoices = node.choices?.length > 0;
+  const avatarSrc = node.avatar || speakerCfg.avatar;
+
+  // Reset states when dialogue node changes
+  useEffect(() => {
+    setTextDone(false);
+    setIsSkipped(false);
+    setImgError(false);
+  }, [node.id]);
+
+  function handleBoxClick() {
+    if (!textDone) {
+      setIsSkipped(true);
+    }
+  }
 
   return (
     <motion.div
       className={`${styles.root} glass-panel`}
-      key={node.id}
-      initial={{ opacity: 0, y: 24 }}
+      onClick={handleBoxClick}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 12 }}
-      transition={{ duration: 0.35 }}
+      exit={{ opacity: 0, y: 8 }}
+      transition={{ duration: 0.25 }}
     >
-      {/* Speaker header */}
-      <div className={styles.header}>
+      <div className={styles.layoutRow}>
+        {/* ── Character Avatar / Placeholder Section ── */}
         <div
-          className={`font-mono ${styles.speakerTag}`}
-          style={{ color: speakerCfg.color, borderColor: speakerCfg.color }}
+          className={styles.avatarFrame}
+          style={{ borderColor: speakerCfg.color, color: speakerCfg.color }}
+          title={node.name || speakerCfg.role}
         >
-          {speakerCfg.label}
+          {!imgError && avatarSrc ? (
+            <img
+              src={avatarSrc}
+              alt={node.name || speakerCfg.label}
+              className={styles.avatarImg}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className={styles.avatarPlaceholder}>
+              <span className={styles.avatarIcon}>{speakerCfg.icon}</span>
+              <span className={styles.avatarTag}>{speakerCfg.label}</span>
+            </div>
+          )}
+          {/* Futuristic Corner Brackets */}
+          <div className={styles.avatarCornerTL} style={{ borderColor: speakerCfg.color }} />
+          <div className={styles.avatarCornerBR} style={{ borderColor: speakerCfg.color }} />
         </div>
-        {node.name && (
-          <span className={styles.speakerName} style={{ color: speakerCfg.color }}>
-            {node.name}
-          </span>
-        )}
-        <div className={styles.headerLine} style={{ background: speakerCfg.color }} />
-      </div>
 
-      {/* Dialogue text */}
-      <div className={styles.textArea}>
-        <p className={styles.text}>
-          <TypewriterText
-            text={displayText}
-            speed={node.speaker === 'system' ? 20 : 28}
-            onDone={() => setTextDone(true)}
-          />
-        </p>
-      </div>
-
-      {/* Choices or Next */}
-      <AnimatePresence>
-        {textDone && (
-          <motion.div
-            className={styles.actions}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            {hasChoices ? (
-              <div className={styles.choices}>
-                {node.choices.map((choice, i) => (
-                  <motion.button
-                    key={choice.next || i}
-                    id={`choice-btn-${i}`}
-                    className={`${styles.choiceBtn} btn btn-ghost`}
-                    onClick={() => onChoice(choice)}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.08 }}
-                    whileHover={{ x: 4, borderColor: 'rgba(0, 212, 255, 0.5)' }}
-                  >
-                    <span className={styles.choiceArrow}>▶</span>
-                    {choice.label}
-                  </motion.button>
-                ))}
-              </div>
-            ) : (
-              <button
-                id="dialogue-next-btn"
-                className="btn btn-ghost"
-                onClick={onNext}
-                style={{ alignSelf: 'flex-end', fontSize: '0.85rem' }}
-              >
-                Continue ▶
-              </button>
+        {/* ── Dialogue Content ── */}
+        <div className={styles.contentCol}>
+          {/* Speaker header */}
+          <div className={styles.header}>
+            <div
+              className={`font-mono ${styles.speakerTag}`}
+              style={{ color: speakerCfg.color, borderColor: speakerCfg.color }}
+            >
+              {speakerCfg.label}
+            </div>
+            {node.name && (
+              <span className={styles.speakerName} style={{ color: speakerCfg.color }}>
+                {node.name}
+              </span>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <span className={styles.speakerRole}>// {speakerCfg.role}</span>
+            <div className={styles.headerLine} style={{ background: speakerCfg.color }} />
+          </div>
+
+          {/* Dialogue text */}
+          <div className={styles.textArea}>
+            <p className={styles.text}>
+              <TypewriterText
+                text={displayText}
+                speed={node.speaker === 'system' ? 18 : 24}
+                isSkipped={isSkipped}
+                onDone={() => setTextDone(true)}
+              />
+            </p>
+          </div>
+
+          {/* Choices or Next Button */}
+          <AnimatePresence>
+            {textDone && (
+              <motion.div
+                className={styles.actions}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {hasChoices ? (
+                  <div className={styles.choices}>
+                    {node.choices.map((choice, i) => (
+                      <motion.button
+                        key={choice.next || i}
+                        id={`choice-btn-${i}`}
+                        className={`${styles.choiceBtn} btn btn-ghost`}
+                        onClick={() => onChoice(choice)}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        whileHover={{ x: 4, borderColor: 'rgba(0, 212, 255, 0.5)' }}
+                      >
+                        <span className={styles.choiceArrow}>▶</span>
+                        {choice.label}
+                      </motion.button>
+                    ))}
+                  </div>
+                ) : (
+                  <button
+                    id="dialogue-next-btn"
+                    className="btn btn-ghost"
+                    onClick={onNext}
+                    style={{ alignSelf: 'flex-end', fontSize: '0.85rem' }}
+                  >
+                    Continue ▶
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </motion.div>
   );
 }

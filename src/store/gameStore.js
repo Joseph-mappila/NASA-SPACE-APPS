@@ -32,6 +32,7 @@ export const useGameStore = create((set, get) => ({
 
   // ── Minigame ──
   activeMinigame: null,     // null | 'evaRepair' | 'oxygenGarden' | 'navigation' | 'solarPanel' | 'sampleLab'
+  lastMinigame: null,       // stores most recent minigame id for transition routing
   minigameResult: null,     // null | 'success' | 'fail'
 
   // ── Achievements ──
@@ -62,7 +63,7 @@ export const useGameStore = create((set, get) => ({
 
   hasFlag: (key) => !!get().flags[key],
 
-  navigateTo: (sceneId, dialogueId = 'start') => set({
+  navigateTo: (sceneId, dialogueId = 'intro') => set({
     currentScene: sceneId,
     currentDialogueId: dialogueId,
     activeMinigame: null,
@@ -79,11 +80,19 @@ export const useGameStore = create((set, get) => ({
 
   setBgLoading: (loading) => set({ bgLoading: loading }),
 
-  launchMinigame: (minigameId) => set({ activeMinigame: minigameId, minigameResult: null }),
+  launchMinigame: (minigameId) => set({
+    activeMinigame: minigameId,
+    lastMinigame: minigameId,
+    minigameResult: null,
+  }),
 
   resolveMinigame: (result, effects = []) => {
     get().applyEffect(effects);
-    set({ minigameResult: result, activeMinigame: null });
+    set((state) => ({
+      minigameResult: result,
+      lastMinigame: state.activeMinigame || state.lastMinigame,
+      activeMinigame: null,
+    }));
   },
 
   unlockAchievement: (id) => set((state) => ({
@@ -102,10 +111,11 @@ export const useGameStore = create((set, get) => ({
     stats: { ...INITIAL_STATS },
     flags: {},
     currentAct: 1,
-    currentScene: 'intro',
-    currentDialogueId: 'start',
+    currentScene: 'lunar_surface',
+    currentDialogueId: 'intro',
     weatherEvent: null,
     activeMinigame: null,
+    lastMinigame: null,
     minigameResult: null,
     unlockedAchievements: [],
     unlockedCodexEntries: [],

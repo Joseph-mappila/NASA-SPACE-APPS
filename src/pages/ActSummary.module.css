@@ -1,0 +1,107 @@
+.root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #0d1226, #07070f);
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.panel {
+  width: min(600px, 95vw);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 36px;
+}
+
+.header { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+
+.headerBadge {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--color-cyan);
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 100px;
+  padding: 4px 16px;
+}
+
+.title    { font-size: 2rem; font-weight: 700; color: white; }
+.subtitle { font-size: 0.9rem; color: rgba(184,196,204,0.6); }
+
+.gradeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.gradeLabel {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: rgba(184,196,204,0.5);
+}
+
+.grade {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 0 40px currentColor;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(184,196,204,0.1);
+  border-radius: 10px;
+}
+
+.statLabel { font-size: 0.7rem; color: rgba(184,196,204,0.6); }
+.statValue { font-size: 1.3rem; }
+
+.achievementsSection { display: flex; flex-direction: column; gap: 10px; }
+.sectionLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: rgba(184,196,204,0.4);
+}
+
+.achievementsList { display: flex; flex-direction: column; gap: 8px; }
+
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(0,255,136,0.06);
+  border: 1px solid rgba(0,255,136,0.2);
+  border-radius: 10px;
+}
+
+.achievementEmoji  { font-size: 1.4rem; flex-shrink: 0; }
+.achievementTitle  { display: block; font-weight: 600; font-size: 0.9rem; }
+.achievementDesc   { display: block; font-size: 0.75rem; color: rgba(184,196,204,0.6); }
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}

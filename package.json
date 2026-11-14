@@ -1,5 +1,5 @@
 {
-  "name": "aster-outpost",
+  "name": "luna-outpost",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -7,19 +7,23 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
+    "test": "vitest run",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-scrollama": "^2.4.2"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
+    "jsdom": "^31.0.1",
     "rollup": "npm:@rollup/wasm-node@^4.68.3",
     "typescript": "^5.9.3",
-    "vite": "^7.2.2"
+    "vite": "^7.2.2",
+    "vitest": "^5.1.0"
   }
 }

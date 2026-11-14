@@ -1,3 +1,5 @@
+import ambientUrl from './ambient.mp4'
+
 type LoopKind =
   | 'storm'
   | 'fire'
@@ -18,8 +20,15 @@ class AudioEngine {
   private loopKind: LoopKind = null
   private enabled = true
   private volume = 0.55
+  private ambient: HTMLAudioElement | null = null
+  private ambientVolume = 0.5
+  private unlocked = false
 
   enable(): void {
+    // Browsers only allow audio to start after a real interaction. App calls
+    // this from its first pointer, touch, or key event.
+    this.unlocked = true
+    this.startAmbient()
     const context = this.ensure()
     if (!context) return
     if (this.loopKind && this.enabled && this.loopNodes.length === 0) {
@@ -39,8 +48,27 @@ class AudioEngine {
     }
     if (enabled) {
       this.ensure()
+      if (this.unlocked) this.startAmbient()
       if (!this.loopNodes.length) this.applyLoop()
+    } else {
+      this.ambient?.pause()
     }
+  }
+
+  private startAmbient(): void {
+    if (!this.enabled || !this.unlocked) return
+    if (!this.ambient) {
+      if (typeof Audio === 'undefined') return
+      this.ambient = new Audio(ambientUrl)
+      this.ambient.loop = true
+      this.ambient.preload = 'auto'
+      this.ambient.volume = this.ambientVolume
+    }
+    this.ambient.volume = this.ambientVolume
+    if (!this.ambient.paused) return
+    // A rejected play() only means the browser is still waiting for a gesture.
+    // The next enable() or setEnabled(true) tries again.
+    void this.ambient.play().catch(() => undefined)
   }
 
   setScene(kind: LoopKind): void {

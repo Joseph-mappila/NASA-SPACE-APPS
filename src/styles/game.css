@@ -486,6 +486,127 @@
   position: absolute;
 }
 
+.name-screen__layout {
+  display: grid;
+  gap: 18px;
+  max-width: 940px;
+  position: relative;
+  width: 100%;
+  z-index: 3;
+}
+
+.name-screen__layout--with-games {
+  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  max-width: 1300px;
+}
+
+.name-screen__layout--with-games .name-card {
+  max-width: none;
+}
+
+.name-games {
+  align-content: start;
+  display: grid;
+  gap: 14px;
+  padding: 24px 22px;
+}
+
+.name-games__title {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.name-games__intro {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.name-games__list {
+  display: grid;
+  gap: 10px;
+}
+
+.name-game {
+  align-items: center;
+  background: rgba(6, 10, 15, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--paper);
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  text-align: left;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+  width: 100%;
+}
+
+.name-game:hover {
+  background: rgba(130, 230, 223, 0.07);
+  border-color: var(--cyan);
+  transform: translateY(-1px);
+}
+
+.name-game__icon {
+  align-items: center;
+  background: #070c11;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  flex-shrink: 0;
+  font-size: 1.35rem;
+  height: 38px;
+  place-items: center;
+  width: 38px;
+}
+
+.name-game__body {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.name-game__body strong {
+  font-size: var(--text-sm);
+  line-height: 1.3;
+}
+
+.name-game__body small {
+  color: var(--paper-dim);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+
+.name-game__body em {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.name-game__arrow {
+  color: var(--cyan);
+  flex-shrink: 0;
+  font-family: var(--mono);
+}
+
+.name-games__note {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
 .name-screen__planet {
   background:
     radial-gradient(circle at 32% 28%, #8fb9c1, #365d6b 42%, #0d1c27 74%);
@@ -937,6 +1058,214 @@
   font-size: var(--text-sm);
   line-height: 1.5;
   margin-top: 8px;
+}
+
+/* ---------- Live NASA space weather ---------- */
+
+.space-weather {
+  padding: 16px 18px;
+}
+
+.space-weather__head {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.space-weather__intro {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 9px 0 10px;
+}
+
+.space-weather__status {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.space-weather__fallback {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.space-weather__fallback p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.space-weather__list {
+  display: grid;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.space-weather__list li {
+  background: rgba(6, 10, 15, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 8px 10px;
+}
+
+.space-weather__list summary {
+  align-items: baseline;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.space-weather__list summary span {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.space-weather__list summary em {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.space-weather__list p {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  margin: 7px 0 0;
+}
+
+.space-weather__list a {
+  color: var(--cyan);
+  display: inline-block;
+  font-size: var(--text-xs);
+  margin-top: 6px;
+}
+
+.space-weather__source {
+  color: var(--muted);
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  line-height: 1.4;
+  margin-top: 9px;
+}
+
+/* ---------- Live NASA EPIC Earth view ---------- */
+
+.earth-view {
+  padding: 16px 18px;
+}
+
+.earth-view__head {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.earth-view__status {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 10px 0 0;
+}
+
+.earth-view__fallback {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin-top: 10px;
+}
+
+.earth-view__fallback p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.earth-view__figure {
+  margin: 10px 0 0;
+}
+
+.earth-view__figure img {
+  aspect-ratio: 1;
+  background: #04070b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.earth-view__figure figcaption {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.earth-view__figure figcaption strong {
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+}
+
+.earth-view__figure figcaption span {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.earth-view__figure figcaption a {
+  color: var(--cyan);
+  font-size: var(--text-xs);
+}
+
+.earth-view__source {
+  color: var(--muted);
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  line-height: 1.4;
+  margin-top: 9px;
+}
+
+.mission-brief__main .earth-view {
+  margin-top: 26px;
+}
+
+.mission-brief__main .earth-view__figure {
+  align-items: start;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+.mission-brief__main .earth-view__figure img {
+  max-width: 220px;
+}
+
+.mission-brief__main .earth-view__figure figcaption {
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  .mission-brief__main .earth-view__figure {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-brief__main .earth-view__figure img {
+    max-width: 100%;
+  }
 }
 
 /* ---------- Mission brief ---------- */
@@ -1625,6 +1954,11 @@
   .day-brief__layout,
   .mission-brief__layout {
     grid-template-columns: 1fr;
+  }
+
+  .name-screen__layout--with-games {
+    grid-template-columns: 1fr;
+    max-width: 940px;
   }
 
   .mission-brief__number {

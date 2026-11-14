@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { audio } from './audio/engine'
 import { DayBrief } from './screens/DayBrief'
 import { Ending } from './screens/Ending'
@@ -8,6 +8,8 @@ import { MissionBrief } from './screens/MissionBrief'
 import { MissionRunner } from './screens/MissionRunner'
 import { NameEntry } from './screens/NameEntry'
 import { ResultScreen } from './screens/ResultScreen'
+import { MinigameScreen } from './minigames/MinigameScreen'
+import type { MinigameId } from './minigames/catalog'
 import { MISSIONS } from './game/content'
 import { clearSave, loadGame, saveGame } from './game/save'
 import {
@@ -22,6 +24,7 @@ function App() {
     initialGameState,
     (initial) => loadGame() ?? initial,
   )
+  const [activeMinigame, setActiveMinigame] = useState<MinigameId | null>(null)
 
   useEffect(() => {
     saveGame(state)
@@ -62,6 +65,15 @@ function App() {
     dispatch({ type: 'TOGGLE_SOUND' })
   }
 
+  if (activeMinigame) {
+    return (
+      <MinigameScreen
+        id={activeMinigame}
+        onExit={() => setActiveMinigame(null)}
+      />
+    )
+  }
+
   if (state.screen === 'landing') {
     return (
       <Landing
@@ -85,6 +97,8 @@ function App() {
   if (state.screen === 'name') {
     return (
       <NameEntry
+        completedOnce={state.completedOnce}
+        onPlayMinigame={setActiveMinigame}
         onSubmit={(name) => {
           audio.click()
           dispatch({ type: 'SET_NAME', name })

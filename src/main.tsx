@@ -10,6 +10,7 @@ import './styles/base.css'
 import './styles/intro.css'
 import './styles/game.css'
 import './styles/missions.css'
+import './styles/minigames.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(

@@ -76,6 +76,8 @@ export type GameState = {
   day: Day
   playerName: string
   soundEnabled: boolean
+  /** True after the player has reached the Day 58 ending at least once. */
+  completedOnce: boolean
   currentMission: MissionId | null
   lastMission: MissionId | null
   resources: Resources

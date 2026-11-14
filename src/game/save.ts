@@ -52,6 +52,7 @@ export function loadGame(): GameState | null {
       ...saved,
       screen,
       version: 1,
+      completedOnce: saved.completedOnce === true || saved.screen === 'ending',
       resources: { ...initialGameState.resources, ...saved.resources },
       flags: { ...initialGameState.flags, ...saved.flags },
       outcomes: { ...saved.outcomes },

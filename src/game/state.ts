@@ -13,6 +13,7 @@ export const initialGameState: GameState = {
   day: 57,
   playerName: '',
   soundEnabled: true,
+  completedOnce: false,
   currentMission: null,
   lastMission: null,
   resources: { power: 52, oxygen: 100, waterFood: 85, crewHealth: 100 },
@@ -194,7 +195,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           resources: withResources(state.resources, { oxygen: -3 }),
         }
       }
-      if (last === 8) return { ...state, screen: 'ending' }
+      if (last === 8) {
+        return { ...state, screen: 'ending', completedOnce: true }
+      }
       return {
         ...state,
         screen: 'mission-brief',
@@ -204,7 +207,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'TOGGLE_SOUND':
       return { ...state, soundEnabled: !state.soundEnabled }
     case 'RESTART':
-      return { ...initialGameState, soundEnabled: state.soundEnabled }
+      return {
+        ...initialGameState,
+        soundEnabled: state.soundEnabled,
+        completedOnce: state.completedOnce,
+      }
     default:
       return state
   }

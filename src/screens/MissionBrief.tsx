@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { audio } from '../audio/engine'
 import { Brand, TelemetryHud } from '../components/Hud'
+import { EarthFromNasa } from '../components/EarthFromNasa'
 import { formatClock } from '../game/format'
 import { missionLimitFor } from '../game/state'
 import type { GameState, MissionDefinition } from '../game/types'
@@ -87,6 +88,8 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
               ))}
             </div>
           </div>
+
+          {mission.id === 8 ? <EarthFromNasa /> : null}
 
           {warnings.length > 0 ? (
             <div className="mission-brief__warnings">

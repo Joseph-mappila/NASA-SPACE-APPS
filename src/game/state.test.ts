@@ -99,6 +99,19 @@ describe('game reducer', () => {
     )
     const ending = gameReducer(ended, { type: 'CONTINUE_FROM_RESULT' })
     expect(ending.screen).toBe('ending')
+    expect(ending.completedOnce).toBe(true)
+  })
+
+  it('keeps the completed-once marker when the player starts a new run', () => {
+    const ended: GameState = {
+      ...initialGameState,
+      screen: 'ending',
+      completedOnce: true,
+    }
+    const restarted = gameReducer(ended, { type: 'RESTART' })
+    expect(restarted.screen).toBe('landing')
+    expect(restarted.completedOnce).toBe(true)
+    expect(restarted.outcomes).toEqual({})
   })
 
   it('records the best time only for successful missions', () => {

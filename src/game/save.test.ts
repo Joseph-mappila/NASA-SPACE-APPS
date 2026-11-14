@@ -36,6 +36,18 @@ describe('save system', () => {
     expect(loaded?.flags.oxygenLeak).toBe(true)
   })
 
+  it('round-trips the completed-once marker used by the minigame launcher', () => {
+    saveGame({ ...sample(), completedOnce: true })
+    expect(loadGame()?.completedOnce).toBe(true)
+  })
+
+  it('treats an old save on the ending screen as completed', () => {
+    const legacy = { ...sample(), screen: 'ending' as const }
+    delete (legacy as Partial<GameState>).completedOnce
+    saveGame(legacy)
+    expect(loadGame()?.completedOnce).toBe(true)
+  })
+
   it('does not resume a mission that was mid-timer', () => {
     saveGame({ ...sample(), screen: 'mission', currentMission: 3 })
     const loaded = loadGame()

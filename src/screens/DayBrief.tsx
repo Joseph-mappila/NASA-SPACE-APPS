@@ -3,6 +3,7 @@ import { audio } from '../audio/engine'
 import commanderImage from '../images/commander_chen.webp'
 import controlImage from '../images/line20-24.webp'
 import { Brand, TelemetryHud } from '../components/Hud'
+import { SpaceWeatherPanel } from '../components/SpaceWeatherPanel'
 import { DAY_BRIEFS, MISSIONS } from '../game/content'
 import { passedCount } from '../game/state'
 import type { GameState, MissionId } from '../game/types'
@@ -141,6 +142,8 @@ export function DayBrief({ state, onContinue }: DayBriefProps) {
             </div>
             <small>HAL is monitoring every hatch, scrubber, and battery.</small>
           </div>
+
+          {state.day === 58 ? <SpaceWeatherPanel /> : null}
         </aside>
       </div>
     </main>

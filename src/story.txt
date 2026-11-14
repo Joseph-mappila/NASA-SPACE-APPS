@@ -18,13 +18,10 @@ Which is why CurioCET presents:
 
 Welcome to Luna, the lunar outpost set up by NASA on the moon!
 Hal: Good morning captain. We are currently day 57 of mission Luna. Current systems are all operational. 
-Oxygen levels: Normal, Water levels: Normal, Power levels: Moderate, Food levels: normal. Solar flare expected in 8 hours.
-Current crewmates: 15 all alive and well
-No casualties to report.
-No messages from earth, communication with earth intact.
-Current objectives that need attention:
-1. Waste disposal
-2. Solar panels on Block A need cleaning
-3. Solar Particle Event (SPE) Storm Shelter Assembly (IMPORTANT!)
-
-WHich one would you like to do first?
+Oxygen: Normal ($P_{IO_2}$: 150 mmHg) | Water: Normal | Power: Moderate (52%) | Food: Normal
+Alert: Solar Particle Event (solar flare) expected in 8 hours.
+Crew: 15/15 alive and well. No casualties to report.
+Comms: Earth link intact. No incoming messages.
+Pending Objectives:Clean solar panels on Block A
+Complete waste disposal
+(Rest is missions.md)

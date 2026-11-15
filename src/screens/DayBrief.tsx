@@ -60,43 +60,47 @@ export function DayBrief({ state, onContinue }: DayBriefProps) {
             ))}
           </div>
 
-          {state.day === 58 ? (
-            <div className="storm-report">
-              <span>Day 57 report</span>
-              <strong>{passedCount(state)} / 4 objectives complete</strong>
-              <ul>
-                <li className={state.flags.shieldTiles > 0 ? 'ok' : 'bad'}>
-                  {state.flags.shieldTiles > 0
-                    ? `${state.flags.shieldTiles} shield tiles ready`
-                    : 'No shield tiles recovered'}
-                </li>
-                <li className={state.flags.oxygenLeak ? 'bad' : 'ok'}>
-                  {state.flags.oxygenLeak ? 'Airlock leak still active' : 'Airlock pressure holding'}
-                </li>
-                <li className={state.flags.brownout ? 'bad' : 'ok'}>
-                  {state.flags.brownout ? 'Storm brownout damaged sensors' : 'Electronics survived the storm'}
-                </li>
-              </ul>
-            </div>
-          ) : (
-            <div className="alert-strip">
-              <i aria-hidden="true" />
-              Solar Particle Event expected in 8 hours
-            </div>
-          )}
+          <div className="day-brief__split">
+            {state.day === 58 ? (
+              <div className="storm-report">
+                <span>Day 57 report</span>
+                <strong>{passedCount(state)} / 4 objectives complete</strong>
+                <ul>
+                  <li className={state.flags.shieldTiles > 0 ? 'ok' : 'bad'}>
+                    {state.flags.shieldTiles > 0
+                      ? `${state.flags.shieldTiles} shield tiles ready`
+                      : 'No shield tiles recovered'}
+                  </li>
+                  <li className={state.flags.oxygenLeak ? 'bad' : 'ok'}>
+                    {state.flags.oxygenLeak ? 'Airlock leak still active' : 'Airlock pressure holding'}
+                  </li>
+                  <li className={state.flags.brownout ? 'bad' : 'ok'}>
+                    {state.flags.brownout ? 'Storm brownout damaged sensors' : 'Electronics survived the storm'}
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <div className="alert-strip">
+                <i aria-hidden="true" />
+                Solar Particle Event expected in 8 hours
+              </div>
+            )}
 
-          <div className="objective-list">
-            <span>Pending objectives</span>
-            <ol>
-              {brief.objectives.map((objective) => (
-                <li key={objective}>{objective}</li>
-              ))}
-            </ol>
+            <div className="objective-list">
+              <span>Pending objectives</span>
+              <ol>
+                {brief.objectives.map((objective) => (
+                  <li key={objective}>{objective}</li>
+                ))}
+              </ol>
+            </div>
           </div>
 
-          <button className="btn btn--primary" onClick={onContinue} type="button">
-            {state.day === 57 ? 'Start Day 57' : 'Start Day 58'}
-          </button>
+          <div className="day-brief__actions">
+            <button className="btn btn--primary" onClick={onContinue} type="button">
+              {state.day === 57 ? 'Start Day 57' : 'Start Day 58'}
+            </button>
+          </div>
         </section>
 
         <aside className="day-brief__side">

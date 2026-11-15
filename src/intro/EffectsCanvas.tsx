@@ -543,79 +543,95 @@ const EffectsCanvas = forwardRef<EffectsHandle, EffectsCanvasProps>(
               y: bob + 600 + dx * sin + dy * cos,
             }
           }
-          const stern = shipPoint(70, 718)
-          const bow = shipPoint(660, 704)
-          const funnel = shipPoint(247, 344)
-          const secondFunnel = shipPoint(364, 364)
+          const stern = shipPoint(150, 700)
+          const bow = shipPoint(676, 672)
+          const stacks = [
+            { point: shipPoint(238, 322), strength: 1 },
+            { point: shipPoint(313, 344), strength: 0.82 },
+            { point: shipPoint(375, 366), strength: 0.64 },
+          ]
           const onScreen = (point: Point) =>
             X(point.x) > -180 && X(point.x) < width + 180
 
+          // Wake and bow spray stay low, small and short-lived so they read as
+          // water, never as smoke climbing off the deck.
           if (onScreen(stern)) {
             for (let index = 0; index < 2; index += 1) {
               addParticle({
-                x: X(stern.x + rand(-20, 30)),
-                y: Y(stern.y + rand(-8, 10)),
-                vx: rand(-120, -40) * scale,
-                vy: rand(-30, 12) * scale,
-                life: rand(0.8, 1.9),
-                maxLife: 1.9,
-                size: rand(5, 14) * scale,
-                color: 'rgba(196, 226, 232, 0.22)',
-                drag: 0.99,
-                gravity: 34 * scale,
-                additive: false,
-                shrink: 0.1,
-              })
-              addParticle({
-                x: X(bow.x + rand(-10, 24)),
-                y: Y(bow.y + rand(-6, 8)),
-                vx: rand(10, 70) * scale,
-                vy: rand(-90, -24) * scale,
-                life: rand(0.3, 0.7),
+                x: X(stern.x + rand(-16, 12)),
+                y: Y(stern.y + rand(-5, 7)),
+                vx: rand(-110, -30) * scale,
+                vy: rand(-24, 8) * scale,
+                life: rand(0.28, 0.7),
                 maxLife: 0.7,
-                size: rand(2, 6) * scale,
-                color: 'rgba(232, 246, 246, 0.5)',
-                drag: 0.98,
-                gravity: 130 * scale,
+                size: rand(2, 5.5) * scale,
+                color: 'rgba(214, 238, 242, 0.38)',
+                drag: 0.97,
+                gravity: 150 * scale,
                 additive: false,
-                shrink: 0.4,
+                shrink: 0.5,
+                stretch: 1.4,
+              })
+            }
+          }
+          if (onScreen(bow)) {
+            for (let index = 0; index < 2; index += 1) {
+              addParticle({
+                x: X(bow.x + rand(-8, 10)),
+                y: Y(bow.y + rand(-4, 6)),
+                vx: rand(30, 110) * scale,
+                vy: rand(-86, -22) * scale,
+                life: rand(0.32, 0.78),
+                maxLife: 0.78,
+                size: rand(2, 5.5) * scale,
+                color: 'rgba(232, 248, 248, 0.46)',
+                drag: 0.975,
+                gravity: 185 * scale,
+                additive: false,
+                shrink: 0.45,
+                stretch: 1.5,
               })
             }
           }
 
-          // Funnel smoke has to leave the stack tops, not the waterline.
-          const stack = Math.random() > 0.45 ? funnel : secondFunnel
-          if (onScreen(stack)) {
-            addParticle({
-              x: X(stack.x + rand(-7, 7)),
-              y: Y(stack.y + rand(-7, 3)),
-              vx: rand(-46, -14) * scale,
-              vy: rand(-74, -34) * scale,
-              life: rand(1.8, 4.2),
-              maxLife: 4.2,
-              size: rand(16, 40) * scale,
-              color: `rgba(${Math.round(rand(150, 186))}, ${Math.round(
-                rand(152, 190),
-              )}, ${Math.round(rand(148, 182))}, ${rand(0.1, 0.19).toFixed(2)})`,
-              drag: 0.996,
-              gravity: -8 * scale,
-              additive: false,
-              shrink: 0.18,
-            })
-            addParticle({
-              x: X(stack.x + rand(-4, 4)),
-              y: Y(stack.y + rand(-2, 8)),
-              vx: rand(-24, -6) * scale,
-              vy: rand(-48, -20) * scale,
-              life: rand(0.9, 1.8),
-              maxLife: 1.8,
-              size: rand(7, 18) * scale,
-              color: 'rgba(206, 210, 204, 0.16)',
-              drag: 0.994,
-              gravity: -5 * scale,
-              additive: false,
-              shrink: 0.25,
-            })
+          // Every stack smokes from its own opening, with the tallest stack
+          // producing the strongest plume.
+          for (const stack of stacks) {
+            if (!onScreen(stack.point)) continue
+            if (Math.random() < 0.42) {
+              addParticle({
+                x: X(stack.point.x + rand(-5, 5)),
+                y: Y(stack.point.y + rand(-1, 7)),
+                vx: rand(-46, -18) * scale,
+                vy: rand(-76, -38) * scale,
+                life: rand(1.8, 4) * stack.strength,
+                maxLife: 4,
+                size: rand(13, 30) * stack.strength * scale,
+                color: `rgba(${Math.round(rand(150, 184))}, ${Math.round(
+                  rand(152, 188),
+                )}, ${Math.round(rand(148, 180))}, ${rand(0.1, 0.17).toFixed(2)})`,
+                drag: 0.996,
+                gravity: -8 * scale,
+                additive: false,
+                shrink: 0.2,
+              })
+            }
+            if (Math.random() < 0.3) {
+              addParticle({
+                x: X(stack.point.x + rand(-3, 3)),
+                y: Y(stack.point.y + rand(0, 8)),
+                vx: rand(-22, -6) * scale,
+                vy: rand(-46, -22) * scale,
+                life: rand(0.8, 1.6),
+                maxLife: 1.6,
+                size: rand(6, 14) * stack.strength * scale,
+                color: 'rgba(206, 210, 204, 0.16)',
+                drag: 0.994,
+                gravity: -5 * scale,
+                additive: false,
+                shrink: 0.28,
+              })
+            }
           }
           drawParticles(dt, scale)
         }

@@ -18,7 +18,91 @@ import {
   nextMissionAtDayStart,
 } from './game/state'
 
-function App() {
+function isMobileDevice(): boolean {
+  if (typeof window === 'undefined') return false
+  return (
+    window.matchMedia?.('(pointer: coarse)').matches ||
+    /Android|iPhone|iPad|iPod|Mobile|Silk/i.test(navigator.userAgent)
+  )
+}
+
+/**
+ * Best-effort immersive mode. Browsers only allow fullscreen and orientation
+ * locking from a user gesture, so this is invoked from the first tap/keypress.
+ * If the browser refuses, the portrait gate below asks the player to rotate.
+ */
+async function enterMobileFullscreen(): Promise<void> {
+  if (typeof document === 'undefined' || !isMobileDevice()) return
+
+  const root = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void
+  }
+
+  try {
+    if (!document.fullscreenElement) {
+      if (root.requestFullscreen) {
+        await root.requestFullscreen({ navigationUI: 'hide' })
+      } else {
+        await root.webkitRequestFullscreen?.()
+      }
+    }
+  } catch {
+    // Fullscreen can be denied by the browser or an embedding frame.
+  }
+
+  const orientation = window.screen.orientation as ScreenOrientation & {
+    lock?: (mode: string) => Promise<void>
+  }
+
+  try {
+    await orientation?.lock?.('landscape')
+  } catch {
+    // Orientation lock is unsupported on iOS and some Android browsers.
+  }
+}
+
+function RotateGate() {
+  const [portrait, setPortrait] = useState(false)
+
+  useEffect(() => {
+    const query = window.matchMedia('(orientation: portrait) and (pointer: coarse)')
+    const update = () => setPortrait(query.matches)
+    update()
+    query.addEventListener?.('change', update)
+    window.addEventListener('resize', update)
+    return () => {
+      query.removeEventListener?.('change', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
+  if (!portrait) return null
+
+  return (
+    <div className="rotate-gate" role="dialog" aria-modal="true">
+      <div className="rotate-gate__card panel">
+        <span aria-hidden="true" className="rotate-gate__icon">
+          ↻
+        </span>
+        <span className="eyebrow">Outpost display</span>
+        <h2>Turn the console sideways</h2>
+        <p>
+          LUNA is built for landscape. Rotate your phone, or tap below to try
+          fullscreen landscape again.
+        </p>
+        <button
+          className="btn btn--primary"
+          onClick={() => void enterMobileFullscreen()}
+          type="button"
+        >
+          Go fullscreen
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function Game() {
   const [state, dispatch] = useReducer(
     gameReducer,
     initialGameState,
@@ -35,9 +119,17 @@ function App() {
   }, [state.soundEnabled])
 
   // Mobile and desktop browsers keep the AudioContext suspended until a real
-  // gesture. Unlock it once on the first interaction anywhere in the game.
+  // gesture. The same first gesture is the only chance to request fullscreen
+  // and lock the orientation to landscape.
   useEffect(() => {
-    const unlock = () => audio.enable()
+    let immersiveAttempted = false
+    const unlock = () => {
+      audio.enable()
+      if (!immersiveAttempted) {
+        immersiveAttempted = true
+        void enterMobileFullscreen()
+      }
+    }
     const options: AddEventListenerOptions = { passive: true }
     window.addEventListener('pointerdown', unlock, options)
     window.addEventListener('touchstart', unlock, options)
@@ -188,6 +280,15 @@ function App() {
       }}
       state={state}
     />
+  )
+}
+
+function App() {
+  return (
+    <>
+      <Game />
+      <RotateGate />
+    </>
   )
 }
 

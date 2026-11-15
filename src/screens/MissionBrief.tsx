@@ -72,20 +72,22 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
             </ol>
           </div>
 
-          <div className="science-card">
-            <span className="eyebrow">NASA fact</span>
-            <p>{mission.science}</p>
-          </div>
+          <div className="mission-brief__facts">
+            <div className="science-card">
+              <span className="eyebrow">NASA fact</span>
+              <p>{mission.science}</p>
+            </div>
 
-          <div className="glossary">
-            <span className="eyebrow">Words to know</span>
-            <div>
-              {mission.glossary.map((item) => (
-                <span className="glossary__item" key={item.term}>
-                  <strong>{item.term}</strong>
-                  <small>{item.meaning}</small>
-                </span>
-              ))}
+            <div className="glossary">
+              <span className="eyebrow">Words to know</span>
+              <div>
+                {mission.glossary.map((item) => (
+                  <span className="glossary__item" key={item.term}>
+                    <strong>{item.term}</strong>
+                    <small>{item.meaning}</small>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 

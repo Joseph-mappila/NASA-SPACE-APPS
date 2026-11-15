@@ -19,10 +19,11 @@
   --console-edge: rgba(130, 230, 223, 0.22);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  min-height: 100vh;
-  overflow: visible;
-  padding: 20px 3vw 30px;
+  gap: clamp(8px, 1.6vh, 16px);
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: clamp(10px, 2vh, 20px) 3vw clamp(10px, 2.4vh, 30px);
 }
 
 .mission-screen__grid {
@@ -45,14 +46,15 @@
 .mission-screen__top {
   align-items: center;
   display: flex;
-  gap: 22px;
+  flex: none;
+  gap: clamp(10px, 1.6vw, 22px);
   justify-content: space-between;
 }
 
 .mission-clock {
   align-items: center;
   display: flex;
-  gap: 12px;
+  gap: clamp(6px, 1vw, 12px);
 }
 
 .mission-clock > span {
@@ -122,6 +124,7 @@
 .mission-screen__intel {
   align-items: end;
   display: flex;
+  flex: none;
   gap: 26px;
   justify-content: space-between;
 }
@@ -131,13 +134,13 @@
 }
 
 .mission-screen__intel h1 {
-  font-size: var(--text-3xl);
+  font-size: clamp(1.5rem, min(4vw, 4.8vh), 3.25rem);
   margin: 6px 0 6px;
 }
 
 .mission-screen__intel p {
   color: var(--paper-dim);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   line-height: 1.5;
   margin: 0;
   max-width: 60ch;
@@ -150,11 +153,19 @@
 .mission-screen__stage {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.mission-screen__fit {
+  transform-origin: top center;
+  width: 100%;
 }
 
 .mission-screen__footer {
   color: var(--muted);
   display: flex;
+  flex: none;
   font-family: var(--mono);
   font-size: var(--text-xs);
   justify-content: space-between;
@@ -1723,8 +1734,8 @@
 
 .beds-panel {
   display: grid;
-  gap: 14px;
-  padding: 18px;
+  gap: 12px;
+  padding: 16px;
 }
 
 .bed-grid {
@@ -1816,8 +1827,8 @@
 .valve-board {
   border-top: 1px solid var(--line);
   display: grid;
-  gap: 10px;
-  padding-top: 12px;
+  gap: 8px;
+  padding-top: 10px;
 }
 
 .valve-warning {
@@ -1843,7 +1854,7 @@
   display: grid;
   gap: 3px;
   justify-items: center;
-  padding: 10px 6px;
+  padding: 8px 6px;
   transition: border-color 140ms ease, background 140ms ease;
 }
 
@@ -1941,9 +1952,23 @@
 }
 
 .coolant-panel {
+  align-content: start;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.coolant-body {
+  align-items: center;
   display: grid;
   gap: 14px;
-  padding: 18px;
+  grid-template-columns: minmax(120px, 0.85fr) minmax(0, 1.15fr);
+}
+
+.coolant-side {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
 }
 
 .coolant-loop {
@@ -1952,12 +1977,23 @@
     radial-gradient(circle at 50% 50%, transparent 42%, rgba(6, 12, 16, 0.6) 43%),
     rgba(5, 9, 13, 0.6);
   border: 1px solid var(--line);
+  justify-self: center;
   overflow: hidden;
   position: relative;
+  width: min(100%, 188px);
+}
+
+.coolant-loop::before {
+  border: 1px dashed rgba(181, 156, 255, 0.14);
+  border-radius: 50%;
+  content: '';
+  inset: 8%;
+  pointer-events: none;
+  position: absolute;
 }
 
 .coolant-loop__pipe {
-  border: 10px solid #1b2b33;
+  border: 9px solid #1b2b33;
   border-radius: 50%;
   box-shadow:
     inset 0 0 0 1px #0a1216,
@@ -1967,7 +2003,7 @@
 }
 
 .coolant-loop__flow {
-  animation: coolant-flow 5s linear infinite;
+  animation: coolant-flow 12s linear infinite;
   background: conic-gradient(
     from 0deg,
     transparent 0 40%,
@@ -1981,33 +2017,121 @@
   position: absolute;
 }
 
+.coolant-loop.is-ready .coolant-loop__flow {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 38%,
+    rgba(127, 224, 166, 0.6) 45%,
+    rgba(176, 255, 214, 0.85) 50%,
+    transparent 57% 100%
+  );
+}
+
+.coolant-loop__state {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  inset: 0;
+  letter-spacing: 0.24em;
+  margin: auto;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  height: fit-content;
+  width: fit-content;
+  z-index: 2;
+}
+
+.coolant-loop.is-ready .coolant-loop__state {
+  animation: blink 1.8s steps(2) infinite;
+  color: var(--green);
+}
+
 @keyframes coolant-flow {
   to { transform: rotate(360deg); }
 }
 
 .coolant-bubble {
-  background:
-    radial-gradient(circle at 34% 30%, #fff, rgba(190, 235, 255, 0.8) 46%, rgba(120, 190, 220, 0.35));
+  background: transparent;
   border: 0;
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(180, 230, 255, 0.55);
   cursor: pointer;
-  height: clamp(14px, 2vw, 20px);
+  height: 32px;
   padding: 0;
   position: absolute;
   transform: translate(-50%, -50%);
-  transition: opacity 160ms ease, transform 160ms ease;
-  width: clamp(14px, 2vw, 20px);
+  transition: opacity 200ms ease;
+  width: 32px;
+  z-index: 3;
 }
 
-.coolant-bubble:hover {
-  transform: translate(-50%, -50%) scale(1.25);
-}
-
-.coolant-bubble::after {
+.coolant-bubble::before {
+  background:
+    radial-gradient(circle at 34% 30%, #fff, rgba(190, 235, 255, 0.8) 46%, rgba(120, 190, 220, 0.35));
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(180, 230, 255, 0.55);
   content: '';
-  inset: -8px;
+  inset: 6px;
   position: absolute;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.coolant-bubble:hover::before {
+  box-shadow: 0 0 14px rgba(190, 245, 255, 0.8);
+  transform: scale(1.22);
+}
+
+.coolant-bubble:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.coolant-loop.is-locked .coolant-bubble {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.coolant-loop.is-locked .coolant-bubble:hover::before {
+  box-shadow: 0 0 8px rgba(180, 230, 255, 0.35);
+  transform: none;
+}
+
+.coolant-loop.is-ready .coolant-bubble::before {
+  animation: bubble-throb 2.4s ease-in-out infinite alternate;
+}
+
+.coolant-bubble.is-popping {
+  cursor: default;
+  opacity: 1;
+}
+
+.coolant-bubble.is-popping::before {
+  animation: bubble-pop 340ms ease-out forwards;
+}
+
+@keyframes bubble-throb {
+  from { box-shadow: 0 0 6px rgba(180, 230, 255, 0.45); }
+  to { box-shadow: 0 0 15px rgba(190, 245, 255, 0.85); }
+}
+
+@keyframes bubble-pop {
+  0% { opacity: 1; transform: scale(1); }
+  45% { opacity: 0.9; transform: scale(1.35); }
+  100% { opacity: 0; transform: scale(0.1); }
+}
+
+.coolant-hint {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  margin: 0;
+  text-align: left;
+}
+
+.coolant-hint.is-ready {
+  color: var(--green);
 }
 
 .eclss-gauges {
@@ -2957,5 +3081,670 @@
 
   .shelter-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Compact the mission consoles on standard and short desktop heights so the
+   whole workspace stays above the fold. */
+@media (max-height: 960px) {
+  .mission-workspace .panel {
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .mission-workspace .panel-title {
+    padding-bottom: 8px;
+  }
+
+  .hopper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .hopper__clump {
+    height: clamp(20px, 3.2vw, 34px);
+    width: clamp(20px, 3.2vw, 34px);
+  }
+
+  .growth-chamber {
+    height: clamp(170px, 22vw, 230px);
+  }
+
+  .seal {
+    aspect-ratio: auto;
+    height: clamp(240px, 36vh, 350px);
+  }
+
+  .solar-panel {
+    aspect-ratio: auto;
+    height: clamp(240px, 42vh, 400px);
+  }
+
+  .sky-plot {
+    aspect-ratio: auto;
+    height: clamp(210px, 29vh, 275px);
+  }
+
+  .slider {
+    gap: 5px;
+  }
+
+  .slider__track {
+    height: 18px;
+  }
+
+  .reactor-core {
+    min-height: 128px;
+    padding: 12px;
+  }
+
+  .reactor-core__chamber {
+    height: 104px;
+  }
+
+  .toggle {
+    padding: 5px 9px;
+  }
+
+  .breakers {
+    gap: 4px;
+  }
+
+  .shield-unit {
+    padding: 9px 6px;
+  }
+
+  .shelter-grid {
+    gap: 7px;
+  }
+
+  .shelter-zone__place {
+    padding: 9px 8px;
+  }
+
+  .shelter-zone__clear {
+    min-height: 28px;
+  }
+
+  .shelter-status {
+    padding: 8px 12px;
+  }
+
+  .valve {
+    padding: 7px 5px;
+  }
+
+  .scrubber-bed {
+    gap: 6px;
+    padding: 9px;
+  }
+}
+
+/* Landscape phones and short laptop windows: the mission itself must stay on
+   one screen, so keep the two working panes side by side instead of stacking
+   them and shrink the console chrome. */
+@media (max-height: 800px) and (min-width: 640px) {
+  .mission-screen {
+    gap: 6px;
+    padding: 6px 10px 8px;
+  }
+
+  .mission-screen .brand-bar__luna {
+    font-size: 0.95rem;
+  }
+
+  .mission-screen .brand-bar__sub {
+    font-size: var(--text-2xs);
+  }
+
+  .mission-screen .brand-bar__meta,
+  .mission-clock > span {
+    display: none;
+  }
+
+  .mission-clock > strong {
+    font-size: 1.15rem;
+    min-width: 58px;
+  }
+
+  .mission-clock > div {
+    width: 76px;
+  }
+
+  .mission-sound {
+    font-size: var(--text-2xs);
+    padding: 0.3rem 0.45rem;
+  }
+
+  .mission-screen__intel {
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .mission-screen__intel .eyebrow {
+    font-size: var(--text-2xs);
+  }
+
+  .mission-screen__intel h1 {
+    font-size: 1.3rem;
+    margin: 1px 0;
+  }
+
+  .mission-screen__intel p {
+    display: none;
+  }
+
+  .mission-screen__intel .telemetry {
+    flex: 0 1 360px;
+  }
+
+  .mission-screen__intel .telemetry__primary {
+    gap: 4px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .mission-screen__intel .telemetry-card {
+    padding: 3px 6px;
+  }
+
+  .mission-screen__intel .telemetry-card__label {
+    font-size: var(--text-2xs);
+  }
+
+  .mission-screen__intel .telemetry-card__value {
+    font-size: 0.8rem;
+  }
+
+  .mission-screen__intel .telemetry__toggle,
+  .mission-screen__footer {
+    display: none;
+  }
+
+  .mission-workspace {
+    gap: 8px;
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  }
+
+  .mission-column,
+  .mission-workspace .panel {
+    gap: 8px;
+  }
+
+  .mission-workspace .panel {
+    padding: 10px;
+  }
+
+  .mission-workspace .panel-title {
+    padding-bottom: 6px;
+  }
+
+  .mission-workspace .eyebrow {
+    font-size: var(--text-2xs);
+  }
+
+  .console-message {
+    font-size: 0.58rem;
+    line-height: 1.3;
+    min-height: 0;
+  }
+
+  .hopper-panel,
+  .reactor-panel,
+  .greenhouse-panel,
+  .shelter-panel,
+  .breaker-panel {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .hopper {
+    aspect-ratio: auto;
+    height: 104px;
+  }
+
+  .readout {
+    gap: 2px;
+    padding: 4px 6px;
+  }
+
+  .readout span {
+    font-size: 0.5rem;
+  }
+
+  .readout strong {
+    font-size: 0.58rem;
+  }
+
+  .mission-workspace .panel-title .eyebrow,
+  .mission-workspace .panel-title > span:last-child {
+    font-size: 0.55rem;
+    line-height: 1.25;
+  }
+
+  .hopper__clump {
+    height: clamp(16px, 2.4vw, 24px);
+    width: clamp(16px, 2.4vw, 24px);
+  }
+
+  .hopper__probe {
+    height: 44px;
+    width: 44px;
+  }
+
+  .growth-chamber {
+    height: clamp(100px, 30vh, 148px);
+  }
+
+  .seal {
+    height: clamp(112px, 29vh, 156px);
+  }
+
+  .solar-panel {
+    height: clamp(112px, 29vh, 156px);
+  }
+
+  .sky-plot {
+    height: clamp(104px, 27vh, 148px);
+  }
+
+  .gauge__ring {
+    height: 56px;
+    width: 56px;
+  }
+
+  .gauge__face strong {
+    font-size: 0.62rem;
+  }
+
+  .gauge__face span {
+    font-size: 0.5rem;
+    margin-top: 1px;
+  }
+
+  .breakers {
+    gap: 4px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .toggle {
+    gap: 5px;
+    padding: 4px 6px;
+  }
+
+  .toggle > i {
+    height: 11px;
+    width: 20px;
+  }
+
+  .toggle > i::after {
+    height: 7px;
+    width: 7px;
+  }
+
+  .toggle.is-on > i::after {
+    left: 11px;
+  }
+
+  .toggle strong {
+    font-size: 0.6rem;
+  }
+
+  .toggle small {
+    display: none;
+  }
+
+  .toggle > b {
+    font-size: 0.54rem;
+  }
+
+  .packet-list {
+    gap: 4px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .packet {
+    gap: 6px;
+    grid-template-columns: 18px 1fr auto;
+    padding: 5px 6px;
+  }
+
+  .packet strong {
+    font-size: 0.6rem;
+  }
+
+  .packet small {
+    font-size: 0.52rem;
+  }
+
+  .queue-order {
+    gap: 4px;
+    padding-top: 6px;
+  }
+
+  .queue-order ol {
+    gap: 2px;
+  }
+
+  .queue-order li {
+    font-size: 0.58rem;
+    padding-left: 16px;
+  }
+
+  .waste-grid {
+    gap: 5px;
+  }
+
+  .bag-inspection {
+    gap: 6px;
+  }
+
+  .waste-card {
+    gap: 1px;
+    min-height: 0;
+    padding: 6px 8px;
+  }
+
+  .waste-card > span {
+    font-size: 1rem;
+  }
+
+  .waste-card strong {
+    font-size: 0.6rem;
+  }
+
+  .waste-card small {
+    font-size: 0.52rem;
+    line-height: 1.2;
+  }
+
+  .antenna-readouts {
+    gap: 8px;
+    padding: 5px 8px;
+  }
+
+  .antenna-readouts .readout {
+    gap: 2px;
+    padding: 4px 6px;
+  }
+
+  .antenna-readouts .readout span {
+    font-size: 0.5rem;
+  }
+
+  .antenna-readouts .readout strong {
+    font-size: 0.6rem;
+  }
+
+  .dtn-footer {
+    padding: 4px 8px;
+  }
+
+  .dtn-footer span {
+    font-size: 0.5rem;
+  }
+
+  .dtn-footer strong {
+    font-size: 0.56rem;
+  }
+
+  .shield-picker {
+    gap: 5px;
+  }
+
+  .shield-unit {
+    gap: 1px;
+    padding: 5px;
+  }
+
+  .shield-unit > span {
+    font-size: 1rem;
+  }
+
+  .shield-unit strong,
+  .shield-unit b {
+    font-size: 0.58rem;
+  }
+
+  .shield-unit small,
+  .shelter-status__text small {
+    display: none;
+  }
+
+  .shelter-grid {
+    gap: 5px;
+  }
+
+  .shelter-zone__place {
+    gap: 1px;
+    padding: 5px 6px;
+  }
+
+  .shelter-zone__place > span {
+    font-size: 0.5rem;
+  }
+
+  .shelter-zone__place strong {
+    font-size: 0.9rem;
+  }
+
+  .shelter-zone__place small {
+    font-size: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .shelter-zone__clear {
+    font-size: 0.52rem;
+    min-height: 22px;
+  }
+
+  .shelter-status {
+    gap: 8px;
+    padding: 5px 8px;
+  }
+
+  .shelter-status__text strong {
+    font-size: 0.62rem;
+  }
+
+  .plants {
+    bottom: 42px;
+  }
+
+  .oscilloscope {
+    height: 78px;
+  }
+
+  .science-note,
+  .reactor-equation {
+    display: none;
+  }
+
+  .slider__limits {
+    display: none;
+  }
+
+  .o2-tank > div {
+    height: 92px;
+  }
+
+  .reactor-controls {
+    gap: 6px;
+  }
+
+  .growth-chamber__floor {
+    height: 42px;
+  }
+
+  .reactor-core {
+    min-height: 84px;
+    padding: 8px;
+  }
+
+  .reactor-core__chamber {
+    height: 64px;
+  }
+
+  .reactor-core__glow {
+    height: 40px;
+    width: 40px;
+  }
+
+  .reactor-core__bed {
+    height: 10px;
+  }
+
+  .slider {
+    gap: 4px;
+  }
+
+  .slider__track {
+    height: 16px;
+  }
+
+  .slider__head span,
+  .slider__head strong {
+    font-size: 0.62rem;
+  }
+
+  .slider__limits {
+    font-size: 0.56rem;
+  }
+
+  .valve-board {
+    gap: 6px;
+    padding-top: 8px;
+  }
+
+  .valve-warning {
+    display: none;
+  }
+
+  .valves {
+    gap: 6px;
+  }
+
+  .valve {
+    gap: 2px;
+    padding: 6px 4px;
+  }
+
+  .valve > i {
+    height: 18px;
+    margin-bottom: 1px;
+    width: 18px;
+  }
+
+  .valve > i::after {
+    left: 2px;
+    right: 2px;
+    top: 6px;
+  }
+
+  .valve strong {
+    font-size: var(--text-2xs);
+  }
+
+  .valve-progress span {
+    font-size: 0.6rem;
+    padding: 2px 4px;
+  }
+
+  .bed-grid {
+    gap: 6px;
+  }
+
+  .scrubber-bed {
+    gap: 3px;
+    padding: 5px 6px;
+  }
+
+  .scrubber-bed__id {
+    font-size: 0.9rem;
+  }
+
+  .scrubber-bed__readouts {
+    gap: 2px;
+  }
+
+  .scrubber-bed__readouts > span {
+    font-size: 0.58rem;
+    gap: 4px;
+  }
+
+  .scrubber-bed__readouts strong {
+    font-size: 0.62rem;
+  }
+
+  .scrubber-bed__readouts > span:nth-child(3),
+  .scrubber-bed small {
+    display: none;
+  }
+
+  .valve-board > .eyebrow {
+    display: none;
+  }
+
+  .valve {
+    padding: 4px;
+  }
+
+  .valve > i {
+    height: 14px;
+    margin-bottom: 0;
+    width: 14px;
+  }
+
+  .valve > i::after {
+    left: 1px;
+    right: 1px;
+    top: 4px;
+  }
+
+  .valve strong {
+    font-size: 0.58rem;
+    line-height: 1.12;
+  }
+
+  .valve small {
+    font-size: 0.54rem;
+  }
+
+  .valve-progress span {
+    display: none;
+  }
+
+  .valve-progress span.is-next {
+    display: inline-flex;
+  }
+
+  .valve-progress span.is-next::before {
+    content: 'Step: ';
+  }
+
+  .coolant-panel {
+    padding: 10px;
+  }
+
+  .coolant-body {
+    gap: 8px;
+  }
+
+  .coolant-loop {
+    width: min(100%, 100px);
+  }
+
+  .coolant-hint {
+    font-size: var(--text-2xs);
+  }
+
+  .eclss-gauges {
+    gap: 6px;
+  }
+
+  .readout-row,
+  .bin-stats,
+  .seal-readouts,
+  .reactor-gauges {
+    gap: 6px;
   }
 }

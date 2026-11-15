@@ -1,8 +1,76 @@
 .screen {
   position: relative;
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
   width: 100%;
   overflow: hidden;
+}
+
+.screen ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.screen ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.screen ::-webkit-scrollbar-thumb {
+  background: rgba(130, 230, 223, 0.22);
+  border-radius: 8px;
+}
+
+.screen * {
+  scrollbar-color: rgba(130, 230, 223, 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.scroll-pane {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.rotate-gate {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(130, 230, 223, 0.12), transparent 42%),
+    rgba(3, 5, 9, 0.94);
+  display: grid;
+  inset: 0;
+  padding: 24px;
+  place-items: center;
+  position: fixed;
+  z-index: 200;
+}
+
+.rotate-gate__card {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  max-width: 360px;
+  padding: 26px 22px;
+  text-align: center;
+}
+
+.rotate-gate__icon {
+  color: var(--cyan);
+  font-size: 3rem;
+  line-height: 1;
+  transform: rotate(-90deg);
+}
+
+.rotate-gate__card h2 {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.rotate-gate__card p {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0 0 6px;
 }
 
 .screen--center {

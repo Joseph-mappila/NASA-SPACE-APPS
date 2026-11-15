@@ -42,6 +42,8 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
   const [vacuumOpen, setVacuumOpen] = useState(false)
   const [step, setStep] = useState<Step>(0)
   const [bubbles, setBubbles] = useState(BUBBLES)
+  const [popping, setPopping] = useState<number[]>([])
+  const popTimers = useRef<number[]>([])
   const [errors, setErrors] = useState(0)
   const [message, setMessage] = useState(
     'Inspect the three amine beds. Find the one holding moisture.',
@@ -51,6 +53,14 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
   const glitch = state.flags.brownout
   const faultyBed = beds[faulty]
   const bubblesLeft = bubbles.length
+  const loopReady = step >= 7
+
+  useEffect(
+    () => () => {
+      for (const timer of popTimers.current) window.clearTimeout(timer)
+    },
+    [],
+  )
 
   useEffect(() => {
     if (step < 7 || bubbles.length > 0 || solved.current) return
@@ -151,13 +161,24 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
     )
   }
 
+  const finishPop = (id: number) => {
+    setBubbles((current) => current.filter((bubble) => bubble.id !== id))
+    setPopping((current) => current.filter((pid) => pid !== id))
+  }
+
   const bleed = (id: number) => {
     if (step < 7) {
-      setMessage('Finish the valve and ORU sequence before bleeding the coolant loop.')
+      setMessage(
+        'Coolant loop locked. Finish the valve and ORU sequence before bleeding it.',
+      )
       return
     }
+    if (popping.includes(id)) return
     audio.hiss()
-    setBubbles((current) => current.filter((bubble) => bubble.id !== id))
+    setPopping((current) =>
+      current.includes(id) ? current : [...current, id],
+    )
+    popTimers.current.push(window.setTimeout(() => finishPop(id), 360))
   }
 
   const stepLabels = [
@@ -282,42 +303,63 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
         <div className="coolant-panel panel">
           <div className="panel-title">
             <span className="eyebrow">Coolant loop · bleed</span>
-            <span className="mono">{bubblesLeft}/6 bubbles</span>
+            <span className={loopReady ? 'status status--good' : 'status status--warn'}>
+              {loopReady ? 'Loop ready' : 'Locked'}
+            </span>
           </div>
 
-          <div className="coolant-loop">
-            <span className="coolant-loop__pipe" />
-            {bubbles.map((bubble) => (
-              <button
-                aria-label="Bleed coolant bubble"
-                className="coolant-bubble"
-                key={bubble.id}
-                onClick={() => bleed(bubble.id)}
-                style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
-                type="button"
-              />
-            ))}
-            <span className="coolant-loop__flow" />
-          </div>
+          <div className="coolant-body">
+            <div className={`coolant-loop ${loopReady ? 'is-ready' : 'is-locked'}`}>
+              <span className="coolant-loop__pipe" />
+              {bubbles.map((bubble) => (
+                <button
+                  aria-disabled={!loopReady}
+                  aria-label={
+                    loopReady
+                      ? 'Pop coolant bubble'
+                      : 'Coolant loop locked until the valve sequence is complete'
+                  }
+                  className={`coolant-bubble ${popping.includes(bubble.id) ? 'is-popping' : ''}`}
+                  key={bubble.id}
+                  onClick={() => bleed(bubble.id)}
+                  onAnimationEnd={() => finishPop(bubble.id)}
+                  style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
+                  type="button"
+                />
+              ))}
+              <span className="coolant-loop__flow" />
+              <span className="coolant-loop__state" aria-hidden="true">
+                {loopReady ? 'READY' : 'LOCKED'}
+              </span>
+            </div>
 
-          <div className="eclss-gauges">
-            <Gauge
-              danger={step < 7}
-              label="Cabin CO₂"
-              max={6}
-              min={0}
-              tone={step >= 7 ? 'green' : 'amber'}
-              unit=" mmHg"
-              value={step >= 7 ? 1.8 : 3.4}
-            />
-            <Gauge
-              label="Loop temp"
-              max={40}
-              min={0}
-              tone="cyan"
-              unit=" °C"
-              value={step >= 4 ? 22 : 28}
-            />
+            <div className="coolant-side">
+              <p className={`coolant-hint ${loopReady ? 'is-ready' : ''}`}>
+                {loopReady
+                  ? 'Loop unlocked — pop all six bubbles to purge the line.'
+                  : 'Complete the valve sequence to unlock the coolant loop.'}
+              </p>
+
+              <div className="eclss-gauges">
+                <Gauge
+                  danger={step < 7}
+                  label="Cabin CO₂"
+                  max={6}
+                  min={0}
+                  tone={step >= 7 ? 'green' : 'amber'}
+                  unit=" mmHg"
+                  value={step >= 7 ? 1.8 : 3.4}
+                />
+                <Gauge
+                  label="Loop temp"
+                  max={40}
+                  min={0}
+                  tone="cyan"
+                  unit=" °C"
+                  value={step >= 4 ? 22 : 28}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="readout-row">
@@ -338,14 +380,6 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
               <strong>{bubblesLeft}/6</strong>
             </div>
           </div>
-
-          {step >= 7 ? (
-            <p className="console-message is-good">Valve sequence complete. Clear the bubbles.</p>
-          ) : (
-            <p className="console-message">
-              The coolant loop is locked until the cabin is back in the atmospheric loop.
-            </p>
-          )}
         </div>
       </div>
     </div>

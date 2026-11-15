@@ -8,8 +8,9 @@
     linear-gradient(150deg, #05080d, #0a121a 58%, #05080d);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding: 26px 24px 40px;
+  height: 100dvh;
+  min-height: 0;
+  padding: clamp(12px, 2.4vh, 26px) 24px clamp(12px, 3vh, 40px);
 }
 
 .minigame-screen__glow {
@@ -38,7 +39,11 @@
 }
 
 .minigame-screen__inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   max-width: 1080px;
+  min-height: 0;
   position: relative;
   width: 100%;
   z-index: 3;
@@ -67,8 +72,12 @@
 
 .minigame-panel {
   display: grid;
-  gap: 20px;
-  padding: 26px 30px;
+  flex: 1;
+  gap: clamp(12px, 2.4vh, 20px);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(14px, 2.8vh, 26px) clamp(16px, 2.6vw, 30px);
 }
 
 .minigame-heading {

@@ -549,24 +549,25 @@ export function ShipScene({ active, progressRef, index }: SceneProps) {
       <g ref={ship}>
         <path d="M70 610h500l114 52-96 46H150Z" fill="url(#ship-hull)" />
         <path d="M120 560h420v56H120Z" fill="#d6d4c8" />
-        <path d="M150 500h250v62H150Z" fill="#bdbdb3" />
-        <path d="M190 440h160v62H190Z" fill="#e8e5d8" />
+        <path d="M150 500h255v62H150Z" fill="#bdbdb3" />
+        <path d="M185 440h220v62H185Z" fill="#e8e5d8" />
         <path d="M120 536h420v14H120Z" fill="#2d3a3e" />
         <g fill="#7a2d24">
-          <path d="M220 350h54v94h-54Z" />
-          <path d="M340 370h48v74h-48Z" />
-          <path d="M420 390h34v54h-34Z" />
+          <path d="M212 334h52v108h-52Z" />
+          <path d="M290 356h46v86h-46Z" />
+          <path d="M356 378h38v64h-38Z" />
         </g>
         <g fill="#2b2421">
-          <path d="M222 340h50v18h-50Z" />
-          <path d="M342 360h44v16h-44Z" />
-          <path d="M421 382h32v14h-32Z" />
+          <path d="M214 324h48v14h-48Z" />
+          <path d="M292 346h42v12h-42Z" />
+          <path d="M358 368h34v12h-34Z" />
         </g>
         <g fill="#23444f">
           <rect height="14" width="24" x="208" y="456" />
           <rect height="14" width="24" x="240" y="456" />
           <rect height="14" width="24" x="272" y="456" />
           <rect height="14" width="24" x="304" y="456" />
+          <rect height="14" width="24" x="336" y="456" />
         </g>
         <g fill="#38474a">
           <circle cx="220" cy="580" r="8" />
@@ -576,6 +577,9 @@ export function ShipScene({ active, progressRef, index }: SceneProps) {
           <circle cx="420" cy="580" r="8" />
           <circle cx="470" cy="580" r="8" />
         </g>
+        <path d="M470 560V466" stroke="#9aa6a4" strokeWidth="5" />
+        <path d="M450 482h40" stroke="#9aa6a4" strokeWidth="4" />
+        <circle cx="470" cy="462" fill="#f3b15d" r="4" />
       </g>
       <path d="M0 850c180-30 300 20 480 0s320-20 500 0 260 18 420-6 220 0 200 6v50H0Z" fill="#061015" />
     </SceneShell>

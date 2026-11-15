@@ -109,6 +109,48 @@ export function MissionRunner({
   const urgent = remaining <= 15_000
   const missionProps = { state, onSolve: solve, onFail: fail }
 
+  const stageRef = useRef<HTMLDivElement>(null)
+  const fitRef = useRef<HTMLDivElement>(null)
+
+  // Guarantee the console never spills out of its stage. The CSS compaction
+  // above keeps the scale at (or very near) 1; this only shrinks the workspace
+  // when a dense mission is opened on a short screen such as a landscape phone.
+  useEffect(() => {
+    const stage = stageRef.current
+    const content = fitRef.current
+    if (!stage || !content) return
+    let frame = 0
+    const update = () => {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        const available = stage.clientHeight
+        const natural = content.scrollHeight
+        if (!available || !natural) return
+        const scale = Math.min(1, available / natural)
+        if (scale > 0.995) {
+          content.style.transform = ''
+          stage.style.overflowY = ''
+          return
+        }
+        const offset = Math.max(0, (available - natural * scale) / 2)
+        content.style.transform = `translateY(${offset}px) scale(${scale})`
+        stage.style.overflowY = 'hidden'
+      })
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(stage)
+    observer.observe(content)
+    window.addEventListener('resize', update)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      observer.disconnect()
+      window.removeEventListener('resize', update)
+      content.style.transform = ''
+      stage.style.overflowY = ''
+    }
+  }, [mission.id])
+
   return (
     <main className={`screen mission-screen ${urgent ? 'is-urgent' : ''}`}>
       <div className="mission-screen__grid" />
@@ -145,15 +187,17 @@ export function MissionRunner({
         <TelemetryHud compact state={state} />
       </div>
 
-      <div className="mission-screen__stage">
-        {mission.id === 1 ? <Mission01 {...missionProps} /> : null}
-        {mission.id === 2 ? <Mission02 {...missionProps} /> : null}
-        {mission.id === 3 ? <Mission03 {...missionProps} /> : null}
-        {mission.id === 4 ? <Mission04 {...missionProps} /> : null}
-        {mission.id === 5 ? <Mission05 {...missionProps} /> : null}
-        {mission.id === 6 ? <Mission06 {...missionProps} /> : null}
-        {mission.id === 7 ? <Mission07 {...missionProps} /> : null}
-        {mission.id === 8 ? <Mission08 {...missionProps} /> : null}
+      <div className="mission-screen__stage" ref={stageRef}>
+        <div className="mission-screen__fit" ref={fitRef}>
+          {mission.id === 1 ? <Mission01 {...missionProps} /> : null}
+          {mission.id === 2 ? <Mission02 {...missionProps} /> : null}
+          {mission.id === 3 ? <Mission03 {...missionProps} /> : null}
+          {mission.id === 4 ? <Mission04 {...missionProps} /> : null}
+          {mission.id === 5 ? <Mission05 {...missionProps} /> : null}
+          {mission.id === 6 ? <Mission06 {...missionProps} /> : null}
+          {mission.id === 7 ? <Mission07 {...missionProps} /> : null}
+          {mission.id === 8 ? <Mission08 {...missionProps} /> : null}
+        </div>
       </div>
 
       <footer className="mission-screen__footer">

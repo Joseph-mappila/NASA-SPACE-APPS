@@ -8,7 +8,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'EDS-01',
     title: 'Solar Panel Dust Shield',
     subtitle: 'Electrodynamic Dust Shield',
-    limitMs: 75_000,
+    limitMs: 40_000,
     objective: 'Tune the electric wave and clear the dust from Block A.',
     brief:
       'Lunar dust is sharp, sticky, and charged with electricity. It is blocking sunlight from the solar panels. The dust shield uses a moving electric wave to make the dust hop off without touching the glass.',
@@ -33,7 +33,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'TCPS-02',
     title: 'Trash to Shield Tiles',
     subtitle: 'Trash Compaction and Processing System',
-    limitMs: 95_000,
+    limitMs: 25_000,
     objective: 'Turn today’s trash into water and six radiation-shield tiles.',
     brief:
       'We cannot throw trash outside on the Moon. The TCPS heats and squeezes it. That drives out water and presses the dry waste into hard tiles the crew can use for radiation shielding.',
@@ -58,7 +58,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'AIR-03',
     title: 'Airlock Leak Hunt',
     subtitle: 'Pressure-Decay Seal Check',
-    limitMs: 80_000,
+    limitMs: 40_000,
     objective: 'Find the leaking hatch and hold cabin pressure at 8.2 psia.',
     brief:
       'A tiny grain of Moon dust can get stuck in an airlock seal. Air then leaks out into space. Run a pressure test, find the bad hatch, and fix the rubber O-ring.',
@@ -83,7 +83,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'SPE-04',
     title: 'Solar Storm Shelter',
     subtitle: 'Radiation Shielding and Power Load',
-    limitMs: 105_000,
+    limitMs: 70_000,
     objective: 'Shield the crew below 250 mSv and keep power under 4.5 kW.',
     brief:
       'A solar particle event is hitting the Moon. Fast protons can hurt the crew. Water, food, and waste tiles are full of hydrogen, which slows the protons down.',
@@ -108,7 +108,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'ECLSS-05',
     title: 'CO₂ Scrubber Rescue',
     subtitle: 'Rapid Cycling Amine Beds',
-    limitMs: 95_000,
+    limitMs: 40_000,
     objective: 'Find the wet scrubber bed and bring CO₂ below 3.0 mmHg.',
     brief:
       'The air has too much carbon dioxide. One of the three scrubber beds is full of water and cannot trap CO₂. Open the valves in the right order so cabin air does not escape into space.',
@@ -134,7 +134,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'BLiSS-06',
     title: 'Greenhouse Rescue',
     subtitle: 'Plant Chamber Balance',
-    limitMs: 100_000,
+    limitMs: 30_000,
     objective: 'Balance the greenhouse so the plants make oxygen again.',
     brief:
       'The plants are wilting. Their air, food, and pH are out of balance. Fix all three and the greenhouse will help clean the cabin air while the oxygen factory warms up.',
@@ -159,7 +159,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'ISRU-07',
     title: 'Oxygen From Moon Dust',
     subtitle: 'ROxygen Hydrogen Reduction',
-    limitMs: 110_000,
+    limitMs: 50_000,
     objective: 'Clear the hopper and make oxygen from ilmenite at 950 °C.',
     brief:
       'The outpost needs a big refill of oxygen. This machine pulls oxygen out of Moon dirt. Clear the blocked feed, heat the reactor, and balance the hydrogen loop.',
@@ -184,7 +184,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     code: 'LUNA-08',
     title: 'Phone Home',
     subtitle: 'LunaNet Antenna and Data Queue',
-    limitMs: 85_000,
+    limitMs: 50_000,
     objective: 'Point the dish, lock the signal, and send life-support data first.',
     brief:
       'Houston needs our life-support data before the lunar night. The dish is off target. Aim it, lock the signal, then put the most important data first in the queue.',

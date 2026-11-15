@@ -6,7 +6,8 @@ keep fifteen astronauts alive through a solar storm.
 
 Built with React 19, TypeScript, Vite, GSAP ScrollTrigger, and the Web Audio API.
 No game engine and no backend. The only external media are the three supplied
-illustrations and the looping ambient music track.
+illustrations, the looping ambient music track, and the optional live NASA
+space-weather and Earth-photo feeds.
 
 ## Run it
 
@@ -54,27 +55,30 @@ Every mission runs on its own clock. Reaching zero is a hard failure, there is
 no retry, and the result carries forward into later missions. Grades are S/A/B/F
 with a local best time per mission.
 
+A failed CO₂ scrubber cuts the clocks of missions 6–8 by 25%, and a storm
+brownout cuts mission 5 by 10%.
+
 ## Missions
 
-| # | Mission | Real science |
-| --- | --- | --- |
-| 1 | Block A Solar Array | Electrodynamic Dust Shield, ITO electrodes, dielectrophoresis |
-| 2 | Habitat Waste Processing | Trash Compaction and Processing System, water recovery, polyethylene tiles |
-| 3 | Exploration Airlock | Differential pressure decay, 8.2 psia boundary, O-ring regolith |
-| 4 | Solar Particle Event | Hydrogen-rich shielding, 250 mSv limit, load shedding |
-| 5 | Life Support Revitalization | Rapid Cycling Amine beds, valve sequencing, coolant bleed |
-| 6 | Bioregenerative Plant Module | CO₂ enrichment, nitrate/potassium/magnesium, pH 5.5–6.0 |
-| 7 | Surface ISRU Plant | ROxygen hydrogen reduction of ilmenite near 950 °C |
-| 8 | LunaNet Relay Dish | Ka-band pointing, 0.2° error, Delay-Tolerant Networking priority |
+| # | Mission | Real science | Clock |
+| --- | --- | --- | --- |
+| 1 | Block A Solar Array | Electrodynamic Dust Shield, ITO electrodes, dielectrophoresis | 40 s |
+| 2 | Habitat Waste Processing | Trash Compaction and Processing System, water recovery, polyethylene tiles | 25 s |
+| 3 | Exploration Airlock | Differential pressure decay, 8.2 psia boundary, O-ring regolith | 40 s |
+| 4 | Solar Particle Event | Hydrogen-rich shielding, 250 mSv limit, load shedding | 1:10 |
+| 5 | Life Support Revitalization | Rapid Cycling Amine beds, valve sequencing, coolant bleed | 40 s |
+| 6 | Bioregenerative Plant Module | CO₂ enrichment, nitrate/potassium/magnesium, pH 5.5–6.0 | 30 s |
+| 7 | Surface ISRU Plant | ROxygen hydrogen reduction of ilmenite near 950 °C | 50 s |
+| 8 | LunaNet Relay Dish | Ka-band pointing, 0.2° error, Delay-Tolerant Networking priority | 50 s |
 
 ## Structure
 
 ```
 src/
   App.tsx                 phase routing + optional training mode
-  api/nasa.ts             NASA DONKI client with DEMO_KEY fallback
+  api/nasa.ts             NASA DONKI + EPIC clients with DEMO_KEY fallback
   audio/engine.ts         ambient music loop + procedural Web Audio effects
-  components/             HUD, live space-weather panel
+  components/             HUD, live space-weather panel, live Earth photo
   game/                   types, content, reducer, saves, formatting
   intro/                  GSAP scroll stage, SVG scenes, canvas effects
   minigames/              three standalone training games and catalog

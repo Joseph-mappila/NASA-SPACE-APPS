@@ -86,13 +86,6 @@ export function Ending({ state, onRestart }: EndingProps) {
             LunaNet. NASA does not operate a crewed lunar outpost, and this project
             does not imply NASA endorsement.
           </p>
-          <p>
-            Sound mixes a looping ambient track, short scene clips, and effects
-            synthesized in the browser with the Web Audio API. The three character
-            and environment illustrations were supplied with the project.
-            Photographs and data in the science debrief above come from NASA’s public
-            archives and are credited to their source. No NASA insignia is used.
-          </p>
         </details>
       </section>
     </main>

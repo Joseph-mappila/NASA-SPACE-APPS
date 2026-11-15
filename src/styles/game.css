@@ -1712,6 +1712,17 @@
   padding: clamp(12px, 3vh, 40px) 20px;
 }
 
+/* Keep the whole result reachable on short screens. The card can be taller
+   than the viewport on a phone, so this wrapper is the single scroll pane. */
+.result-screen__layout {
+  display: grid;
+  justify-items: center;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  width: 100%;
+}
+
 .result-screen__glow {
   background: radial-gradient(circle at 50% 42%, rgba(127, 224, 166, 0.14), transparent 46%);
   inset: 0;
@@ -1723,10 +1734,7 @@
 }
 
 .result-card {
-  max-height: 100%;
   max-width: 900px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
   padding: clamp(18px, 3.2vh, 34px) clamp(20px, 3vw, 38px) clamp(20px, 3.6vh, 38px);
   position: relative;
   width: 100%;

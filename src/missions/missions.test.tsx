@@ -20,6 +20,7 @@ const state: GameState = {
 
 afterEach(() => {
   cleanup()
+  vi.restoreAllMocks()
   vi.useRealTimers()
 })
 
@@ -39,6 +40,23 @@ describe('mission components', () => {
       <Mission02 onFail={onFail} onSolve={onSolve} state={state} />,
     )
     expect(container.querySelectorAll('.waste-card')).toHaveLength(6)
+  })
+
+  it('reorders the waste bag between runs', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0)
+    const first = render(
+      <Mission02 onFail={onFail} onSolve={onSolve} state={state} />,
+    )
+    const firstLabel = first.container.querySelector('.waste-card strong')?.textContent
+    first.unmount()
+
+    random.mockReturnValue(0.9999)
+    const second = render(
+      <Mission02 onFail={onFail} onSolve={onSolve} state={state} />,
+    )
+    const secondLabel = second.container.querySelector('.waste-card strong')?.textContent
+
+    expect(firstLabel).not.toBe(secondLabel)
   })
 
   it('renders mission 3', () => {
@@ -84,5 +102,26 @@ describe('mission components', () => {
     expect(container.querySelectorAll('.packet')).toHaveLength(4)
     expect(container.querySelector('.sky-plot')).toBeInTheDocument()
     expect(container.querySelectorAll('.slider')).toHaveLength(2)
+  })
+
+  it('places the mission 8 satellite in a fresh part of the sky', () => {
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0)
+    const first = render(
+      <Mission08 onFail={onFail} onSolve={onSolve} state={state} />,
+    )
+    const firstTarget = first.container.querySelector<HTMLElement>('.sky-plot__target')
+    const firstLeft = firstTarget?.style.left
+    first.unmount()
+
+    random.mockReturnValue(0.9999)
+    const second = render(
+      <Mission08 onFail={onFail} onSolve={onSolve} state={state} />,
+    )
+    const secondTarget = second.container.querySelector<HTMLElement>('.sky-plot__target')
+    const secondLeft = secondTarget?.style.left ?? ''
+
+    expect(firstLeft).toBe('50%')
+    expect(Number.parseFloat(secondLeft)).toBeGreaterThan(80)
+    expect(secondLeft).not.toBe(firstLeft)
   })
 })

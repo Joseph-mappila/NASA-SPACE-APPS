@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { audio } from '../audio/engine'
+import { shuffled } from '../game/random'
 import { Gauge, Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -12,18 +13,16 @@ const QUEUE = [
 
 const QUEUE_ORDER = ['eclss', 'crew', 'nav', 'science']
 
-function shuffled<T>(items: T[]): T[] {
-  return [...items].sort(() => Math.random() - 0.5)
-}
-
 function angleGap(a: number, b: number): number {
   return Math.abs(((a - b + 540) % 360) - 180)
 }
 
 export function Mission08({ onSolve, onFail }: MissionComponentProps) {
+  // Pick a fresh patch of sky on every run, spanning most of the plot while
+  // staying away from the edges and from the starting dish position.
   const [target] = useState(() => ({
-    azimuth: 196 + Math.random() * 38,
-    elevation: 28 + Math.random() * 22,
+    azimuth: 180 + Math.random() * 140,
+    elevation: 28 + Math.random() * 42,
   }))
   const [azimuth, setAzimuth] = useState(140)
   const [elevation, setElevation] = useState(12)

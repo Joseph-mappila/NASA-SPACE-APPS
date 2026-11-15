@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { audio } from '../audio/engine'
+import { shuffled } from '../game/random'
 import { HoldButton, Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -23,7 +24,9 @@ const WASTE_ITEMS: WasteItem[] = [
 const UNSAFE_TOTAL = WASTE_ITEMS.filter((item) => item.unsafe).length
 
 export function Mission02({ onSolve, onFail }: MissionComponentProps) {
-  const [items, setItems] = useState(WASTE_ITEMS)
+  // Reorder the bag on every run, so the unsafe items are not always in the
+  // same two slots. The item types and scoring stay the same.
+  const [items, setItems] = useState(() => shuffled(WASTE_ITEMS))
   const [contamination, setContamination] = useState(0)
   const [feedback, setFeedback] = useState(
     'Open the bag. Remove the two items that could damage the compactor.',

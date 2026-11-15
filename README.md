@@ -1,6 +1,7 @@
 # LUNA — Outpost 57
 
 A browser game about running a Moon outpost through a solar storm.
+Play now at: <https://github.com/Joseph-mappila/NASA-SPACE-APPS>
 
 Outpost 57 is a fictional NASA outpost on the Moon. Fifteen astronauts depend on
 it for power, air, water, food, and a radio link home. The player commands the
@@ -100,24 +101,6 @@ npm test          # game logic, missions, minigames, and NASA data tests
 npm run typecheck
 ```
 
-### Publish it
-
-The repository includes `.github/workflows/deploy.yml`, which builds and
-publishes the game on every push to `main`.
-
-1. On GitHub, open **Settings → Pages → Build and deployment** and set **Source**
-   to **GitHub Actions**, not **Deploy from a branch**.
-2. Push to `main`, or run **Deploy to GitHub Pages** from the Actions tab.
-3. The game is published at `https://<owner>.github.io/<repo>/`.
-
-If the published page is blank and the browser console asks for `/src/main.tsx`,
-Pages is still set to **Deploy from a branch**. That mode publishes the source
-`index.html` instead of the built bundle. Switch **Source** to **GitHub Actions**
-and run the workflow again.
-
-The build detects the repository name and sets Vite's base path automatically,
-so the site works from a project sub-path.
-
 ## Missions in order
 
 | # | Day and time | Mission | What the player does | Real science | Clock |
@@ -215,9 +198,7 @@ variable.
 
 ## Credits
 
-Made by CurioCET. Character and environment illustrations were supplied with the
-project. Audio combines a supplied ambient track, short supplied sound clips, and
-effects synthesized in the browser. NASA photography and data are credited beside
+Made by CurioCET. NASA photography and data are credited beside
 each item, and no NASA insignia is used.
 
 LUNA is a fictional outpost. NASA does not operate a crewed lunar outpost, and

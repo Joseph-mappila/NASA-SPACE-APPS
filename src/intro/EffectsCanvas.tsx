@@ -119,7 +119,7 @@ const EffectsCanvas = forwardRef<EffectsHandle, EffectsCanvasProps>(
       sparkBurst() {
         const { scale, offsetX, offsetY } = projection.current
         const originX = offsetX + 944 * scale
-        const originY = offsetY + 566 * scale
+        const originY = offsetY + 578 * scale
         for (let index = 0; index < 44; index += 1) {
           const angle = rand(-Math.PI * 0.98, -Math.PI * 0.02)
           const speed = rand(130, 580) * scale
@@ -531,27 +531,44 @@ const EffectsCanvas = forwardRef<EffectsHandle, EffectsCanvasProps>(
 
         if (scene === 5) {
           const shipX = -800 + local * 2500
-          const stern = 70 + shipX
-          const bow = 660 + shipX
-          if (X(stern) > -160 && X(stern) < width + 160) {
+          const bob = Math.sin(local * Math.PI * 6) * 7
+          const tilt = (Math.sin(local * Math.PI * 4) * 1.2 * Math.PI) / 180
+          const cos = Math.cos(tilt)
+          const sin = Math.sin(tilt)
+          const shipPoint = (pointX: number, pointY: number) => {
+            const dx = pointX - 300
+            const dy = pointY - 600
+            return {
+              x: shipX + 300 + dx * cos - dy * sin,
+              y: bob + 600 + dx * sin + dy * cos,
+            }
+          }
+          const stern = shipPoint(70, 718)
+          const bow = shipPoint(660, 704)
+          const funnel = shipPoint(247, 344)
+          const secondFunnel = shipPoint(364, 364)
+          const onScreen = (point: Point) =>
+            X(point.x) > -180 && X(point.x) < width + 180
+
+          if (onScreen(stern)) {
             for (let index = 0; index < 2; index += 1) {
               addParticle({
-                x: X(stern + rand(-20, 30)),
-                y: Y(706 + rand(-8, 10)),
+                x: X(stern.x + rand(-20, 30)),
+                y: Y(stern.y + rand(-8, 10)),
                 vx: rand(-120, -40) * scale,
-                vy: rand(-36, 10) * scale,
+                vy: rand(-30, 12) * scale,
                 life: rand(0.8, 1.9),
                 maxLife: 1.9,
-                size: rand(6, 16) * scale,
-                color: 'rgba(214, 236, 236, 0.26)',
+                size: rand(5, 14) * scale,
+                color: 'rgba(196, 226, 232, 0.22)',
                 drag: 0.99,
-                gravity: 16 * scale,
+                gravity: 34 * scale,
                 additive: false,
                 shrink: 0.1,
               })
               addParticle({
-                x: X(bow + rand(-10, 24)),
-                y: Y(700 + rand(-6, 8)),
+                x: X(bow.x + rand(-10, 24)),
+                y: Y(bow.y + rand(-6, 8)),
                 vx: rand(10, 70) * scale,
                 vy: rand(-90, -24) * scale,
                 life: rand(0.3, 0.7),
@@ -565,18 +582,53 @@ const EffectsCanvas = forwardRef<EffectsHandle, EffectsCanvasProps>(
               })
             }
           }
+
+          // Funnel smoke has to leave the stack tops, not the waterline.
+          const stack = Math.random() > 0.45 ? funnel : secondFunnel
+          if (onScreen(stack)) {
+            addParticle({
+              x: X(stack.x + rand(-7, 7)),
+              y: Y(stack.y + rand(-7, 3)),
+              vx: rand(-46, -14) * scale,
+              vy: rand(-74, -34) * scale,
+              life: rand(1.8, 4.2),
+              maxLife: 4.2,
+              size: rand(16, 40) * scale,
+              color: `rgba(${Math.round(rand(150, 186))}, ${Math.round(
+                rand(152, 190),
+              )}, ${Math.round(rand(148, 182))}, ${rand(0.1, 0.19).toFixed(2)})`,
+              drag: 0.996,
+              gravity: -8 * scale,
+              additive: false,
+              shrink: 0.18,
+            })
+            addParticle({
+              x: X(stack.x + rand(-4, 4)),
+              y: Y(stack.y + rand(-2, 8)),
+              vx: rand(-24, -6) * scale,
+              vy: rand(-48, -20) * scale,
+              life: rand(0.9, 1.8),
+              maxLife: 1.8,
+              size: rand(7, 18) * scale,
+              color: 'rgba(206, 210, 204, 0.16)',
+              drag: 0.994,
+              gravity: -5 * scale,
+              additive: false,
+              shrink: 0.25,
+            })
+          }
           drawParticles(dt, scale)
         }
 
         if (scene === 6) {
           const planeX = -900 + local * 2500
           const planeY = 40 + Math.sin(local * Math.PI) * 70 + local * 20
-          const tail = 126 + planeX
+          const tail = 158 + planeX
           if (X(tail) > -100 && X(tail) < width + 100) {
             for (let index = 0; index < 2; index += 1) {
               addParticle({
                 x: X(tail + rand(-10, 16)),
-                y: Y(430 + planeY + rand(-8, 8)),
+                y: Y(440 + planeY + rand(-8, 8)),
                 vx: rand(-86, -32) * scale,
                 vy: rand(-8, 8) * scale,
                 life: rand(1.2, 2.6),

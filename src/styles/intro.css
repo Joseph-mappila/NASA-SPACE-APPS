@@ -151,10 +151,10 @@
 
 .intro__caption {
   animation: rise 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  border-left: 1px solid rgba(255, 199, 105, 0.55);
+  border-left: 2px solid rgba(255, 199, 105, 0.6);
   left: 4vw;
-  max-width: min(560px, 46vw);
-  padding: 4px 0 4px 24px;
+  max-width: min(760px, 54vw);
+  padding: 4px 0 4px 28px;
   pointer-events: none;
   position: absolute;
   top: calc(6vh + 58px);
@@ -162,45 +162,45 @@
 }
 
 .intro__caption::before {
-  background: radial-gradient(75% 90% at 6% 45%, rgba(2, 4, 7, 0.84) 0%, rgba(2, 4, 7, 0.55) 45%, rgba(2, 4, 7, 0) 78%);
+  background: radial-gradient(75% 90% at 6% 45%, rgba(2, 4, 7, 0.9) 0%, rgba(2, 4, 7, 0.62) 45%, rgba(2, 4, 7, 0) 78%);
   content: '';
-  inset: -70px -220px -70px -6vw;
+  inset: -80px -220px -80px -6vw;
   position: absolute;
   z-index: -1;
 }
 
 .intro__caption p {
-  color: #b9b5a8;
+  color: #d6d2c4;
   font-family: var(--body);
-  font-size: clamp(0.82rem, 1.02vw, 0.98rem);
-  line-height: 1.62;
+  font-size: clamp(1.05rem, 1.55vw, 1.5rem);
+  line-height: 1.5;
   margin: 0;
-  max-width: 56ch;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.92);
+  max-width: 44ch;
+  text-shadow: 0 3px 22px rgba(0, 0, 0, 0.95);
 }
 
 .intro__caption p:first-child {
-  color: #f1eee4;
-  font-size: clamp(0.92rem, 1.18vw, 1.1rem);
-  line-height: 1.55;
+  color: #fffdf4;
+  font-size: clamp(1.35rem, 2.15vw, 2rem);
+  line-height: 1.38;
 }
 
 .intro__caption p + p {
-  margin-top: 0.7em;
+  margin-top: 0.8em;
 }
 
 .intro__caption--short {
-  border-left-color: rgba(130, 230, 223, 0.65);
-  max-width: min(680px, 60vw);
+  border-left-color: rgba(130, 230, 223, 0.7);
+  max-width: min(920px, 66vw);
 }
 
 .intro__caption--short p {
   color: #fff;
   font-family: var(--display);
-  font-size: clamp(1.8rem, 4.4vw, 3.6rem);
+  font-size: clamp(2.4rem, 6vw, 5rem);
   font-weight: 400;
   letter-spacing: 0.01em;
-  line-height: 1;
+  line-height: 1.02;
   text-transform: none;
 }
 
@@ -316,10 +316,10 @@
 .intro__closing {
   color: var(--paper-dim);
   font-family: var(--body);
-  font-size: clamp(0.86rem, 1.3vw, 1.06rem);
-  line-height: 1.62;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  line-height: 1.58;
   margin: 0 auto 2.2rem;
-  max-width: 46ch;
+  max-width: 42ch;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
 }
 
@@ -385,25 +385,6 @@
 @keyframes cloud-drift {
   from { transform: translateX(-24px); }
   to { transform: translateX(32px); }
-}
-
-.intro__scene--forge .forge-hammer {
-  transform-box: view-box;
-  transform-origin: 1129px 582px;
-}
-
-.intro__scene--forge.is-active .forge-hammer {
-  animation: hammer-strike 1.8s cubic-bezier(0.66, 0, 0.34, 1) infinite;
-}
-
-@keyframes hammer-strike {
-  0% { transform: rotate(-22deg); }
-  10% { transform: rotate(-4deg); }
-  24% { transform: rotate(-87deg); }
-  32% { transform: rotate(-78deg); }
-  62% { transform: rotate(-82deg); }
-  86% { transform: rotate(-36deg); }
-  100% { transform: rotate(-22deg); }
 }
 
 .intro__scene--fire .fire-flames path {
@@ -476,13 +457,13 @@
   }
 
   .intro__caption p {
-    font-size: 0.78rem;
-    line-height: 1.52;
+    font-size: clamp(1rem, 4.2vw, 1.2rem);
+    line-height: 1.48;
     max-width: none;
   }
 
   .intro__caption p:first-child {
-    font-size: 0.88rem;
+    font-size: clamp(1.14rem, 5vw, 1.38rem);
   }
 
   .intro__caption--short {
@@ -490,7 +471,7 @@
   }
 
   .intro__caption--short p {
-    font-size: clamp(1.6rem, 9vw, 2.6rem);
+    font-size: clamp(2.1rem, 11vw, 3.8rem);
   }
 
   .intro__presents {

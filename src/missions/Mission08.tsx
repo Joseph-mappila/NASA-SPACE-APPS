@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { audio } from '../audio/engine'
 import { Gauge, Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -75,6 +76,7 @@ export function Mission08({ onSolve, onFail }: MissionComponentProps) {
       if (lockRef.current >= 1 && !lockedRef.current) {
         lockedRef.current = true
         setLocked(true)
+        audio.radio()
         setMessage('Signal locked. Now send the DTN queue: life support first.')
       }
     }, 180)
@@ -86,6 +88,7 @@ export function Mission08({ onSolve, onFail }: MissionComponentProps) {
     const nextIndex = chosenRef.current.length
     const expected = QUEUE_ORDER[nextIndex]
     if (id !== expected) {
+      audio.beep(300, 0.16, 0.045)
       const nextErrors = errorsRef.current + 1
       setErrors(nextErrors)
       errorsRef.current = nextErrors
@@ -102,6 +105,7 @@ export function Mission08({ onSolve, onFail }: MissionComponentProps) {
       return
     }
     const nextChosen = [...chosenRef.current, id]
+    audio.beep(1180, 0.06, 0.025)
     setChosen(nextChosen)
     chosenRef.current = nextChosen
     setMessage(

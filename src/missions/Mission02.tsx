@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { audio } from '../audio/engine'
 import { HoldButton, Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -44,6 +45,7 @@ export function Mission02({ onSolve, onFail }: MissionComponentProps) {
   const inspect = (item: WasteItem) => {
     if (phase !== 'inspect' || item.removed) return
     if (!item.unsafe) {
+      audio.beep(320, 0.12, 0.03)
       const next = contamination + 1
       setContamination(next)
       setFeedback(
@@ -54,6 +56,7 @@ export function Mission02({ onSolve, onFail }: MissionComponentProps) {
       if (next >= 4) onFail('Waste contamination locked out the compactor.')
       return
     }
+    audio.latch()
     const nextItems = items.map((entry) =>
       entry.id === item.id ? { ...entry, removed: true } : entry,
     )
@@ -71,6 +74,7 @@ export function Mission02({ onSolve, onFail }: MissionComponentProps) {
 
   const compact = () => {
     if (!heatOk || !pressureOk) {
+      audio.beep(300, 0.14, 0.035)
       const next = contamination + 1
       setContamination(next)
       setFeedback(
@@ -83,6 +87,7 @@ export function Mission02({ onSolve, onFail }: MissionComponentProps) {
     }
     setWaterActivity(0.48)
     setPhase('done')
+    audio.hydraulic()
     setFeedback('Water recovered. The tile is dense enough to use as radiation shielding.')
     onSolve({
       accuracy,

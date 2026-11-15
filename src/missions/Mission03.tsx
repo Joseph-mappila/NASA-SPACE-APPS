@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { audio } from '../audio/engine'
 import { Gauge, HoldButton } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -33,6 +34,12 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
 
   const cleared = spots.filter((spot) => spot.cleared).length
   const allClear = cleared === spots.length
+  const lastCleared = useRef(0)
+
+  useEffect(() => {
+    if (cleared > lastCleared.current) audio.wipe()
+    lastCleared.current = cleared
+  }, [cleared])
 
   useEffect(() => {
     return () => {
@@ -42,6 +49,7 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
 
   const test = (side: Side) => {
     if (found || testing || tested[side]) return
+    audio.pump()
     setTesting(side)
     setMessage(`Pressure-decay test running on the ${side} hatch…`)
     testTimer.current = window.setTimeout(() => {
@@ -49,11 +57,13 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
       setTesting(null)
       setTested((current) => ({ ...current, [side]: true }))
       if (side === leakSide) {
+        audio.scanner()
         setFound(true)
         setMessage(
           `Decay confirmed at the ${side} hatch: 3.8 sccm. Inspect the O-ring groove and clear the regolith.`,
         )
       } else {
+        audio.beep(820, 0.1, 0.03)
         setMessage(`The ${side} hatch held pressure at 0.2 sccm. Test the other hatch.`)
       }
     }, 1400)
@@ -82,12 +92,14 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
 
   const reseat = () => {
     if (!allClear) {
+      audio.beep(300, 0.12, 0.035)
       const next = errors + 1
       setErrors(next)
       setMessage('Regolith is still trapped in the groove. Clean all three spots first.')
       if (next >= 3) onFail('The O-ring was reseated over trapped regolith and failed the pressure test.')
       return
     }
+    audio.latch()
     setReseated(true)
     setMessage('O-ring reseated. Hold the pump until the cabin reaches 8.2 psia.')
   }
@@ -95,6 +107,7 @@ export function Mission03({ onSolve, onFail }: MissionComponentProps) {
   const pump = () => {
     if (!reseated || solved.current) return
     solved.current = true
+    audio.pump()
     onSolve({
       accuracy: Math.max(25, 100 - errors * 15),
       notes: [

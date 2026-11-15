@@ -64,6 +64,18 @@ const SCENE_AUDIO = [
   'space',
 ] as const
 
+const SCENE_CLIPS = [
+  null,
+  null,
+  null,
+  'cart',
+  'car',
+  'ship',
+  'airplane',
+  'rocket',
+  null,
+] as const
+
 export function Intro({ soundEnabled, onToggleSound, onComplete }: IntroProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -129,18 +141,19 @@ export function Intro({ soundEnabled, onToggleSound, onComplete }: IntroProps) {
     if (!soundEnabled) {
       audio.setEnabled(false)
       audio.setScene(null)
+      audio.setSceneClip(null)
       return
     }
     audio.setEnabled(true)
     audio.setScene(SCENE_AUDIO[sceneIndex])
+    audio.setSceneClip(SCENE_CLIPS[sceneIndex])
 
     const timers: number[] = []
-    const intervals: number[] = []
 
     if (sceneIndex === 0) {
       const strike = () => {
         effectsRef.current?.strike()
-        timers.push(window.setTimeout(() => audio.thunder(), 110))
+        timers.push(window.setTimeout(() => audio.playClip('lightning'), 90))
       }
       timers.push(window.setTimeout(strike, 420))
       const scheduleNext = () => {
@@ -148,25 +161,10 @@ export function Intro({ soundEnabled, onToggleSound, onComplete }: IntroProps) {
           window.setTimeout(() => {
             strike()
             scheduleNext()
-          }, 2800 + Math.random() * 1700),
+          }, 3400 + Math.random() * 1600),
         )
       }
       scheduleNext()
-    }
-
-    if (sceneIndex === 2) {
-      timers.push(
-        window.setTimeout(() => {
-          audio.hammer()
-          effectsRef.current?.sparkBurst()
-        }, 440),
-      )
-      intervals.push(
-        window.setInterval(() => {
-          audio.hammer()
-          effectsRef.current?.sparkBurst()
-        }, 1800),
-      )
     }
 
     if (sceneIndex === 5) audio.horn()
@@ -174,13 +172,13 @@ export function Intro({ soundEnabled, onToggleSound, onComplete }: IntroProps) {
 
     return () => {
       for (const timer of timers) window.clearTimeout(timer)
-      for (const interval of intervals) window.clearInterval(interval)
     }
   }, [sceneIndex, soundEnabled])
 
   useEffect(() => {
     return () => {
       audio.setScene(null)
+      audio.setSceneClip(null)
     }
   }, [])
 
@@ -205,7 +203,15 @@ export function Intro({ soundEnabled, onToggleSound, onComplete }: IntroProps) {
         <div className="intro__scenes">
           <StormScene active={sceneIndex === 0} index={0} progressRef={progressRef} />
           <FireScene active={sceneIndex === 1} index={1} progressRef={progressRef} />
-          <ForgeScene active={sceneIndex === 2} index={2} progressRef={progressRef} />
+          <ForgeScene
+            active={sceneIndex === 2}
+            index={2}
+            onImpact={() => {
+              audio.hammer()
+              effectsRef.current?.sparkBurst()
+            }}
+            progressRef={progressRef}
+          />
           <WheelScene active={sceneIndex === 3} index={3} progressRef={progressRef} />
           <CarScene active={sceneIndex === 4} index={4} progressRef={progressRef} />
           <ShipScene active={sceneIndex === 5} index={5} progressRef={progressRef} />

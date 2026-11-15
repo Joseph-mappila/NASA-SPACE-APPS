@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { audio } from '../audio/engine'
 import { Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -41,6 +42,12 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
 
   const inBand = frequency >= 42 && frequency <= 58 && voltage >= 60 && voltage <= 80
   const cleared = clumps.filter((clump) => clump.cleared).length
+  const lastCleared = useRef(0)
+
+  useEffect(() => {
+    if (cleared > lastCleared.current) audio.hiss()
+    lastCleared.current = cleared
+  }, [cleared])
 
   useEffect(() => {
     if (solved.current || cleared < clumps.length) return
@@ -60,6 +67,7 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
   const engage = () => {
     if (engaged) return
     if (!inBand) {
+      audio.zap()
       const nextErrors = errors + 1
       setErrors(nextErrors)
       setMessage(
@@ -70,6 +78,7 @@ export function Mission01({ onSolve, onFail }: MissionComponentProps) {
       if (nextErrors >= 5) onFail('Dielectric arcing destroyed the solar cover glass.')
       return
     }
+    audio.zap()
     setEngaged(true)
     setMessage('Dust is lifting. Move the field probe over each clump to confirm it cleared.')
   }

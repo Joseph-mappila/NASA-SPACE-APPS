@@ -1,4 +1,4 @@
-import { useRef, type ReactNode, type RefObject } from 'react'
+import { useEffect, useRef, type ReactNode, type RefObject } from 'react'
 import { useSceneProgress } from './useSceneProgress'
 
 type SceneProps = {
@@ -192,7 +192,78 @@ export function FireScene({ active }: SceneProps) {
   )
 }
 
-export function ForgeScene({ active }: SceneProps) {
+export function ForgeScene({
+  active,
+  onImpact,
+}: SceneProps & { onImpact?: () => void }) {
+  const hammer = useRef<SVGGElement>(null)
+  const impactRef = useRef(onImpact)
+  impactRef.current = onImpact
+
+  // The strike is driven in JS rather than CSS so the clang can fire on the
+  // exact frame the head reaches the ingot. At this angle the hammer face sits
+  // flat on the glowing metal at roughly x 929-962, y 581.
+  useEffect(() => {
+    if (!active) return
+    const element = hammer.current
+    if (!element) return
+
+    const CYCLE = 1800
+    const PIVOT_X = 1129
+    const PIVOT_Y = 582
+    const RAISED = -24
+    const LIFTED = -14
+    const CONTACT = -62
+    const RECOIL = -48
+    const SETTLE = -54
+    const IMPACT_AT = 0.29
+
+    const easeOut = (value: number) => 1 - (1 - value) ** 3
+    const easeInOut = (value: number) =>
+      value < 0.5 ? 2 * value * value : 1 - (-2 * value + 2) ** 2 / 2
+
+    const angleAt = (local: number) => {
+      if (local < 0.12) return RAISED + (LIFTED - RAISED) * easeOut(local / 0.12)
+      if (local < IMPACT_AT) {
+        const p = (local - 0.12) / (IMPACT_AT - 0.12)
+        return LIFTED + (CONTACT - LIFTED) * p * p
+      }
+      if (local < 0.36) {
+        const p = (local - IMPACT_AT) / (0.36 - IMPACT_AT)
+        return CONTACT + (RECOIL - CONTACT) * easeOut(p)
+      }
+      if (local < 0.46) {
+        const p = (local - 0.36) / 0.1
+        return RECOIL + (SETTLE - RECOIL) * easeInOut(p)
+      }
+      if (local < 0.86) {
+        const p = (local - 0.46) / 0.4
+        return SETTLE + (RAISED - SETTLE) * easeInOut(p)
+      }
+      return RAISED
+    }
+
+    let frame = 0
+    let start = 0
+    let struck = false
+
+    const tick = (time: number) => {
+      if (!start) start = time
+      const local = ((time - start) % CYCLE) / CYCLE
+      // A new cycle begins at 0, so re-arm the strike once per swing.
+      if (local < 0.12) struck = false
+      element.setAttribute('transform', `rotate(${angleAt(local)} ${PIVOT_X} ${PIVOT_Y})`)
+      if (!struck && local >= IMPACT_AT) {
+        struck = true
+        impactRef.current?.()
+      }
+      frame = requestAnimationFrame(tick)
+    }
+
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [active])
+
   return (
     <SceneShell active={active} id="forge">
       <defs>
@@ -255,12 +326,14 @@ export function ForgeScene({ active }: SceneProps) {
         <path d="M896 570h106l-8 22H904Z" fill="url(#forge-metal)" />
         <ellipse cx="944" cy="572" fill="#ffcf7a" opacity="0.55" rx="80" ry="18" filter="url(#forge-soft)" />
       </g>
-      <g className="forge-hammer">
-        <rect fill="#4b2c18" height="196" rx="9" width="26" x="1116" y="386" />
-        <path d="M1042 360h176l24 28-24 28h-176l-16-28Z" fill="#6c7474" />
-        <path d="M1054 372h152l14 16-14 16h-152Z" fill="#b9c1c0" opacity="0.55" />
+      <g transform="translate(20 0)">
+        <g className="forge-hammer" ref={hammer}>
+          <rect fill="#4b2c18" height="196" rx="9" width="26" x="1116" y="386" />
+          <path d="M1042 360h176l24 28-24 28h-176l-16-28Z" fill="#6c7474" />
+          <path d="M1054 372h152l14 16-14 16h-152Z" fill="#b9c1c0" opacity="0.55" />
+        </g>
       </g>
-      <circle cx="1129" cy="582" fill="#0a0605" r="19" />
+      <circle cx="1149" cy="582" fill="#0a0605" r="19" />
       <path d="M0 700h1600v200H0Z" fill="url(#forge-floor)" />
       <g stroke="#1a0e09" strokeWidth="8" opacity="0.7">
         <path d="M0 760h1600M0 840h1600" />
@@ -517,8 +590,8 @@ export function PlaneScene({ active, progressRef, index }: SceneProps) {
     const x = -900 + local * 2500
     const y = 40 + Math.sin(local * Math.PI) * 70 + local * 20
     const tilt = -12 + Math.sin(local * Math.PI * 2) * 8
-    plane.current?.setAttribute('transform', `translate(${x} ${y}) rotate(${tilt} 300 420)`)
-    propeller.current?.setAttribute('transform', `rotate(${local * 3000} 735 400)`)
+    plane.current?.setAttribute('transform', `translate(${x} ${y}) rotate(${tilt} 430 426)`)
+    propeller.current?.setAttribute('transform', `rotate(${local * 3000} 690 426)`)
   })
 
   return (
@@ -558,20 +631,38 @@ export function PlaneScene({ active, progressRef, index }: SceneProps) {
         <ellipse cx="990" cy="630" rx="120" ry="44" />
       </g>
       <g ref={plane}>
-        <path d="M120 430c40-30 130-48 260-46l180 2 120-26 42 14-76 38 74 4 30 18-88 10-180 10c-140 6-270-2-350-14Z" fill="url(#plane-body)" />
-        <path d="M300 410 214 318l54-16 148 102Z" fill="#d9ded8" />
-        <path d="M300 448 204 548l50 16 150-106Z" fill="#aab9b8" />
-        <path d="M470 386 520 300l38 8-24 80Z" fill="#dfe2d9" />
-        <path d="M470 448 520 530l38-8-24-78Z" fill="#9badaf" />
-        <path d="M360 388h180l-20 64H380Z" fill="#23444f" />
-        <path d="M380 398h70v34h-70Z" fill="#8fc3c8" opacity="0.6" />
-        <circle cx="650" cy="410" r="24" fill="#2d5965" />
-        <circle cx="735" cy="400" fill="rgba(226, 238, 238, 0.14)" r="54" />
-        <g ref={propeller}>
-          <path d="M690 400h90M735 355v90" stroke="#2a3437" strokeWidth="8" />
-          <circle cx="735" cy="400" fill="#56676a" r="12" />
+        <path d="M398 402 306 332l44-10 132 80Z" fill="#d7ded9" />
+        <path d="M178 414 146 300l30-16 76 120Z" fill="#dce1da" />
+        <path d="M170 438 116 438l52-26Z" fill="#c3cecb" />
+        <path d="M372 430 244 512l54 14 128-74Z" fill="#9fb2b4" />
+        <path d="M372 430 244 512l24 6 132-74Z" fill="#c2ceca" opacity="0.65" />
+        <path
+          d="M150 438c14-26 50-44 104-48l284-4c70 0 118 10 150 26 10 6 10 18-2 22l-150 16-248 12c-64 3-112-2-138-10Z"
+          fill="url(#plane-body)"
+        />
+        <path
+          d="M214 446c72 8 160 8 246 4l116-10-14 12-150 12-200 2c-22 0-42-2-62-6Z"
+          fill="#5f757a"
+          opacity="0.45"
+        />
+        <path d="M236 428h344l-16 12H242Z" fill="#2f7a86" opacity="0.85" />
+        <path d="M566 400h52c16 0 28 6 38 14l-96 4Z" fill="#1e4a57" />
+        <path d="M548 402h18l-4 12h-18Z" fill="#1e4a57" />
+        <g fill="#1e4a57" opacity="0.85">
+          <rect height="10" rx="4" width="18" x="320" y="410" />
+          <rect height="10" rx="4" width="18" x="360" y="409" />
+          <rect height="10" rx="4" width="18" x="400" y="408" />
+          <rect height="10" rx="4" width="18" x="440" y="407" />
+          <rect height="10" rx="4" width="18" x="480" y="406" />
+          <rect height="10" rx="4" width="18" x="520" y="405" />
         </g>
-        <path d="M120 430 74 420l46 26Z" fill="#ccd3cd" />
+        <path d="M674 414c12 0 20 8 20 16s-8 16-20 16l-18-4v-24Z" fill="#d9ded8" />
+        <circle cx="690" cy="426" fill="rgba(226, 238, 238, 0.13)" r="54" />
+        <g ref={propeller}>
+          <path d="M690 372v104M642 426h96" stroke="#2a3437" strokeWidth="9" strokeLinecap="round" />
+          <circle cx="690" cy="426" fill="#56676a" r="11" />
+          <circle cx="690" cy="426" fill="#c6d3d1" r="4" opacity="0.7" />
+        </g>
       </g>
       <path d="M0 820c200-30 340 20 540 0s360-20 560 0 300 16 500-4v84H0Z" fill="#d9d4c1" opacity="0.35" />
     </SceneShell>

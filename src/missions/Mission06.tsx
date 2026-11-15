@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { audio } from '../audio/engine'
 import { Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -23,6 +24,12 @@ export function Mission06({ onSolve }: MissionComponentProps) {
   const phOk = inBand(ph, TARGETS.ph)
   const allOk = co2Ok && nutrientOk && phOk
   const lockout = ph < 5.5 || ph > 6.0
+  const wasOk = useRef(false)
+
+  useEffect(() => {
+    if (allOk && !wasOk.current) audio.scanner()
+    wasOk.current = allOk
+  }, [allOk])
 
   useEffect(() => {
     const id = window.setInterval(() => {

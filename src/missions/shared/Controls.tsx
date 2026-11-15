@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { audio } from '../../audio/engine'
 
 type SliderProps = {
   label: string
@@ -29,6 +30,7 @@ export function Slider({
   const targetLeft = target ? ((target[0] - min) / (max - min)) * 100 : 0
   const targetWidth = target ? ((target[1] - target[0]) / (max - min)) * 100 : 0
   const inTarget = target ? value >= target[0] && value <= target[1] : true
+  const lastTick = useRef(0)
 
   return (
     <label
@@ -56,7 +58,14 @@ export function Slider({
           disabled={disabled}
           max={max}
           min={min}
-          onChange={(event) => onChange(Number(event.target.value))}
+          onChange={(event) => {
+            const now = performance.now()
+            if (now - lastTick.current > 60) {
+              lastTick.current = now
+              audio.tick()
+            }
+            onChange(Number(event.target.value))
+          }}
           step={step}
           type="range"
           value={value}
@@ -149,6 +158,7 @@ export function HoldButton({
     if (disabled || timer.current !== null) return
     completed.current = false
     startedAt.current = performance.now()
+    audio.servo()
     timer.current = window.setInterval(() => {
       const elapsed = performance.now() - startedAt.current
       const next = Math.min(1, elapsed / durationMs)
@@ -201,7 +211,10 @@ export function Toggle({
     <button
       aria-pressed={active}
       className={`toggle toggle--${tone} ${active ? 'is-on' : ''}`}
-      onClick={() => onChange(!active)}
+      onClick={() => {
+        audio.click()
+        onChange(!active)
+      }}
       type="button"
     >
       <i />

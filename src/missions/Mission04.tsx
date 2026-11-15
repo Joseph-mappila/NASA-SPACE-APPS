@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { audio } from '../audio/engine'
 import { Gauge, Toggle } from './shared/Controls'
 import { requiredShelterCoverage } from '../game/state'
 import type { MissionComponentProps } from './types'
@@ -101,6 +102,7 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
         zoneIndex === index ? [...zone, selected] : zone,
       ),
     )
+    audio.clunk()
     setCounts((current) => ({ ...current, [selected]: current[selected] - 1 }))
     setMessage(
       `Zone ${index + 1} now has ${densities[index] + UNIT_BY_TYPE[selected].density} g/cm² of shielding.`,
@@ -110,6 +112,7 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
   const clearZone = (index: number) => {
     const removed = zones[index]
     if (removed.length === 0) return
+    audio.clunk()
     setZones((current) =>
       current.map((zone, zoneIndex) => (zoneIndex === index ? [] : zone)),
     )
@@ -140,6 +143,7 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
       setMessage(`Estimated dose is ${dose} mSv. Add more shielding to get below 250 mSv.`)
       return
     }
+    audio.hydraulic()
     onSolve({
       accuracy: coverage,
       shelterCoverage: coverage,
@@ -168,7 +172,10 @@ export function Mission04({ state, onSolve }: MissionComponentProps) {
                 className={`shield-unit shield-unit--${unit.type} ${selected === unit.type ? 'is-selected' : ''}`}
                 disabled={counts[unit.type] <= 0}
                 key={unit.type}
-                onClick={() => setSelected(unit.type)}
+                onClick={() => {
+                  audio.click()
+                  setSelected(unit.type)
+                }}
                 type="button"
               >
                 <span aria-hidden="true">{unit.symbol}</span>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { audio } from '../audio/engine'
 import { Gauge, Slider } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -38,9 +39,16 @@ export function Mission07({ onSolve, onFail }: MissionComponentProps) {
   const currentOk = current >= 45 && current <= 55
   const allOk = tempOk && hydrogenOk && currentOk
   const o2 = Math.round(52 + (stability / 100) * 48)
+  const lastCleared = useRef(0)
+
+  useEffect(() => {
+    if (cleared > lastCleared.current) audio.tick()
+    lastCleared.current = cleared
+  }, [cleared])
 
   useEffect(() => {
     if (phase === 'hopper' && cleared === clumps.length) {
+      audio.servo()
       setPhase('reactor')
       setMessage('Feed clear. Ramp the reactor to 950 °C and balance the hydrogen loop.')
     }

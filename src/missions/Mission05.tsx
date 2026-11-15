@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { audio } from '../audio/engine'
 import { Gauge } from './shared/Controls'
 import type { MissionComponentProps } from './types'
 
@@ -78,6 +79,7 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
   }
 
   const toggleValve = (valve: 'cabin' | 'bed' | 'vacuum') => {
+    audio.valve()
     if (valve === 'cabin') {
       if (step === 0 && cabinOpen) {
         setCabinOpen(false)
@@ -132,11 +134,13 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
       )
       return
     }
+    audio.latch()
     advance(4)
     setMessage('ORU replaced. Close the vacuum path, then reopen the bed and cabin valves.')
   }
 
   const inspect = (bed: Bed) => {
+    audio.scanner()
     setInspected((current) =>
       current.includes(bed.id) ? current : [...current, bed.id],
     )
@@ -152,6 +156,7 @@ export function Mission05({ state, onSolve, onFail }: MissionComponentProps) {
       setMessage('Finish the valve and ORU sequence before bleeding the coolant loop.')
       return
     }
+    audio.hiss()
     setBubbles((current) => current.filter((bubble) => bubble.id !== id))
   }
 

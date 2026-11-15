@@ -3,6 +3,18 @@ import {
   fetchSpaceWeather,
   type SpaceWeatherEvent,
 } from '../api/nasa'
+import { nasaArchive, safeUrl } from '../data/nasa/archive'
+
+function shortDate(value: string | null | undefined): string {
+  if (!value) return 'a recent date'
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return value
+  return parsed.toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
 
 type PanelState =
   | { status: 'loading'; events: SpaceWeatherEvent[] }
@@ -95,6 +107,27 @@ export function SpaceWeatherPanel() {
                 </li>
               ))}
             </ul>
+          ) : null}
+
+          {nasaArchive.storm ? (
+            <div className="space-weather__storm">
+              <span className="eyebrow">Storm source</span>
+              <p>
+                The Day 57 storm is fictional. The fastest real eruption in NASA’s
+                recent DONKI catalog was a coronal mass ejection on{' '}
+                {shortDate(nasaArchive.storm.event.startTime)} travelling at about{' '}
+                {nasaArchive.storm.event.speedKms ?? '—'} km/s.
+              </p>
+              {safeUrl(nasaArchive.storm.event.link) ? (
+                <a
+                  href={safeUrl(nasaArchive.storm.event.link) ?? undefined}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Read the DONKI record ↗
+                </a>
+              ) : null}
+            </div>
           ) : null}
 
           <small className="space-weather__source">

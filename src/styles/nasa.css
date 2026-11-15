@@ -1,0 +1,508 @@
+/* ==========================================================================
+   NASA archive — mission briefing modal and post-run science debrief.
+
+   Both surfaces are opt-in: the briefing keeps a single compact button in its
+   header, and the debrief lives inside the ending's existing <details>. Neither
+   adds height to a screen that already has to fit the viewport.
+   ========================================================================== */
+
+.mission-brief__top-tools {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.nasa-archive__trigger {
+  align-items: center;
+  background: rgba(130, 230, 223, 0.08);
+  border: 1px solid rgba(130, 230, 223, 0.38);
+  border-radius: 999px;
+  color: var(--cyan);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: var(--body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  gap: 0.4rem;
+  letter-spacing: 0.02em;
+  padding: 0.34rem 0.72rem;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.nasa-archive__trigger:hover,
+.nasa-archive__trigger:focus-visible {
+  background: rgba(130, 230, 223, 0.16);
+  border-color: var(--cyan);
+  color: var(--paper);
+  outline: none;
+}
+
+.nasa-archive__trigger > span {
+  font-size: 0.85em;
+}
+
+.space-weather__storm {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 6px;
+  padding-top: 10px;
+}
+
+.space-weather__storm p {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.space-weather__storm a {
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.space-weather__storm a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Modal ---------- */
+
+.nasa-dialog {
+  background: none;
+  border: 0;
+  color: var(--paper);
+  height: auto;
+  margin: auto;
+  max-height: min(640px, 90dvh);
+  max-width: min(780px, 94vw);
+  padding: 0;
+  width: min(780px, 94vw);
+}
+
+.nasa-dialog::backdrop {
+  backdrop-filter: blur(6px);
+  background: rgba(3, 7, 11, 0.72);
+}
+
+.nasa-dialog__panel {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent 42%),
+    var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  max-height: min(640px, 90dvh);
+  overflow: hidden;
+}
+
+.nasa-dialog__head {
+  align-items: start;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+}
+
+.nasa-dialog__head h2 {
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  letter-spacing: 0.01em;
+  margin: 4px 0 0;
+  text-transform: uppercase;
+}
+
+.nasa-dialog__close {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--paper-dim);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  height: 30px;
+  line-height: 1;
+  width: 30px;
+}
+
+.nasa-dialog__close:hover,
+.nasa-dialog__close:focus-visible {
+  border-color: var(--cyan);
+  color: var(--paper);
+  outline: none;
+}
+
+.nasa-dialog__body {
+  display: grid;
+  gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 18px;
+}
+
+.nasa-dialog__foot {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  padding: 10px 18px;
+}
+
+.nasa-project,
+.nasa-extra {
+  display: grid;
+  gap: 8px;
+}
+
+/* On a full desktop dialog, put the photo beside the project text so the
+   caption and source link stay visible without scrolling. Short landscape
+   screens keep the single-column, scrollable layout. */
+@media (min-width: 900px) and (min-height: 600px) {
+  .nasa-dialog__body {
+    align-items: start;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+
+  .nasa-project {
+    grid-column: 1;
+  }
+
+  .nasa-photo {
+    grid-column: 2;
+    margin-top: 2px;
+  }
+
+  .nasa-photo img {
+    max-height: 260px;
+  }
+
+  .nasa-extra {
+    grid-column: 1 / -1;
+  }
+}
+
+.nasa-project h3 {
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: var(--text-lg);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.nasa-project__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nasa-project p,
+.nasa-extra p {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.nasa-project a,
+.nasa-extra a,
+.nasa-photo a,
+.nasa-debrief a {
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.nasa-project a:hover,
+.nasa-extra a:hover,
+.nasa-photo a:hover,
+.nasa-debrief a:hover {
+  text-decoration: underline;
+}
+
+.nasa-photo {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.nasa-photo img {
+  aspect-ratio: 16 / 9;
+  background: #060b0f;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: block;
+  max-height: 230px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.nasa-photo figcaption {
+  display: grid;
+  gap: 2px;
+}
+
+.nasa-photo figcaption strong {
+  color: var(--paper);
+  font-size: var(--text-sm);
+  line-height: 1.35;
+}
+
+.nasa-photo figcaption span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- Ending debrief ---------- */
+
+.nasa-debrief {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.nasa-debrief__section {
+  display: grid;
+  gap: 8px;
+}
+
+.nasa-debrief h3 {
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: var(--text-base);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.nasa-debrief p {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.nasa-epic__stage {
+  aspect-ratio: 16 / 9;
+  background: #03070b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  max-height: 240px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.nasa-epic__frame {
+  animation: nasa-epic-fade calc(var(--nasa-frames, 10) * 1.2s) linear infinite;
+  animation-delay: calc(var(--nasa-index, 0) * 1.2s);
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+}
+
+@keyframes nasa-epic-fade {
+  0% { opacity: 0; }
+  4% { opacity: 1; }
+  9% { opacity: 1; }
+  13% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.nasa-earth {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.nasa-earth img {
+  aspect-ratio: 2 / 1;
+  background: #03070b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.nasa-earth figcaption {
+  display: grid;
+  gap: 2px;
+}
+
+.nasa-earth figcaption strong {
+  color: var(--paper);
+  font-size: var(--text-sm);
+}
+
+.nasa-earth figcaption span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nasa-sky {
+  display: grid;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nasa-sky li {
+  align-items: baseline;
+  background: rgba(6, 10, 15, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 7px 10px;
+}
+
+.nasa-sky strong {
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+
+.nasa-sky span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+}
+
+.nasa-sky em {
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nasa-solar {
+  align-items: end;
+  background: rgba(6, 10, 15, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  gap: 6px;
+  height: 110px;
+  padding: 10px;
+}
+
+.nasa-solar__bar {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  justify-content: end;
+  min-width: 0;
+}
+
+.nasa-solar__bar i {
+  background: linear-gradient(180deg, var(--amber), rgba(243, 177, 93, 0.35));
+  border-radius: 3px 3px 0 0;
+  display: block;
+  min-height: 4px;
+  width: 100%;
+}
+
+.nasa-solar__bar small {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.nasa-readouts {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+}
+
+.nasa-readouts > div {
+  background: rgba(6, 10, 15, 0.6);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--cyan);
+  border-radius: 6px;
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+}
+
+.nasa-readouts strong {
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: var(--text-base);
+}
+
+.nasa-readouts span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nasa-debrief__source {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nasa-epic__frame {
+    animation: none;
+  }
+
+  .nasa-epic__frame:first-child {
+    opacity: 1;
+  }
+}
+
+@media (max-height: 620px) {
+  .nasa-dialog__head {
+    padding: 12px 14px 10px;
+  }
+
+  .nasa-dialog__body {
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .nasa-dialog__foot {
+    padding: 8px 14px;
+  }
+
+  .nasa-photo img {
+    aspect-ratio: auto;
+    max-height: 160px;
+  }
+}

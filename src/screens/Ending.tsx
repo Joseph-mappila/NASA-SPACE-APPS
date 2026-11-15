@@ -1,4 +1,5 @@
 import starterImage from '../images/starter_img.webp'
+import { NasaDebrief } from '../components/NasaDebrief'
 import { ENDINGS, MISSIONS } from '../game/content'
 import { formatSeconds } from '../game/format'
 import { getEndingId, passedCount } from '../game/state'
@@ -84,8 +85,10 @@ export function Ending({ state, onRestart }: EndingProps) {
           <p>
             All sound is synthesized in the browser with the Web Audio API. The three
             character and environment illustrations were supplied with the project.
-            No NASA insignia or photography is used.
+            Photographs and data in the science debrief below come from NASA’s public
+            archives and are credited to their source. No NASA insignia is used.
           </p>
+          <NasaDebrief />
         </details>
       </section>
     </main>

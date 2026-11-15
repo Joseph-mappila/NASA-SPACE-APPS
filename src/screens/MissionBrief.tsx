@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { audio } from '../audio/engine'
 import { Brand, TelemetryHud } from '../components/Hud'
 import { EarthFromNasa } from '../components/EarthFromNasa'
+import { NasaArchiveDialog } from '../components/NasaArchiveDialog'
 import { formatClock } from '../game/format'
 import { missionLimitFor } from '../game/state'
 import type { GameState, MissionDefinition } from '../game/types'
@@ -38,7 +39,10 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
 
       <div className="mission-brief__top">
         <Brand day={mission.day} code={mission.code} />
-        <span className="chip chip--amber">Commander · Clock {formatClock(limit)} · no retries</span>
+        <div className="mission-brief__top-tools">
+          <NasaArchiveDialog mission={mission} />
+          <span className="chip chip--amber">Commander · Clock {formatClock(limit)} · no retries</span>
+        </div>
       </div>
 
       <div className="mission-brief__layout">

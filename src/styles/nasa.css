@@ -46,9 +46,108 @@
   font-size: 0.95em;
 }
 
+/* Attention pulses: kid-facing cues that these NASA surfaces can be clicked.
+   Box-shadow rings never change layout, and all motion is opt-out. */
+@keyframes nasa-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(130, 230, 223, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 11px rgba(130, 230, 223, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 11px rgba(130, 230, 223, 0);
+  }
+}
+
+@keyframes nasa-soft-glow {
+  0%,
+  100% {
+    background-color: rgba(130, 230, 223, 0.05);
+    box-shadow: 0 0 0 0 rgba(130, 230, 223, 0);
+  }
+  50% {
+    background-color: rgba(130, 230, 223, 0.2);
+    box-shadow: 0 0 22px 3px rgba(130, 230, 223, 0.22);
+  }
+}
+
+@keyframes nasa-link-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 0 rgba(130, 230, 223, 0);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(130, 230, 223, 0.6);
+  }
+}
+
+@keyframes nasa-ripple {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  65% {
+    opacity: 0;
+    transform: scale(1.14, 1.7);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14, 1.7);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nasa-archive__trigger,
+  .science-card__archive {
+    position: relative;
+  }
+
+  .nasa-archive__trigger::before,
+  .science-card__archive::before {
+    animation: nasa-ripple 2.4s ease-out infinite;
+    border: 2px solid rgba(130, 230, 223, 0.6);
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .science-card__archive::before {
+    animation-delay: 0.9s;
+  }
+
+  .nasa-archive__trigger {
+    animation: nasa-ring 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  }
+
+  .science-card__archive {
+    animation: nasa-soft-glow 2.8s ease-in-out infinite;
+  }
+
+  .space-weather__head {
+    animation: nasa-ring 2.8s cubic-bezier(0.2, 0.6, 0.3, 1) 0.7s infinite;
+    border-radius: 10px;
+  }
+
+  .space-weather__fallback .btn,
+  .earth-view__fallback .btn {
+    animation: nasa-ring 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  }
+
+  .space-weather__list a,
+  .space-weather__storm a,
+  .earth-view__figure a,
+  .nasa-debrief a {
+    animation: nasa-link-glow 3.6s ease-in-out infinite;
+  }
+}
+
 .science-card__archive {
   background: none;
   border: 0;
+  border-radius: 999px;
   color: var(--cyan);
   cursor: pointer;
   display: inline-flex;
@@ -56,8 +155,8 @@
   font-size: var(--text-xs);
   gap: 0.4rem;
   letter-spacing: 0.05em;
-  margin-top: 10px;
-  padding: 0;
+  margin: 6px 0 0 -10px;
+  padding: 5px 10px;
   text-transform: uppercase;
 }
 

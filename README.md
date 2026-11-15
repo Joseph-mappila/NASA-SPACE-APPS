@@ -20,6 +20,28 @@ npm test          # reducer, consequences, save/load, mission and minigame tests
 npm run typecheck
 ```
 
+## Deploy to GitHub Pages
+
+The repository includes `.github/workflows/deploy.yml`, which builds the game
+and publishes `dist/` on every push to `main`.
+
+1. On GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+2. Optional: add `VITE_NASA_API_KEY` under **Settings → Secrets and variables →
+   Actions** to use a personal NASA key instead of the shared `DEMO_KEY`.
+3. Push to `main`, or run **Deploy to GitHub Pages** from the Actions tab.
+4. The game is published at `https://<owner>.github.io/<repo>/`.
+
+The build reads `GITHUB_REPOSITORY` and sets Vite's `base` to the repository
+sub-path automatically, so asset URLs resolve on a project page. Screens are
+state-driven rather than URL-routed, so no SPA rewrite rules are needed.
+
+To reproduce the Pages build locally:
+
+```bash
+GITHUB_ACTIONS=true GITHUB_REPOSITORY=owner/repo npm run build
+npx serve dist
+```
+
 ## NASA data and the optional API key
 
 The game uses NASA's public APIs in two deliberate ways: two **live** feeds and
@@ -77,6 +99,9 @@ The archive surfaces are additive and optional:
 - The science debrief is shown in full on the ending screen, in its own panel
   directly under the ending stats and above the mission log. It never hides
   behind a click.
+- The archive triggers, the Day 58 space-weather panel, and the live NASA links
+  pulse gently to show they are interactive. The animation is removed under
+  `prefers-reduced-motion: reduce`.
 - If a section is missing from the snapshot, its component renders nothing.
 - The Worldview image is a curated regional view (the eastern Mediterranean and
   Nile Delta) because the global snapshot endpoint returned partial-coverage

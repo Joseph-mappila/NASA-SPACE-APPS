@@ -190,7 +190,7 @@ async function fetchProject(id, key) {
     status: stripHtml(project.status) || null,
     program: stripHtml(project.program?.title) || stripHtml(project.program?.acronym) || null,
     description: trimText(stripHtml(project.description), 260),
-    url: `https://techport.nasa.gov/project/${project.projectId ?? id}`,
+    url: `https://techport.nasa.gov/projects/${project.projectId ?? id}`,
   }
 }
 

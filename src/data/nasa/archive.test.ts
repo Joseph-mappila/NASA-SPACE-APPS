@@ -31,6 +31,9 @@ describe('NASA snapshot', () => {
       expect(entry?.project?.description.length).toBeGreaterThan(0)
       expect(entry?.image?.title.length).toBeGreaterThan(0)
       expectHttps(entry?.project?.url)
+      expect(entry?.project?.url).toMatch(
+        /^https:\/\/techport\.nasa\.gov\/projects\/\d+$/,
+      )
       expectHttps(entry?.image?.url)
       expectHttps(entry?.image?.pageUrl)
     }

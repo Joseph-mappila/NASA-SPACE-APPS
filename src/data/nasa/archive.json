@@ -20,7 +20,7 @@
         "status": "Completed",
         "program": "Center Independent Research & Development: KSC IRAD",
         "description": "The Electrostatics and Surface Physics Laboratory at Kennedy Space Center is developing a dust mitigation experiment and testing it on the lunar surface and on the International Space Station (ISS). The Electrodynamic Dust Shield (EDS) clears dust off…",
-        "url": "https://techport.nasa.gov/project/32733"
+        "url": "https://techport.nasa.gov/projects/32733"
       },
       "image": {
         "nasaId": "KSC-20230118-PH-CSH01_0002",
@@ -40,7 +40,7 @@
         "status": "Active",
         "program": "Mars Campaign Office",
         "description": "The Mars Campaign Office, Logistics Reduction project called the Trash Compaction and Processing System (TCPS) is a waste management technology. Currently, there are no trash management practices that are being implemented in the space environment other than…",
-        "url": "https://techport.nasa.gov/project/93127"
+        "url": "https://techport.nasa.gov/projects/93127"
       },
       "image": {
         "nasaId": "KSC-20220721-PH-KLS01_0019",
@@ -60,7 +60,7 @@
         "status": "Completed",
         "program": "Small Business Innovation Research/Small Business Tech Transfer",
         "description": "NASA is developing a common launch infrastructure to support multiple types of rockets. In order to reduce cost and simplify service of infrastructure, automation of multiple processes is highly desirable. In this approach, Autonomous Control Technologies…",
-        "url": "https://techport.nasa.gov/project/94753"
+        "url": "https://techport.nasa.gov/projects/94753"
       },
       "image": {
         "nasaId": "Gateway Summer Req Images Rev2_6",
@@ -80,7 +80,7 @@
         "status": "Completed",
         "program": "NASA Innovative Advanced Concepts",
         "description": "WATER WALLS (WW) takes an approach to providing a life support system, Forward Osmosis (FO), that is biologically and chemically passive, using mechanical systems only for plumbing to pump fluids such as gray water from the source to the point of processing.…",
-        "url": "https://techport.nasa.gov/project/11551"
+        "url": "https://techport.nasa.gov/projects/11551"
       },
       "image": {
         "nasaId": "iss053e238888",
@@ -100,7 +100,7 @@
         "status": "Completed",
         "program": "Game Changing Development",
         "description": "This dual function component for space suit portable life support systems (PLSS) will remove both carbon dioxide and humidity. It is under development for the next generation pressurized space suit for human exploration beyond LEO. The system is regenerative,…",
-        "url": "https://techport.nasa.gov/project/13611"
+        "url": "https://techport.nasa.gov/projects/13611"
       },
       "image": {
         "nasaId": "iss059e035608",
@@ -120,7 +120,7 @@
         "status": "Completed",
         "program": "Flight Opportunities",
         "description": "No plant-based biological spaceflight experiment has ever hydrated seeds in lunar gravity. Risk of bubbles or of uneven dispersion were deemed too great. This flight opportunity helps verify the microfluidics delivery system will disperse water to all seeds…",
-        "url": "https://techport.nasa.gov/project/91334"
+        "url": "https://techport.nasa.gov/projects/91334"
       },
       "image": {
         "nasaId": "KSC-20170316-PH_AAG01_0001",
@@ -140,7 +140,7 @@
         "status": "Completed",
         "program": "Game Changing Development",
         "description": "The ISRU-ISRU Hydrogen Oxygen Production-BAA task aims to develop and test the integrated performance of water purification and hydrogen-oxygen production components. This project will: produce a TRL 5 Ionomer-membrane Water Processor (IWP) that can purify…",
-        "url": "https://techport.nasa.gov/project/116390"
+        "url": "https://techport.nasa.gov/projects/116390"
       },
       "image": {
         "nasaId": "KSC-20201029-PH-CSH01_0017",
@@ -160,7 +160,7 @@
         "status": "Completed",
         "program": "Space Communications and Navigation",
         "description": "In response to a 2019 call for lunar communications and navigation architectures, TEMPO led a multi-disciplinary study team at Goddard Space Flight Center. This study resulted in LunaNet, NASA's plan to bring internet-like capabilities to the Moon. LunaNet is…",
-        "url": "https://techport.nasa.gov/project/157472"
+        "url": "https://techport.nasa.gov/projects/157472"
       },
       "image": {
         "nasaId": "PIA25136",

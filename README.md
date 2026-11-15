@@ -105,9 +105,15 @@ npm run typecheck
 The repository includes `.github/workflows/deploy.yml`, which builds and
 publishes the game on every push to `main`.
 
-1. On GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
+1. On GitHub, open **Settings → Pages → Build and deployment** and set **Source**
+   to **GitHub Actions**, not **Deploy from a branch**.
 2. Push to `main`, or run **Deploy to GitHub Pages** from the Actions tab.
 3. The game is published at `https://<owner>.github.io/<repo>/`.
+
+If the published page is blank and the browser console asks for `/src/main.tsx`,
+Pages is still set to **Deploy from a branch**. That mode publishes the source
+`index.html` instead of the built bundle. Switch **Source** to **GitHub Actions**
+and run the workflow again.
 
 The build detects the repository name and sets Vite's base path automatically,
 so the site works from a project sub-path.

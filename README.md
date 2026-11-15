@@ -1,13 +1,93 @@
 # LUNA — Outpost 57
 
-A browser-based, kid-oriented NASA science adventure. Scroll through a cinematic
-history of human curiosity, then take command of a fictional lunar outpost and
-keep fifteen astronauts alive through a solar storm.
+A browser game about running a Moon outpost through a solar storm.
 
-Built with React 19, TypeScript, Vite, GSAP ScrollTrigger, and the Web Audio API.
-No game engine and no backend. The only external media are the three supplied
-illustrations, the looping ambient music track, and the optional live NASA
-space-weather and Earth-photo feeds.
+Outpost 57 is a fictional NASA outpost on the Moon. Fifteen astronauts depend on
+it for power, air, water, food, and a radio link home. The player commands the
+outpost for two days and eight missions while a solar storm passes over the
+site. Built for ages 7–12, playable on a phone, tablet, or laptop.
+
+## What does it do, and how does it work?
+
+The player enters a callsign and takes eight missions in order. Each mission is
+an interactive console: sliders, breakers, valves, a drag target, or a priority
+queue. Every mission has its own countdown, from 25 seconds to 1 minute 10
+seconds, which starts when the player presses Begin and does not stop.
+
+Results carry forward. A failed dust shield leaves the battery at 52% and causes
+a brownout in a later mission; a failed CO₂ scrubber cuts the clocks of the next
+three missions by 25%. At the end, the outpost is either sustained, locked down,
+or evacuated, depending on how many missions passed and whether any resource
+reached zero.
+
+The whole game runs in the browser. React holds the game state, localStorage
+keeps the save, and the audio mixes a looping ambient track, short scene clips,
+and Web Audio tones and noise. There is no server, no account, and no database.
+
+## What benefits does it have?
+
+- Teaches real lunar engineering through play: dust levitation, trash
+  compaction, pressure seals, radiation shielding, CO₂ scrubbing, plant growth,
+  oxygen from regolith, and radio pointing.
+- Practises decisions under time pressure. Shielding costs mass and power; life
+  support costs battery. Every choice has a visible cost.
+- Shows consequences instead of resetting them, so a bad call matters in the
+  next mission.
+- Gives instant feedback through gauges, messages, and the final ending.
+- Needs no install, account, or sign-in, and shows no ads.
+- Works with touch or keyboard, on small screens and desktops.
+
+## What is the intended impact?
+
+- Make Moon missions feel understandable and doable for a young player.
+- Connect the game to hardware NASA is testing now, so the science is not
+  abstract.
+- Encourage curiosity about engineering and space careers.
+
+## What tools, languages, and software did you use?
+
+- React 19 and TypeScript
+- Vite 7
+- GSAP ScrollTrigger for the opening sequence
+- Web Audio API for generated sound effects and scene ambience
+- Hand-written SVG for the scenes and CSS for the interface
+- Vitest and Testing Library
+- NASA public APIs: DONKI, EPIC, TechPort, Image and Video Library, POWER, JPL
+  Horizons, NeoWs, InSight, and Worldview (GIBS)
+- GitHub Actions and GitHub Pages
+
+No special hardware is needed: the game runs in any modern browser on a laptop,
+tablet, or phone. There is no game engine, no backend, and no database. The three
+supplied character and environment illustrations are the only images bundled with
+the project; NASA photos load from NASA's image servers.
+
+## How is the project creative?
+
+- The opening sequence is drawn in SVG and animated by scroll position. There is
+  no video.
+- Sound is layered: a looping ambient track, short clips for each scene, and
+  Web Audio tones and noise synthesized live for storms, engines, and alarms.
+- Each mission is a custom-built console rather than a multiple-choice question.
+- Real NASA records sit beside the fiction: every briefing has an archive with a
+  real project and photograph, and the ending compares the story with real
+  Earth, asteroid, solar, Mars, and antenna data.
+- Failure is part of the story. Consequences accumulate across missions instead
+  of resetting at the next screen.
+
+## What factors did you consider?
+
+- **Age 7–12:** short instructions, large controls, plain language, and no
+  reading-heavy failure text.
+- **Accessibility:** keyboard controls, visible focus, and support for
+  `prefers-reduced-motion`.
+- **Time:** clocks long enough to think and short enough to feel urgent.
+- **Fairness:** every failure has a visible cause and a later consequence.
+- **Accuracy:** values follow public NASA material such as NASA-STD-3001 and the
+  Moon-to-Mars architecture.
+- **Performance and cost:** static files, no backend, and no API key needed to
+  play.
+- **Connection:** most NASA material ships with the game; one live feed adds
+  current solar activity.
 
 ## Run it
 
@@ -16,68 +96,83 @@ npm install
 npm run dev       # http://localhost:5173
 npm run build     # production bundle in dist/
 npm run preview   # serve the production build
-npm test          # reducer, consequences, save/load, mission and minigame tests
+npm test          # game logic, missions, minigames, and NASA data tests
 npm run typecheck
 ```
 
-## Deploy to GitHub Pages
+### Publish it
 
-The repository includes `.github/workflows/deploy.yml`, which builds the game
-and publishes `dist/` on every push to `main`.
+The repository includes `.github/workflows/deploy.yml`, which builds and
+publishes the game on every push to `main`.
 
 1. On GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
-2. Optional: add `VITE_NASA_API_KEY` under **Settings → Secrets and variables →
-   Actions** to use a personal NASA key instead of the shared `DEMO_KEY`.
-3. Push to `main`, or run **Deploy to GitHub Pages** from the Actions tab.
-4. The game is published at `https://<owner>.github.io/<repo>/`.
+2. Push to `main`, or run **Deploy to GitHub Pages** from the Actions tab.
+3. The game is published at `https://<owner>.github.io/<repo>/`.
 
-The build reads `GITHUB_REPOSITORY` and sets Vite's `base` to the repository
-sub-path automatically, so asset URLs resolve on a project page. Screens are
-state-driven rather than URL-routed, so no SPA rewrite rules are needed.
+The build detects the repository name and sets Vite's base path automatically,
+so the site works from a project sub-path.
 
-To reproduce the Pages build locally:
+## Missions in order
 
-```bash
-GITHUB_ACTIONS=true GITHUB_REPOSITORY=owner/repo npm run build
-npx serve dist
-```
+| # | Day and time | Mission | What the player does | Real science | Clock |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Day 57, 08:00 | Solar Panel Dust Shield | Tune the electric wave, set the voltage, and sweep the panel clean | Electrodynamic Dust Shield, ITO electrodes, dielectrophoresis | 40 s |
+| 2 | Day 57, 10:30 | Trash to Shield Tiles | Remove unsafe items, set heat and pressure, hold the press | Trash Compaction and Processing System, water recovery, polyethylene tiles | 25 s |
+| 3 | Day 57, 13:30 | Airlock Leak Hunt | Test both hatches, clean the dirty seal, reseat the O-ring, hold pressure | Differential pressure decay, 8.2 psia boundary | 40 s |
+| 4 | Day 57, 16:00 | Solar Storm Shelter | Cover the bunks with water, food, and tile units, then shed non-essential power | Hydrogen-rich shielding, 250 mSv limit, 20 g/cm² | 1:10 |
+| 5 | Day 58, 07:00 | CO₂ Scrubber Rescue | Find the wet amine bed, close the valves, swap the bed, bleed the coolant | Rapid Cycling Amine beds, valve sequencing | 40 s |
+| 6 | Day 58, 09:30 | Greenhouse Rescue | Hold CO₂, nutrients, and pH in band until the crop recovers | Advanced Plant Habitat, CELSS | 30 s |
+| 7 | Day 58, 13:30 | Oxygen From Moon Dust | Clear the hopper, heat the reactor to 950 °C, balance hydrogen | ROxygen hydrogen reduction of ilmenite | 50 s |
+| 8 | Day 58, 17:00 | Phone Home | Point the dish, hold the lock, queue data by priority | Ka-band pointing, Delay-Tolerant Networking | 50 s |
 
-## NASA data and the optional API key
+Grades are S, A, B, or F, with a local best time for each mission.
 
-The game uses NASA's public APIs in two deliberate ways: two **live** feeds and
-one **committed snapshot**. Nothing here touches the save file, the mission
-clocks, scoring, or the ending logic.
+### What failure costs
 
-### Live at runtime
+| Failure | Effect later |
+| --- | --- |
+| Mission 1 | Power stays at 52%, and Mission 4 sets a brownout that shortens Mission 5's clock |
+| Mission 2 | No shield tiles and 5 less water, so the shelter must cover 80% of bunks instead of 93% |
+| Mission 3 | Oxygen leaks through Missions 4–7 |
+| Mission 4 | Crew health drops 20 and power drops 15; the outpost enters a brownout |
+| Mission 5 | Missions 6–8 lose 25% of their clocks |
+| Mission 6 | Oxygen drops 12 and water drops 10 as the plants stop producing |
+| Mission 7 | Oxygen drops 15, or to zero if the airlock still leaks |
+| Mission 8 | Houston cannot certify the outpost, and the crew is ordered home |
 
-| Where | What | Endpoint | If it fails |
-| --- | --- | --- | --- |
-| Day 58 briefing | The three newest space-weather notices | `api.nasa.gov/DONKI/notifications` | Shows a calm fallback and a retry button |
-| Mission 8 briefing | The latest full-disk Earth photo | `epic.gsfc.nasa.gov/api/natural` (keyless) | Hides the photo and keeps the mission ready |
+The run ends as **Outpost Luna Sustained**, **Safe-Haven Lockdown**, or **Outpost
+Abandoned**. Abandonment follows any resource reaching zero, an abort, or fewer
+than four passed missions. Otherwise, six or more passes with every resource above
+50 gives a sustained outpost; anything else is a lockdown.
 
-These are the original two integrations and behave exactly as before.
+## Where NASA data is used
 
-### From the committed snapshot
+### Live during play
 
-`src/data/nasa/archive.json` is generated by `npm run nasa:sync` and committed.
-The game imports it directly, so it never waits on the network to show this
-material.
+| Where | What | API |
+| --- | --- | --- |
+| Day 58 briefing | The three newest space-weather notices | DONKI notifications |
+| Mission 8 briefing | The latest full-disk Earth photo | EPIC |
 
-| Where it appears | What it shows | NASA API | Why it matters |
-| --- | --- | --- | --- |
-| Every mission briefing → **NASA archive** | A real NASA technology project: title, TRL, programme, description, link | TechPort | Ties each fictional mission to hardware NASA is actually building |
-| Every mission briefing → **NASA archive** | A real photograph with centre, date, and archive link | Image and Video Library | Shows the people and hardware behind the science |
-| Mission 1 archive | Measured sunlight for the last seven days at a lunar-analog site | POWER | Grounds the solar-array mission in real irradiance data |
-| Mission 4 archive, Day 58 briefing | A real recent CME (speed, half-angle) plus the latest Kp index | DONKI | Anchors the fictional Day 57 storm to a documented event |
-| Mission 8 archive | Real Earth azimuth and elevation above Shackleton crater rim | JPL Horizons | Makes the antenna-pointing mission physically concrete |
-| Ending → **Science debrief** panel | A cross-fading timelapse of one real Earth day | EPIC | The crew looks back at the planet they are calling home |
-| Ending → **Science debrief** panel | A true-colour regional satellite view of Earth | NASA Worldview (GIBS) | Shows dust, water, and sunlight together — the three things the outpost manages |
-| Ending → **Science debrief** panel | Known asteroid close approaches for the coming week | NeoWs | Gives a real sense of scale around Earth–Moon space |
-| Ending → **Science debrief** panel | The last sol of weather from InSight | InSight Mars Weather (archive) | Contrasts the Moon with Mars for the crew |
-| Ending → **Science debrief** panel | Seven days of solar irradiance | POWER | Repeats the power-budget lesson in the debrief |
+### From a committed snapshot
 
-The mission archive uses one curated TechPort project and one Image Library
-query per mission:
+`src/data/nasa/archive.json` is generated by `npm run nasa:sync` and committed
+with the code.
+
+| Where it appears | What it shows | API |
+| --- | --- | --- |
+| Every mission briefing → **NASA archive** | A real technology project with TRL, programme, description, and link | TechPort |
+| Every mission briefing → **NASA archive** | A real photograph with centre, date, and archive link | Image and Video Library |
+| Mission 1 archive | Seven days of measured sunlight at a lunar-analog site | POWER |
+| Mission 4 archive and Day 58 panel | A real coronal mass ejection and the latest Kp index | DONKI |
+| Mission 8 archive | Earth's real azimuth and elevation above Shackleton crater | JPL Horizons |
+| Ending → **Science debrief** | A timelapse of one real Earth day | EPIC |
+| Ending → **Science debrief** | A true-colour regional satellite view of Earth | Worldview (GIBS) |
+| Ending → **Science debrief** | Asteroid close approaches for the coming week | NeoWs |
+| Ending → **Science debrief** | The last sol of weather from InSight | InSight Mars Weather |
+| Ending → **Science debrief** | Seven days of solar irradiance | POWER |
+
+### Mission archive projects
 
 | Mission | TechPort project |
 | --- | --- |
@@ -90,114 +185,34 @@ query per mission:
 | 7 · Oxygen From Moon Dust | 116390 · ISRU Hydrogen Oxygen Production |
 | 8 · Phone Home | 157472 · LunaNet Network Layer Services |
 
-The archive surfaces are additive and optional:
-
-- On every mission briefing, the **Open NASA archive** button sits in the header
-  and a **See the real NASA project and photo** link sits inside the NASA fact
-  card. Both open the same native `<dialog>`, so the briefing layout is
-  unchanged.
-- The science debrief is shown in full on the ending screen, in its own panel
-  directly under the ending stats and above the mission log. It never hides
-  behind a click.
-- The archive triggers, the Day 58 space-weather panel, and the live NASA links
-  pulse gently to show they are interactive. The animation is removed under
-  `prefers-reduced-motion: reduce`.
-- If a section is missing from the snapshot, its component renders nothing.
-- The Worldview image is a curated regional view (the eastern Mediterranean and
-  Nile Delta) because the global snapshot endpoint returned partial-coverage
-  imagery during testing. The caption links to the full interactive viewer.
-
 ### Refresh the snapshot
 
 ```bash
 npm run nasa:sync
 ```
 
-The script reads `VITE_NASA_API_KEY` from `.env.local` (falling back to
-`DEMO_KEY`), fetches each feed independently, and rewrites
-`src/data/nasa/archive.json`. If a feed fails, the previous section is kept and
-the script prints a warning, so a partial outage cannot wipe good data.
+The script reads `VITE_NASA_API_KEY` from `.env.local`, or uses `DEMO_KEY`, and
+rewrites `src/data/nasa/archive.json`. A feed that fails keeps its previous
+section.
 
 ### API key
 
-A free key from <https://api.nasa.gov> raises the rate limit from the shared
+A free key from <https://api.nasa.gov> raises the limit from the shared
 `DEMO_KEY` to 1,000 requests per hour. Copy `.env.example` to `.env.local`:
 
 ```bash
 VITE_NASA_API_KEY=your_key_here
 ```
 
-Vite reads this at build or dev-server start, so restart `npm run dev` after
-changing it. The snapshot script also reads the same variable.
+Restart `npm run dev` after changing it. The snapshot script reads the same
+variable.
 
-### Deliberately not used
+## Credits
 
-- **APOD** — during implementation the live feed returned the same site-logo
-  placeholder and the generic title “NASA Science” for every date, so it would
-  have looked broken. It can be added later without touching game state.
-- **Mars Rover Photos** — the legacy endpoint now returns `404`.
-- **DONKI `FLR`** — returned `404` in testing, so the storm reference uses the
-  CME and GST endpoints, which are reliable.
+Made by CurioCET. Character and environment illustrations were supplied with the
+project. Audio combines a supplied ambient track, short supplied sound clips, and
+effects synthesized in the browser. NASA photography and data are credited beside
+each item, and no NASA insignia is used.
 
-
-## How it plays
-
-1. **Landing** — sound check and a short briefing.
-2. **Scroll intro** — nine scroll-linked scenes: storm, fire, forge, wheel,
-   car, ship, plane, rocket, starfield, then the title.
-3. **Callsign** — HAL asks for the player's name. It stays in `localStorage`.
-   After the first completed run, this screen also offers three optional
-   training minigames. They never change the story save, mission clock, or
-   ending.
-4. **Day 57** — missions 1–4 prepare the outpost for a Solar Particle Event.
-5. **Day 58** — missions 5–8 recover life support, food, oxygen, and the link
-   to Houston. The briefing also shows live NASA DONKI space-weather notices.
-6. **Ending** — sustained, lockdown, or evacuation, depending on the run.
-
-Every mission runs on its own clock. Reaching zero is a hard failure, there is
-no retry, and the result carries forward into later missions. Grades are S/A/B/F
-with a local best time per mission.
-
-A failed CO₂ scrubber cuts the clocks of missions 6–8 by 25%, and a storm
-brownout cuts mission 5 by 10%.
-
-## Missions
-
-| # | Mission | Real science | Clock |
-| --- | --- | --- | --- |
-| 1 | Block A Solar Array | Electrodynamic Dust Shield, ITO electrodes, dielectrophoresis | 40 s |
-| 2 | Habitat Waste Processing | Trash Compaction and Processing System, water recovery, polyethylene tiles | 25 s |
-| 3 | Exploration Airlock | Differential pressure decay, 8.2 psia boundary, O-ring regolith | 40 s |
-| 4 | Solar Particle Event | Hydrogen-rich shielding, 250 mSv limit, load shedding | 1:10 |
-| 5 | Life Support Revitalization | Rapid Cycling Amine beds, valve sequencing, coolant bleed | 40 s |
-| 6 | Bioregenerative Plant Module | CO₂ enrichment, nitrate/potassium/magnesium, pH 5.5–6.0 | 30 s |
-| 7 | Surface ISRU Plant | ROxygen hydrogen reduction of ilmenite near 950 °C | 50 s |
-| 8 | LunaNet Relay Dish | Ka-band pointing, 0.2° error, Delay-Tolerant Networking priority | 50 s |
-
-## Structure
-
-```
-scripts/
-  nasa-snapshot.mjs       builds src/data/nasa/archive.json from NASA APIs
-src/
-  App.tsx                 phase routing + optional training mode
-  api/nasa.ts             live DONKI + EPIC clients with DEMO_KEY fallback
-  audio/engine.ts         ambient music loop + procedural Web Audio effects
-  components/             HUD, space weather, Earth photo, NASA archive/debrief
-  data/nasa/              committed NASA snapshot + typed accessors
-  game/                   types, content, reducer, saves, formatting
-  intro/                  GSAP scroll stage, SVG scenes, canvas effects
-  minigames/              three standalone training games and catalog
-  missions/               eight story missions + shared controls
-  screens/                landing, name, briefs, runner, result, ending
-  styles/                 tokens, base, intro, game, missions, minigames, NASA
-```
-
-## Science note
-
-LUNA is fiction. NASA does not operate a crewed lunar outpost, and this project
-does not imply NASA endorsement. The mechanics and values are drawn from public
-NASA material including NASA-STD-3001, the Moon-to-Mars architecture, EDS, TCPS,
-ROxygen ISRU, and LunaNet. No NASA insignia is used. NASA photography and data
-appear only in the mission archive and the post-run science debrief, with the
-source and archive link shown beside each item.
+LUNA is a fictional outpost. NASA does not operate a crewed lunar outpost, and
+this project is not affiliated with or endorsed by NASA.

@@ -41,8 +41,7 @@ export function NasaDebrief() {
         <span className="eyebrow">Science debrief · real NASA data</span>
         <h2>What NASA measured</h2>
         <p>
-          Public NASA data, captured {shortDate(nasaArchiveDate)}. These numbers
-          and photographs are real; the outpost is not.
+          Public NASA data, captured {shortDate(nasaArchiveDate)}.
         </p>
       </header>
 
@@ -209,9 +208,9 @@ export function NasaDebrief() {
       ) : null}
 
       <small className="nasa-debrief__source">
-        Snapshot of public NASA data, fetched {nasaArchiveDate}. Sources: NASA
-        TechPort, NASA Image and Video Library, DONKI, EPIC, NeoWs, POWER, JPL
-        Horizons, InSight, and Worldview. NASA does not endorse this project.
+        Public NASA data, fetched {nasaArchiveDate}. Sources: NASA TechPort, NASA
+        Image and Video Library, DONKI, EPIC, NeoWs, POWER, JPL Horizons,
+        InSight, and Worldview.
       </small>
     </div>
   )

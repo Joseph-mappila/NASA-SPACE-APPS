@@ -53,7 +53,7 @@ function extrasFor(missionId: number): Extra[] {
     const event = storm.event
     extras.push({
       label: 'NASA DONKI · reference eruption',
-      text: `A real coronal mass ejection on ${shortDate(event.startTime)} left the Sun at about ${event.speedKms ?? '—'} km/s with a ${event.halfAngle ?? '—'}° half-angle. The Day 57 storm is fictional, but its physics follows events like this one.`,
+      text: `A real coronal mass ejection on ${shortDate(event.startTime)} left the Sun at about ${event.speedKms ?? '—'} km/s with a ${event.halfAngle ?? '—'}° half-angle. The Day 57 storm follows the physics of events like this one.`,
       href: event.link ?? 'https://ccmc.gsfc.nasa.gov/',
       linkLabel: 'Read the DONKI record',
     })
@@ -202,8 +202,7 @@ export function NasaArchiveDialog({ mission }: NasaArchiveDialogProps) {
           </div>
 
           <footer className="nasa-dialog__foot">
-            Snapshot of public NASA open data, fetched {nasaArchiveDate}. Every
-            feed has a fallback, so the mission runs even when NASA is offline.
+            Public NASA data · fetched {nasaArchiveDate}
           </footer>
         </div>
       </dialog>

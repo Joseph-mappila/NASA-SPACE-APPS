@@ -40,14 +40,14 @@ export function Landing({
         <h1 className="landing__title">LUNA</h1>
         <span className="landing__subtitle">OUTPOST 57</span>
         <p className="landing__lede">
-          Every giant leap began with a question. Travel from the first lightning
-          strike to a working outpost on the Moon — then keep fifteen astronauts
-          alive when the sky turns against them.
+          Outpost 57 is alone on the Moon, and a solar storm is on its way. Take
+          command, run the outpost, and keep fifteen astronauts alive through
+          eight missions.
         </p>
 
         <div className="landing__actions">
           <button className="btn btn--primary landing__begin" onClick={onBegin} type="button">
-            Begin the journey
+            Begin
           </button>
           <span className="landing__age">Ages 7–12 · 8 missions · 15 crew</span>
         </div>
@@ -55,8 +55,8 @@ export function Landing({
         <div className="landing__facts">
           <div>
             <span>01</span>
-            <strong>Scroll through history</strong>
-            <small>Lightning, fire, metal, wheels, cars, ships, planes, rockets.</small>
+            <strong>Take command</strong>
+            <small>Eight missions, one outpost, fifteen crew.</small>
           </div>
           <div>
             <span>02</span>

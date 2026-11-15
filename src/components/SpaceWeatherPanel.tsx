@@ -57,8 +57,7 @@ export function SpaceWeatherPanel() {
 
         <div className="space-weather__body">
           <p className="space-weather__intro">
-            Real solar activity from NASA’s database. The Day 57 storm in this story
-            is fictional, but NASA watches the Sun every day for events like these.
+            Real solar activity from NASA’s DONKI archive.
           </p>
 
           {state.status === 'loading' ? (

@@ -120,9 +120,11 @@ describe('NASA science debrief', () => {
     const frames = container.querySelectorAll('.nasa-epic__frame')
     expect(frames.length).toBeGreaterThan(0)
     for (const frame of frames) {
-      expect(frame.getAttribute('src')).toContain('/thumbs/')
+      expect(frame.getAttribute('src')).toMatch(/\/jpg\/.+\.jpg$/)
       expect(frame.getAttribute('src')).toMatch(/^https:\/\//)
     }
+
+    expect(screen.getByText(/Earth from orbit, in true colour/i)).toBeInTheDocument()
   })
 
   it('renders the close-approach list and the solar chart', () => {

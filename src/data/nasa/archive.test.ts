@@ -49,20 +49,27 @@ describe('NASA snapshot', () => {
     }
   })
 
-  it('has EPIC frames whose thumbnails are all HTTPS', () => {
+  it('has EPIC frames and a true-colour Worldview image', () => {
     const earth = nasaArchive.earth
     expect(earth).not.toBeNull()
     expect(earth?.frames.length).toBeGreaterThan(0)
-    expect(earth?.frames.length).toBeLessThanOrEqual(10)
+    expect(earth?.frames.length).toBeLessThanOrEqual(6)
     for (const frame of earth?.frames ?? []) {
-      expectHttps(frame.thumbUrl)
-      expect(frame.thumbUrl).toContain('/thumbs/')
+      expectHttps(frame.url)
+      expect(frame.url).toMatch(/\/jpg\/.+\.jpg$/)
       expect(frame.time).toMatch(/^\d{2}:\d{2}$/)
     }
     expectHttps(earth?.pageUrl)
+
+    const earthView = nasaArchive.earthView
+    expect(earthView).not.toBeNull()
+    expect(earthView?.region.length).toBeGreaterThan(0)
+    expect(earthView?.caption.length).toBeGreaterThan(0)
+    expectHttps(earthView?.url)
+    expectHttps(earthView?.pageUrl)
   })
 
-  it('describes close approaches and the Worldview Earth image', () => {
+  it('describes close approaches', () => {
     const approaches = nasaArchive.sky?.approaches ?? []
     expect(approaches.length).toBeGreaterThan(0)
     for (const approach of approaches) {
@@ -70,11 +77,6 @@ describe('NASA snapshot', () => {
       expect(approach.distanceLunar).toBeGreaterThan(0)
       expect(approach.velocityKms).toBeGreaterThan(0)
     }
-
-    const earthToday = nasaArchive.earthToday
-    expect(earthToday).not.toBeNull()
-    expectHttps(earthToday?.url)
-    expectHttps(earthToday?.pageUrl)
   })
 
   it('has a seven-day solar series and a pointing solution', () => {

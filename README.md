@@ -49,10 +49,24 @@ material.
 | Mission 4 archive, Day 58 briefing | A real recent CME (speed, half-angle) plus the latest Kp index | DONKI | Anchors the fictional Day 57 storm to a documented event |
 | Mission 8 archive | Real Earth azimuth and elevation above Shackleton crater rim | JPL Horizons | Makes the antenna-pointing mission physically concrete |
 | Ending → **Science, credits, and sources** | A cross-fading timelapse of one real Earth day | EPIC | The crew looks back at the planet they are calling home |
-| Ending → **Science, credits, and sources** | Earth today in true colour | NASA Worldview (GIBS) | Live satellite context for the ending |
+| Ending → **Science, credits, and sources** | A true-colour regional satellite view of Earth | NASA Worldview (GIBS) | Shows dust, water, and sunlight together — the three things the outpost manages |
 | Ending → **Science, credits, and sources** | Known asteroid close approaches for the coming week | NeoWs | Gives a real sense of scale around Earth–Moon space |
 | Ending → **Science, credits, and sources** | The last sol of weather from InSight | InSight Mars Weather (archive) | Contrasts the Moon with Mars for the crew |
 | Ending → **Science, credits, and sources** | Seven days of solar irradiance | POWER | Repeats the power-budget lesson in the debrief |
+
+The mission archive uses one curated TechPort project and one Image Library
+query per mission:
+
+| Mission | TechPort project |
+| --- | --- |
+| 1 · Solar Panel Dust Shield | 32733 · Electrodynamic Dust Shield for Lunar/ISS Experiment |
+| 2 · Trash to Shield Tiles | 93127 · Trash Compaction and Processing System |
+| 3 · Airlock Leak Hunt | 94753 · Smart Elastomer Seal with Remote Monitoring |
+| 4 · Solar Storm Shelter | 11551 · Water Walls life support architecture |
+| 5 · CO₂ Scrubber Rescue | 13611 · Rapid Cycle Amine (RCA) Swing Bed |
+| 6 · Greenhouse Rescue | 91334 · Lunar Plant Growth Experiment (LPX) |
+| 7 · Oxygen From Moon Dust | 116390 · ISRU Hydrogen Oxygen Production |
+| 8 · Phone Home | 157472 · LunaNet Network Layer Services |
 
 The archive surfaces are additive and opt-in:
 
@@ -61,6 +75,9 @@ The archive surfaces are additive and opt-in:
 - The debrief lives inside the ending's existing collapsed disclosure, so the
   ending keeps its current layout.
 - If a section is missing from the snapshot, its component renders nothing.
+- The Worldview image is a curated regional view (the eastern Mediterranean and
+  Nile Delta) because the global snapshot endpoint returned partial-coverage
+  imagery during testing. The caption links to the full interactive viewer.
 
 ### Refresh the snapshot
 

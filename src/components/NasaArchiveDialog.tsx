@@ -143,12 +143,12 @@ export function NasaArchiveDialog({ mission }: NasaArchiveDialogProps) {
                     <span className="chip chip--amber">{data.project.program}</span>
                   ) : null}
                 </div>
-                <p>{data.project.description}</p>
                 {projectHref ? (
                   <a href={projectHref} rel="noreferrer" target="_blank">
                     Open in NASA TechPort ↗
                   </a>
                 ) : null}
+                <p>{data.project.description}</p>
               </section>
             ) : null}
 

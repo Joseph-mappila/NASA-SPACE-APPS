@@ -297,14 +297,15 @@
 }
 
 .nasa-epic__stage {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1;
   background: #03070b;
   border: 1px solid var(--line);
   border-radius: 8px;
-  max-height: 240px;
+  margin-inline: auto;
+  max-height: 280px;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: min(100%, 280px);
 }
 
 .nasa-epic__frame {

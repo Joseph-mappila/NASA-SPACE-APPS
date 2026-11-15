@@ -18,13 +18,13 @@ function shortDate(value: string | null | undefined): string {
  * change the ending layout.
  */
 export function NasaDebrief() {
-  const { earth, sky, solar, pointing, mars, earthToday } = nasaArchive
-  const epicFrames = earth?.frames.filter((frame) => safeUrl(frame.thumbUrl)) ?? []
+  const { earth, sky, solar, pointing, mars, earthView } = nasaArchive
+  const epicFrames = earth?.frames.filter((frame) => safeUrl(frame.url)) ?? []
   const epicHref = earth ? safeUrl(earth.pageUrl) : null
   const skyHref = 'https://cneos.jpl.nasa.gov/'
   const solarMax = solar ? Math.max(...solar.days.map((day) => day.kwh), 1) : 1
-  const earthTodayHref = earthToday ? safeUrl(earthToday.pageUrl) : null
-  const earthTodaySrc = earthToday ? safeUrl(earthToday.url) : null
+  const earthViewHref = earthView ? safeUrl(earthView.pageUrl) : null
+  const earthViewSrc = earthView ? safeUrl(earthView.url) : null
 
   const hasAnything =
     epicFrames.length > 0 ||
@@ -32,7 +32,7 @@ export function NasaDebrief() {
     Boolean(solar) ||
     Boolean(pointing) ||
     Boolean(mars) ||
-    Boolean(earthTodaySrc)
+    Boolean(earthViewSrc)
 
   if (!hasAnything) return null
 
@@ -53,10 +53,10 @@ export function NasaDebrief() {
                 alt=""
                 className="nasa-epic__frame"
                 decoding="async"
-                key={frame.thumbUrl}
+                key={frame.url}
                 loading="lazy"
                 referrerPolicy="no-referrer"
-                src={frame.thumbUrl}
+                src={frame.url}
                 style={{ '--nasa-index': index } as CSSProperties}
               />
             ))}
@@ -74,22 +74,23 @@ export function NasaDebrief() {
         </section>
       ) : null}
 
-      {earthTodaySrc ? (
+      {earthViewSrc ? (
         <figure className="nasa-earth">
           <img
-            alt={`Satellite view of Earth on ${earthToday?.date ?? 'today'}`}
+            alt={`Satellite view of ${earthView?.region ?? 'Earth'} on ${earthView?.date ?? 'the snapshot date'}`}
             decoding="async"
             loading="lazy"
             referrerPolicy="no-referrer"
-            src={earthTodaySrc}
+            src={earthViewSrc}
           />
           <figcaption>
-            <strong>Earth today, in true colour</strong>
+            <strong>Earth from orbit, in true colour</strong>
             <span>
-              MODIS Terra via NASA Worldview · {shortDate(earthToday?.date)}
+              {earthView?.region ?? 'NASA Worldview'} · {shortDate(earthView?.date)}
             </span>
-            {earthTodayHref ? (
-              <a href={earthTodayHref} rel="noreferrer" target="_blank">
+            <p>{earthView?.caption}</p>
+            {earthViewHref ? (
+              <a href={earthViewHref} rel="noreferrer" target="_blank">
                 Open NASA Worldview ↗
               </a>
             ) : null}

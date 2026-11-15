@@ -188,7 +188,7 @@
       "observedTime": "2026-10-31T21:00Z",
       "link": "https://ccmc.gsfc.nasa.gov/DONKI/view/GST/49348/-1"
     },
-    "fetchedAt": "2026-11-15T07:02:09.775Z"
+    "fetchedAt": "2026-11-15T10:58:47.619Z"
   },
   "earth": {
     "date": "2026-11-12",
@@ -200,19 +200,9 @@
         "time": "00:03"
       },
       {
-        "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112015633.jpg",
-        "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112015633.jpg",
-        "time": "01:51"
-      },
-      {
         "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112034436.jpg",
         "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112034436.jpg",
         "time": "03:39"
-      },
-      {
-        "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112053238.jpg",
-        "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112053238.jpg",
-        "time": "05:27"
       },
       {
         "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112072041.jpg",
@@ -220,19 +210,9 @@
         "time": "07:15"
       },
       {
-        "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112090843.jpg",
-        "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112090843.jpg",
-        "time": "09:03"
-      },
-      {
         "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112105645.jpg",
         "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112105645.jpg",
         "time": "10:51"
-      },
-      {
-        "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112124448.jpg",
-        "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112124448.jpg",
-        "time": "12:39"
       },
       {
         "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112143251.jpg",
@@ -240,9 +220,9 @@
         "time": "14:28"
       },
       {
-        "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112162053.jpg",
-        "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112162053.jpg",
-        "time": "16:16"
+        "url": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/jpg/epic_1b_20261112180855.jpg",
+        "thumbUrl": "https://epic.gsfc.nasa.gov/archive/natural/2026/11/12/thumbs/epic_1b_20261112180855.jpg",
+        "time": "18:04"
       }
     ],
     "pageUrl": "https://epic.gsfc.nasa.gov/"
@@ -343,9 +323,11 @@
     "pressurePa": 744,
     "lastUtc": "2020-10-26"
   },
-  "earthToday": {
+  "earthView": {
     "date": "2026-11-12",
-    "url": "https://wvs.earthdata.nasa.gov/api/v1/snapshot?REQUEST=GetSnapshot&TIME=2026-11-12&BBOX=-180,-90,180,90&CRS=EPSG:4326&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&FORMAT=image/jpeg&WIDTH=960&HEIGHT=480",
-    "pageUrl": "https://worldview.earthdata.nasa.gov/?v=-180,-90,180,90&t=2026-11-12"
+    "region": "Eastern Mediterranean and the Nile Delta",
+    "caption": "MODIS Terra over the eastern Mediterranean, the Nile Delta, and the Sahara.",
+    "url": "https://wvs.earthdata.nasa.gov/api/v1/snapshot?REQUEST=GetSnapshot&TIME=2026-11-12&BBOX=22%2C21%2C46%2C33&CRS=EPSG%3A4326&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&FORMAT=image%2Fjpeg&WIDTH=960&HEIGHT=480",
+    "pageUrl": "https://worldview.earthdata.nasa.gov/?v=22,21,46,33&t=2026-11-12"
   }
 }

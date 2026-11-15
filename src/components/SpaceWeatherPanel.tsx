@@ -116,7 +116,9 @@ export function SpaceWeatherPanel() {
                 The Day 57 storm is fictional. The fastest real eruption in NASA’s
                 recent DONKI catalog was a coronal mass ejection on{' '}
                 {shortDate(nasaArchive.storm.event.startTime)} travelling at about{' '}
-                {nasaArchive.storm.event.speedKms ?? '—'} km/s.
+                {nasaArchive.storm.event.speedKms ?? '—'} km/s. The latest planetary
+                K index in the same window was Kp{' '}
+                {nasaArchive.storm.latestKp?.kp ?? '—'}.
               </p>
               {safeUrl(nasaArchive.storm.event.link) ? (
                 <a

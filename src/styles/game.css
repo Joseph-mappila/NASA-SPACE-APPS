@@ -1931,6 +1931,9 @@
 .ending__card {
   max-height: 100%;
   max-width: 1040px;
+  /* The debrief loads animated media. Without this, the browser's scroll
+     anchoring can pull the page backwards mid-gesture as that media updates. */
+  overflow-anchor: none;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: clamp(18px, 3.4vh, 40px) clamp(20px, 3.2vw, 44px);

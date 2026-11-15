@@ -1,9 +1,9 @@
 /* ==========================================================================
    NASA archive — mission briefing modal and post-run science debrief.
 
-   Both surfaces are opt-in: the briefing keeps a single compact button in its
-   header, and the debrief lives inside the ending's existing <details>. Neither
-   adds height to a screen that already has to fit the viewport.
+   The briefing keeps a compact button in its header plus a text link in the
+   NASA fact card; both open the same native <dialog>. The debrief is shown in
+   full on the ending screen, above the collapsed credits disclosure.
    ========================================================================== */
 
 .mission-brief__top-tools {
@@ -16,9 +16,10 @@
 
 .nasa-archive__trigger {
   align-items: center;
-  background: rgba(130, 230, 223, 0.08);
-  border: 1px solid rgba(130, 230, 223, 0.38);
+  background: rgba(130, 230, 223, 0.16);
+  border: 1px solid rgba(130, 230, 223, 0.62);
   border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(130, 230, 223, 0.08), 0 6px 18px rgba(0, 0, 0, 0.28);
   color: var(--cyan);
   cursor: pointer;
   display: inline-flex;
@@ -27,21 +28,48 @@
   font-size: var(--text-xs);
   font-weight: 700;
   gap: 0.4rem;
-  letter-spacing: 0.02em;
-  padding: 0.34rem 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.34rem 0.8rem;
+  text-transform: uppercase;
   transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
 .nasa-archive__trigger:hover,
 .nasa-archive__trigger:focus-visible {
-  background: rgba(130, 230, 223, 0.16);
+  background: rgba(130, 230, 223, 0.26);
   border-color: var(--cyan);
   color: var(--paper);
   outline: none;
 }
 
 .nasa-archive__trigger > span {
-  font-size: 0.85em;
+  font-size: 0.95em;
+}
+
+.science-card__archive {
+  background: none;
+  border: 0;
+  color: var(--cyan);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  gap: 0.4rem;
+  letter-spacing: 0.05em;
+  margin-top: 10px;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.science-card__archive-label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.science-card__archive:hover,
+.science-card__archive:focus-visible {
+  color: var(--paper);
+  outline: none;
 }
 
 .space-weather__storm {
@@ -276,6 +304,28 @@
   padding-top: 16px;
 }
 
+.nasa-debrief__head {
+  display: grid;
+  gap: 4px;
+}
+
+.nasa-debrief__head h2 {
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.nasa-debrief__head p {
+  color: var(--paper-dim);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 70ch;
+}
+
 .nasa-debrief__section {
   display: grid;
   gap: 8px;
@@ -298,7 +348,9 @@
 
 .nasa-epic__stage {
   aspect-ratio: 1;
-  background: #03070b;
+  background-color: #03070b;
+  background-position: center;
+  background-size: cover;
   border: 1px solid var(--line);
   border-radius: 8px;
   margin-inline: auto;
@@ -322,8 +374,8 @@
 @keyframes nasa-epic-fade {
   0% { opacity: 0; }
   4% { opacity: 1; }
-  9% { opacity: 1; }
-  13% { opacity: 0; }
+  20% { opacity: 1; }
+  24% { opacity: 0; }
   100% { opacity: 0; }
 }
 
@@ -476,6 +528,33 @@
   font-size: var(--text-2xs);
   letter-spacing: 0.03em;
   line-height: 1.5;
+}
+
+/* The ending shows the debrief in a panel so it reads as real content, not a
+   footnote. Two columns on desktop keep it short enough to scan. */
+.ending__science {
+  background: rgba(5, 9, 13, 0.5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin: clamp(8px, 1.6vh, 18px) 0 clamp(16px, 2.4vh, 26px);
+  padding: clamp(14px, 2.2vh, 22px) clamp(16px, 2.4vw, 24px);
+}
+
+.ending__science .nasa-debrief {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+@media (min-width: 760px) {
+  .ending__science .nasa-debrief {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ending__science .nasa-debrief__head,
+  .ending__science .nasa-debrief__source {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

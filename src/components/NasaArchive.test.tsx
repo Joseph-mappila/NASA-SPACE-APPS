@@ -1,6 +1,6 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
-import { NasaArchiveDialog } from './NasaArchiveDialog'
+import { NasaArchiveDialog, openNasaArchive } from './NasaArchiveDialog'
 import { NasaDebrief } from './NasaDebrief'
 import { missionArchive } from '../data/nasa/archive'
 import { MISSIONS } from '../game/content'
@@ -75,6 +75,21 @@ describe('NASA archive dialog', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Close NASA archive/i }))
     expect(dialog).not.toHaveAttribute('open')
+  })
+
+  it('opens from the inline link in the NASA fact card', () => {
+    const { container } = render(<NasaArchiveDialog mission={MISSIONS[3]} />)
+    const dialog = container.querySelector('dialog')
+    expect(dialog).not.toHaveAttribute('open')
+
+    act(() => openNasaArchive(3))
+
+    expect(dialog).toHaveAttribute('open')
+    expect(screen.getByText(missionArchive(3)!.project!.title)).toBeInTheDocument()
+  })
+
+  it('does nothing when the mission has no dialog on the page', () => {
+    expect(() => openNasaArchive(8)).not.toThrow()
   })
 
   it('hides a photo that fails to load and keeps the project', () => {

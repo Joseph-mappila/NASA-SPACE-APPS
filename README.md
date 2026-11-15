@@ -43,16 +43,16 @@ material.
 
 | Where it appears | What it shows | NASA API | Why it matters |
 | --- | --- | --- | --- |
-| Every mission briefing → **NASA archive** button | A real NASA technology project: title, TRL, programme, description, link | TechPort | Ties each fictional mission to hardware NASA is actually building |
-| Every mission briefing → **NASA archive** button | A real photograph with centre, date, and archive link | Image and Video Library | Shows the people and hardware behind the science |
+| Every mission briefing → **NASA archive** | A real NASA technology project: title, TRL, programme, description, link | TechPort | Ties each fictional mission to hardware NASA is actually building |
+| Every mission briefing → **NASA archive** | A real photograph with centre, date, and archive link | Image and Video Library | Shows the people and hardware behind the science |
 | Mission 1 archive | Measured sunlight for the last seven days at a lunar-analog site | POWER | Grounds the solar-array mission in real irradiance data |
 | Mission 4 archive, Day 58 briefing | A real recent CME (speed, half-angle) plus the latest Kp index | DONKI | Anchors the fictional Day 57 storm to a documented event |
 | Mission 8 archive | Real Earth azimuth and elevation above Shackleton crater rim | JPL Horizons | Makes the antenna-pointing mission physically concrete |
-| Ending → **Science, credits, and sources** | A cross-fading timelapse of one real Earth day | EPIC | The crew looks back at the planet they are calling home |
-| Ending → **Science, credits, and sources** | A true-colour regional satellite view of Earth | NASA Worldview (GIBS) | Shows dust, water, and sunlight together — the three things the outpost manages |
-| Ending → **Science, credits, and sources** | Known asteroid close approaches for the coming week | NeoWs | Gives a real sense of scale around Earth–Moon space |
-| Ending → **Science, credits, and sources** | The last sol of weather from InSight | InSight Mars Weather (archive) | Contrasts the Moon with Mars for the crew |
-| Ending → **Science, credits, and sources** | Seven days of solar irradiance | POWER | Repeats the power-budget lesson in the debrief |
+| Ending → **Science debrief** panel | A cross-fading timelapse of one real Earth day | EPIC | The crew looks back at the planet they are calling home |
+| Ending → **Science debrief** panel | A true-colour regional satellite view of Earth | NASA Worldview (GIBS) | Shows dust, water, and sunlight together — the three things the outpost manages |
+| Ending → **Science debrief** panel | Known asteroid close approaches for the coming week | NeoWs | Gives a real sense of scale around Earth–Moon space |
+| Ending → **Science debrief** panel | The last sol of weather from InSight | InSight Mars Weather (archive) | Contrasts the Moon with Mars for the crew |
+| Ending → **Science debrief** panel | Seven days of solar irradiance | POWER | Repeats the power-budget lesson in the debrief |
 
 The mission archive uses one curated TechPort project and one Image Library
 query per mission:
@@ -68,12 +68,15 @@ query per mission:
 | 7 · Oxygen From Moon Dust | 116390 · ISRU Hydrogen Oxygen Production |
 | 8 · Phone Home | 157472 · LunaNet Network Layer Services |
 
-The archive surfaces are additive and opt-in:
+The archive surfaces are additive and optional:
 
-- The briefing button sits in the header and opens a native `<dialog>`; it adds
-  no height to the briefing.
-- The debrief lives inside the ending's existing collapsed disclosure, so the
-  ending keeps its current layout.
+- On every mission briefing, the **Open NASA archive** button sits in the header
+  and a **See the real NASA project and photo** link sits inside the NASA fact
+  card. Both open the same native `<dialog>`, so the briefing layout is
+  unchanged.
+- The science debrief is shown in full on the ending screen, in its own panel
+  directly under the ending stats and above the mission log. It never hides
+  behind a click.
 - If a section is missing from the snapshot, its component renders nothing.
 - The Worldview image is a curated regional view (the eastern Mediterranean and
   Nile Delta) because the global snapshot endpoint returned partial-coverage

@@ -2,7 +2,8 @@ import { useEffect } from 'react'
 import { audio } from '../audio/engine'
 import { Brand, TelemetryHud } from '../components/Hud'
 import { EarthFromNasa } from '../components/EarthFromNasa'
-import { NasaArchiveDialog } from '../components/NasaArchiveDialog'
+import { NasaArchiveDialog, openNasaArchive } from '../components/NasaArchiveDialog'
+import { missionArchive } from '../data/nasa/archive'
 import { formatClock } from '../game/format'
 import { missionLimitFor } from '../game/state'
 import type { GameState, MissionDefinition } from '../game/types'
@@ -80,6 +81,18 @@ export function MissionBrief({ state, mission, onStart }: MissionBriefProps) {
             <div className="science-card">
               <span className="eyebrow">NASA fact</span>
               <p>{mission.science}</p>
+              {missionArchive(mission.id) ? (
+                <button
+                  className="science-card__archive"
+                  onClick={() => openNasaArchive(mission.id)}
+                  type="button"
+                >
+                  <span className="science-card__archive-label">
+                    See the real NASA project and photo
+                  </span>
+                  <span aria-hidden="true">→</span>
+                </button>
+              ) : null}
             </div>
 
             <div className="glossary">

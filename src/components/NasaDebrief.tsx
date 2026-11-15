@@ -13,9 +13,8 @@ function shortDate(value: string | null | undefined): string {
 }
 
 /**
- * Post-run science panel. It lives inside the ending's existing "Science,
- * credits, and sources" disclosure, so it is collapsed by default and cannot
- * change the ending layout.
+ * Post-run science panel, shown in full on the ending screen. Every value comes
+ * from the committed NASA snapshot, so it renders instantly and offline.
  */
 export function NasaDebrief() {
   const { earth, sky, solar, pointing, mars, earthView } = nasaArchive
@@ -38,7 +37,14 @@ export function NasaDebrief() {
 
   return (
     <div className="nasa-debrief">
-      <span className="eyebrow">Science debrief · real NASA data</span>
+      <header className="nasa-debrief__head">
+        <span className="eyebrow">Science debrief · real NASA data</span>
+        <h2>What NASA measured</h2>
+        <p>
+          Public NASA data, captured {shortDate(nasaArchiveDate)}. These numbers
+          and photographs are real; the outpost is not.
+        </p>
+      </header>
 
       {epicFrames.length > 0 && earth ? (
         <section className="nasa-debrief__section">
@@ -46,7 +52,12 @@ export function NasaDebrief() {
           <div
             aria-hidden="true"
             className="nasa-epic__stage"
-            style={{ '--nasa-frames': epicFrames.length } as CSSProperties}
+            style={
+              {
+                '--nasa-frames': epicFrames.length,
+                backgroundImage: `url(${epicFrames[0]?.url})`,
+              } as CSSProperties
+            }
           >
             {epicFrames.map((frame, index) => (
               <img

@@ -22,6 +22,17 @@ function shortDate(value: string | null): string {
   })
 }
 
+/** Opens the archive dialog for a mission from anywhere on the briefing. */
+export function openNasaArchive(missionId: number) {
+  const dialog = document.getElementById(
+    `nasa-archive-${missionId}`,
+  ) as HTMLDialogElement | null
+  if (!dialog) return
+  if (dialog.open) return
+  if (typeof dialog.showModal === 'function') dialog.showModal()
+  else dialog.setAttribute('open', '')
+}
+
 type Extra = { label: string; text: string; href: string; linkLabel: string }
 
 function extrasFor(missionId: number): Extra[] {
@@ -98,14 +109,16 @@ export function NasaArchiveDialog({ mission }: NasaArchiveDialogProps) {
         aria-haspopup="dialog"
         className="nasa-archive__trigger"
         onClick={open}
+        title="The real NASA project and photo behind this mission"
         type="button"
       >
-        <span aria-hidden="true">◎</span> NASA archive
+        <span aria-hidden="true">◎</span> Open NASA archive
       </button>
 
       <dialog
         aria-labelledby={titleId}
         className="nasa-dialog"
+        id={`nasa-archive-${mission.id}`}
         onClick={(event) => {
           if (event.target === dialogRef.current) close()
         }}

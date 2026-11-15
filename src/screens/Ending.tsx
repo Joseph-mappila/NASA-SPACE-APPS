@@ -45,6 +45,10 @@ export function Ending({ state, onRestart }: EndingProps) {
           </div>
         </div>
 
+        <section className="ending__science">
+          <NasaDebrief />
+        </section>
+
         <div className="ending__log">
           <span className="eyebrow">Mission log</span>
           <ol>
@@ -85,10 +89,9 @@ export function Ending({ state, onRestart }: EndingProps) {
           <p>
             All sound is synthesized in the browser with the Web Audio API. The three
             character and environment illustrations were supplied with the project.
-            Photographs and data in the science debrief below come from NASA’s public
+            Photographs and data in the science debrief above come from NASA’s public
             archives and are credited to their source. No NASA insignia is used.
           </p>
-          <NasaDebrief />
         </details>
       </section>
     </main>

@@ -1,7 +1,7 @@
 # LUNA — Outpost 57
 
 A browser game about running a Moon outpost through a solar storm.
-Play now at: <https://github.com/Joseph-mappila/NASA-SPACE-APPS>
+Play now at: <https://joseph-mappila.github.io/NASA-SPACE-APPS>
 
 Outpost 57 is a fictional NASA outpost on the Moon. Fifteen astronauts depend on
 it for power, air, water, food, and a radio link home. The player commands the
